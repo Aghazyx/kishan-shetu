@@ -638,9 +638,9 @@
             </div>
           </div>
 
-          <button class="btn-action-dark" id="btn-fetch" onclick="triggerAutoFetch()">
-            <i class="fa-solid fa-shield-halved"></i> Auto-Fetch Verified Land & Bank Data
-          </button>
+<button class="btn-action-dark" id="btn-fetch">
+  <i class="fa-solid fa-shield-halved"></i> Auto-Fetch Verified Land & Bank Data
+</button>
         </div>
 
         <div class="card-panel">
@@ -652,31 +652,31 @@
             <span class="badge-active-status">PFMS & Bhoomi Active</span>
           </div>
 
-          <div class="profile-sub-grid">
-            <div class="info-card">
-              <small>VERIFIED FARMER NAME</small>
-              <strong id="farmer-name-val">Sardar Ramesh Singh</strong>
-              <p id="farmer-phone-val">+91 98765-43210</p>
-            </div>
+        <div class="profile-sub-grid">
+  <div class="info-card">
+    <small>VERIFIED FARMER NAME</small>
+    <strong id="farmer-name-val">Not fetched</strong>
+    <p id="farmer-phone-val">Awaiting verification</p>
+  </div>
 
-            <div class="info-card">
-              <small>LAND HOLDING SIZE</small>
-              <strong id="land-size-val">4.5 Acres</strong>
-              <p id="land-khasra-val">Khatauni 114/208, Khasra 41//12/2</p>
-            </div>
+  <div class="info-card">
+    <small>LAND HOLDING SIZE</small>
+    <strong id="land-size-val">Not fetched</strong>
+    <p id="land-khasra-val">Awaiting land record verification</p>
+  </div>
 
-            <div class="info-card">
-              <small>LOCATION (TEHSIL / MANDI)</small>
-              <strong id="loc-mandi-val">Khanna, Ludhiana</strong>
-              <p id="loc-state-val">Punjab State</p>
-            </div>
+  <div class="info-card">
+    <small>LOCATION (TEHSIL / MANDI)</small>
+    <strong id="loc-mandi-val">Not fetched</strong>
+    <p id="loc-state-val">Awaiting location verification</p>
+  </div>
 
-            <div class="info-card">
-              <small>BANK & DBT CREDENTIALS</small>
-              <strong id="bank-name-val">State Bank of India</strong>
-              <p id="bank-acc-val">A/C XXXX-XXXX-3312 • SBIN0001234</p>
-            </div>
-          </div>
+  <div class="info-card">
+    <small>BANK & DBT CREDENTIALS</small>
+    <strong id="bank-name-val">Not fetched</strong>
+    <p id="bank-acc-val">Awaiting bank verification</p>
+  </div>
+</div>
 
           <div style="font-size:12px; font-weight:700; color:var(--dark-olive); margin-bottom:12px;">Permitted Crop Profiles & Maximum Procurement Cap:</div>
 
@@ -686,7 +686,7 @@
                 <strong>Wheat (ਕਣਕ / Wheat)</strong><br>
                 <small style="font-size:10px; color:var(--text-muted);">Rabi 2025-26</small>
               </div>
-              <span class="qty-tag" id="wheat-cap">Max 87.5 Qtl</span>
+<span class="qty-tag" id="wheat-cap">Not fetched</span>
             </div>
 
             <div class="crop-card">
@@ -694,7 +694,7 @@
                 <strong>Paddy Grade A (ਝੋਨਾ)</strong><br>
                 <small style="font-size:10px; color:var(--text-muted);">Kharif 2025-26</small>
               </div>
-              <span class="qty-tag" id="paddy-cap">Max 128 Qtl</span>
+<span class="qty-tag" id="paddy-cap">Not fetched</span>
             </div>
           </div>
 
@@ -938,19 +938,19 @@
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
             <div class="form-group">
               <label>Gross Weight (Vehicle + Crop) kg</label>
-              <input type="number" class="text-input" id="gross-weight-input" value="8450" oninput="calculateNetProcured()">
-            </div>
+     <input type="number" class="text-input" id="gross-weight-input" value="" min="0" max="100000" step="1" oninput="calculateNetProcured()">
+            </div>       
             <div class="form-group">
               <label>Tare Weight (Empty Vehicle) kg</label>
-              <input type="number" class="text-input" id="tare-weight-input" value="3950" oninput="calculateNetProcured()">
+<input type="number" class="text-input" id="tare-weight-input" value="" min="0" max="10000" step="1" oninput="calculateNetProcured()">
             </div>
           </div>
 
-          <div class="farmer-info-box glass-pill" style="margin-top:8px;">
-            <small style="font-size:10px; font-weight:800; color:var(--text-muted);">NET GRAIN PROCURED</small>
-            <h1 style="font-size:28px; color:var(--dark-olive);" id="net-quintals-display">45.00 Qtl</h1>
-            <p style="font-size:11px; color:var(--text-muted);" id="net-kg-display">Gross (8450 kg) - Tare (3950 kg) = 4500 kg</p>
-          </div>
+<div class="farmer-info-box glass-pill" style="margin-top:8px;">
+    <small style="font-size:10px; font-weight:800; color:var(--text-muted);">NET GRAIN PROCURED</small>
+    <h1 style="font-size:28px; color:var(--dark-olive);" id="net-grain-value">Enter Weights</h1>
+    <p style="font-size:11px; color:var(--text-muted);" id="net-kg-display">Enter gross and tare weights</p>
+</div>
 
           <p style="font-size:10.5px; color:var(--text-muted); font-family:monospace; margin-top:4px;">
             Operator ID: OP-WB-101 • Scale Calibrated: Certified Legal Metrology
@@ -963,22 +963,22 @@
             <div class="form-group">
               <label>Grain Moisture %</label>
               <input type="number" step="0.1" class="text-input" value="11.4">
-              <small style="font-size:9px; color:var(--text-muted);">Limit: ≤ 12.0% for Wheat Grade A</small>
+              <small style="font-size:9px; color:var(--text-muted);">FAQ ceiling: ≤14.0% | Grade A target: ≤12.0%</small>
             </div>
             <div class="form-group">
               <label>Foreign Matter %</label>
               <input type="number" step="0.1" class="text-input" value="0.6">
-              <small style="font-size:9px; color:var(--text-muted);">Limit: ≤ 0.75%</small>
+              <small style="font-size:9px; color:var(--text-muted);">FAQ maximum: ≤0.75% | Grade A target: ≤0.50%</small>
             </div>
           </div>
 
-          <div class="overflow-recommendation-box" style="background:#f0fdf4; border-color:#bbf7d0; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <small style="font-size:9px; font-weight:800; color:#166534;">AUTOMATED FAQ RESULT</small>
-              <strong style="display:block; font-size:14px; color:#15803d;">Grade A FAQ Cleared</strong>
-            </div>
-            <span class="badge-active-status">GRADE_A</span>
-          </div>
+      <div class="overflow-recommendation-box" style="background:#f0fdf4; border-color:#bbf7d0; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <small style="font-size:9px; font-weight:800; color:#166534;">AUTOMATED FAQ RESULT</small>
+        <strong style="display:block; font-size:14px; color:#15803d;" id="quality-result-text">Awaiting Quality Test</strong>
+    </div>
+    <span class="badge-active-status" id="quality-grade-badge">PENDING</span>
+</div>
 
           <button class="btn-action-dark" onclick="completeStageAndProceed(6, 7)">
             <i class="fa-solid fa-floppy-disk"></i> Save Quality Assay & Issue Digital Receipt
@@ -1078,10 +1078,9 @@
           <p style="font-size:11px; color:var(--text-muted); line-height:1.4;">
             Real-time synchronization with Public Financial Management System (PFMS) ensures 0 intermediaries. Credit confirmation is transmitted instantaneously via SMS Gateway, FCM push, and WhatsApp.
           </p>
-
-          <button class="btn-action-dark" style="margin-top:auto; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);" onclick="alert('Block Hash Validated on Hyperledger Fabric Node #4')">
-            <i class="fa-solid fa-cubes"></i> Verify Block on Immutable Ledger
-          </button>
+<button class="btn-action-dark" style="margin-top:auto; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);" onclick="verifyLedgerBlock()">
+  <i class="fa-solid fa-cubes"></i> Verify Block on Immutable Ledger
+</button>
         </div>
       </div>
     </div>
@@ -1212,237 +1211,17 @@
     </div>
   </footer>
 
-  <!-- INTERACTIVE JS ENGINE -->
-  <script>
-    // Global Target Mandi and Selected Time Slot Variables
-    let currentTargetMandi = "Khanna Grain Market (Asia's Largest)";
-    let currentSelectedSlot = "09:00 AM - 11:00 AM";
-
-    // Stage Navigation Controller
-    function completeStageAndProceed(currentStage, nextStage) {
-      const currentNode = document.getElementById(`step-node-${currentStage}`);
-      const currentNum = document.getElementById(`step-num-${currentStage}`);
-      
-      if (currentNode && currentNum) {
-        currentNode.classList.remove('active');
-        currentNode.classList.add('completed');
-        currentNum.innerHTML = `<i class="fa-solid fa-check"></i>`;
-      }
-
-      switchStage(nextStage);
-    }
-
-    function switchStage(stageNum) {
-      for (let i = 1; i <= 7; i++) {
-        const node = document.getElementById(`step-node-${i}`);
-        if (node) {
-          if (i === stageNum) {
-            node.classList.add('active');
-          } else {
-            node.classList.remove('active');
-          }
-        }
-
-        const view = document.getElementById(`stage-view-${i}`);
-        if (view) {
-          if (i === stageNum) {
-            view.classList.add('active-view');
-          } else {
-            view.classList.remove('active-view');
-          }
-        }
-      }
-    }
-
-    // Direct click listeners on Stepper Bar nodes
-    document.querySelectorAll('.step-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const stage = parseInt(item.getAttribute('data-stage'));
-        switchStage(stage);
-      });
-    });
-
-    // Stage 1 Toggle Views (Smartphone PWA vs 2G IVR)
-    const btnPwa = document.getElementById('btn-pwa');
-    const btnIvr = document.getElementById('btn-ivr');
-    const viewPwaSub = document.getElementById('view-pwa-sub');
-    const viewIvrSub = document.getElementById('view-ivr-sub');
-
-    btnPwa.addEventListener('click', () => {
-      btnPwa.classList.add('active');
-      btnIvr.classList.remove('active');
-      viewPwaSub.classList.add('active-sub');
-      viewIvrSub.classList.remove('active-sub');
-    });
-
-    btnIvr.addEventListener('click', () => {
-      btnIvr.classList.add('active');
-      btnPwa.classList.remove('active');
-      viewIvrSub.classList.add('active-sub');
-      viewPwaSub.classList.remove('active-sub');
-    });
-
-    // Stage 2 Presets & Bhoomi Fetch Logic
-    const presets = {
-      ramesh: { kcc: 'KCC-PB-2024-8841', aadhaar: 'XXXX-XXXX-4912', name: 'Sardar Ramesh Singh', phone: '+91 98765-43210', land: '4.5 Acres', khasra: 'Khatauni 114/208, Khasra 41//12/2', mandi: 'Khanna, Ludhiana', state: 'Punjab State', bank: 'State Bank of India', acc: 'A/C XXXX-XXXX-3312 • SBIN0001234', wheat: 'Max 87.5 Qtl', paddy: 'Max 128 Qtl' },
-      kaur: { kcc: 'KCC-PB-2024-9102', aadhaar: 'XXXX-XXXX-8821', name: 'Surjit Kaur', phone: '+91 98123-55678', land: '6.2 Acres', khasra: 'Khatauni 88/102, Khasra 14//02', mandi: 'Jagraon, Ludhiana', state: 'Punjab State', bank: 'Punjab National Bank', acc: 'A/C XXXX-XXXX-9901 • PUNB0102000', wheat: 'Max 120 Qtl', paddy: 'Max 175 Qtl' },
-      kumar: { kcc: 'KCC-HR-2024-3312', aadhaar: 'XXXX-XXXX-1102', name: 'Rajesh Kumar', phone: '+91 97290-12345', land: '3.0 Acres', khasra: 'Khatauni 42/55, Khasra 08//11', mandi: 'Karnal Mandi', state: 'Haryana State', bank: 'HDFC Bank', acc: 'A/C XXXX-XXXX-4412 • HDFC0000240', wheat: 'Max 60 Qtl', paddy: 'Max 90 Qtl' }
-    };
-
-    function loadPreset(key, e) {
-      document.querySelectorAll('.preset-pill').forEach(btn => btn.classList.remove('active'));
-      if (e) e.target.classList.add('active');
-
-      const p = presets[key];
-      document.getElementById('kcc-input').value = p.kcc;
-      document.getElementById('aadhaar-input').value = p.aadhaar;
-      document.getElementById('farmer-name-val').innerText = p.name;
-      document.getElementById('farmer-phone-val').innerText = p.phone;
-      document.getElementById('land-size-val').innerText = p.land;
-      document.getElementById('land-khasra-val').innerText = p.khasra;
-      document.getElementById('loc-mandi-val').innerText = p.mandi;
-      document.getElementById('loc-state-val').innerText = p.state;
-      document.getElementById('bank-name-val').innerText = p.bank;
-      document.getElementById('bank-acc-val').innerText = p.acc;
-      document.getElementById('wheat-cap').innerText = p.wheat;
-      document.getElementById('paddy-cap').innerText = p.paddy;
-    }
-
-    function triggerAutoFetch() {
-      const btn = document.getElementById('btn-fetch');
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching Records from Bhoomi...`;
-      setTimeout(() => {
-        btn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Auto-Fetch Verified Land & Bank Data`;
-        alert('Land records & bank credentials verified successfully via Bhoomi API.');
-      }, 700);
-    }
-
-    // Stage 3 Dynamic Overflow Logic
-    function updateMandiStatus() {
-      const qty = parseInt(document.getElementById('qty-input').value) || 0;
-
-      if (qty > 50) {
-        document.getElementById('mandi-status-badge').innerText = "HIGH CONGESTION";
-        document.getElementById('mandi-status-badge').style.background = "#fee2e2";
-        document.getElementById('mandi-status-badge').style.color = "#991b1b";
-        document.getElementById('est-wait-val').innerText = "54 min";
-        document.getElementById('active-queue-val').innerText = "28 Trucks";
-      } else {
-        document.getElementById('mandi-status-badge').innerText = "MODERATE CONGESTION";
-        document.getElementById('mandi-status-badge').style.background = "#fef3c7";
-        document.getElementById('mandi-status-badge').style.color = "#92400e";
-        document.getElementById('est-wait-val').innerText = "38 min";
-        document.getElementById('active-queue-val').innerText = "12 Trucks";
-      }
-    }
-
-    function selectSlot(element) {
-      document.querySelectorAll('.time-slot-btn').forEach(btn => btn.classList.remove('selected'));
-      element.classList.add('selected');
-      currentSelectedSlot = element.innerText;
-    }
-
-    function applyReroute() {
-      currentTargetMandi = "Karnal Central Krishi Mandi";
-      document.getElementById('target-mandi-title').innerText = currentTargetMandi;
-      document.getElementById('mandi-status-badge').innerText = "OPTIMIZED FLOW";
-      document.getElementById('mandi-status-badge').style.background = "#dff2e1";
-      document.getElementById('mandi-status-badge').style.color = "#236835";
-      document.getElementById('est-wait-val').innerText = "18 min";
-      document.getElementById('active-queue-val').innerText = "4 Trucks";
-      document.getElementById('overflow-desc').innerHTML = "<strong>Successfully Rerouted!</strong> Karnal Mandi queue load-balancer lock confirmed. Turnaround guarantee active.";
-      alert("Queue load-balancer rerouted vehicle to Karnal Central Krishi Mandi.");
-    }
-
-    function submitSlotBooking() {
-      const cropText = document.getElementById('crop-select').options[document.getElementById('crop-select').selectedIndex].text;
-      const qty = document.getElementById('qty-input').value;
-      
-      document.getElementById('modal-alert-text').innerText = `DoCA Alert: Slot confirmed for Sardar Ramesh Singh. Token: DOCA-2026-PB-1296 for ${cropText} (${qty} qtl) on 2026-09-11 (${currentSelectedSlot}) at ${currentTargetMandi}.`;
-      document.getElementById('notification-fanout-modal').classList.add('open');
-    }
-
-    function closeNotificationModal() {
-      document.getElementById('notification-fanout-modal').classList.remove('open');
-    }
-
-    function closeNotificationModalAndShowQR() {
-      closeNotificationModal();
-      completeStageAndProceed(3, 4);
-    }
-
-    // Modal QR Slip Popups
-    function openQRSlipModal() {
-      document.getElementById('qr-mandi-centre').innerText = currentTargetMandi;
-      document.getElementById('qr-slip-modal').classList.add('open');
-    }
-
-    function closeQRModal() {
-      document.getElementById('qr-slip-modal').classList.remove('open');
-    }
-
-    // Stage 4 Live Alert Simulation
-    function triggerSimulatedSMS() {
-      alert("Simulated Dispatch Sent via DLT Gateway:\n'Vehicle PB 10 Z 9921, proceed to Gate 2. Current queue position #3.'");
-    }
-
-    // Stage 5 Geofence Slider Logic
-    function updateGeofenceDistance(val) {
-      document.getElementById('current-distance-text').innerText = `${val} km`;
-      const btn = document.getElementById('btn-verify-geofence');
-      
-      if (parseFloat(val) <= 1.0) {
-        document.getElementById('geofence-status-card').style.background = "#dff2e1";
-        document.getElementById('geofence-status-title').innerText = "Geofence Perimeter Unlocked!";
-        document.getElementById('geofence-status-desc').innerText = "Vehicle is within 1.0 km radius threshold. Gate clearance granted.";
-        btn.disabled = false;
-        btn.style.opacity = "1";
-      } else {
-        document.getElementById('geofence-status-card').style.background = "rgba(255,255,255,0.85)";
-        document.getElementById('geofence-status-title').innerText = "Waiting for GPS Geofence Verification";
-        document.getElementById('geofence-status-desc').innerText = "Vehicle distance must be within 1.0 km threshold of target Mandi to trigger automatic barrier clearance.";
-      }
-    }
-
-    function verifyGeofenceCheckIn() {
-      alert("GPS Telematics verified! Barrier gate opened. Token status flipped to 'Active Gate Queue'.");
-      completeStageAndProceed(5, 6);
-    }
-
-    // Stage 6 Weighbridge Calculation Logic
-    function calculateNetProcured() {
-      const gross = parseFloat(document.getElementById('gross-weight-input').value) || 0;
-      const tare = parseFloat(document.getElementById('tare-weight-input').value) || 0;
-      const netKg = gross - tare;
-      const netQtl = (netKg / 100).toFixed(2);
-
-      document.getElementById('net-quintals-display').innerText = `${netQtl} Qtl`;
-      document.getElementById('net-kg-display').innerText = `Gross (${gross} kg) - Tare (${tare} kg) = ${netKg} kg`;
-      document.getElementById('final-qty-val').innerText = `${netQtl} Quintals`;
-      
-      const mspAmount = (netQtl * 2275).toLocaleString('en-IN');
-      document.getElementById('final-dbt-amount').innerText = `₹${mspAmount}`;
-    }
-
-    // Stage 7 DBT Dispatch Simulation
-    function dispatchDBTPayout() {
-      const btn = document.getElementById('btn-dispatch-dbt');
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing PFMS Host-to-Host Settlement...`;
-      
-      setTimeout(() => {
-        btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Direct Benefit Transfer Dispatched`;
-        btn.style.background = "#22c55e";
-        document.getElementById('dbt-status-stage-text').innerText = "Payout Credit Confirmed";
-        document.getElementById('dbt-status-stage-text').style.color = "#15803d";
-        alert("PFMS e-Kuber Settlement Successful!\nAmount credited directly to farmer bank account via RBI Direct Linkage.");
-      }, 1000);
-    }
-
-    // Tech Stack Modal Handling
-    const techModal = document.getElementById('tech-modal');
-    document.getElementById('btn-open-tech-stack').addEventListener('click', () => techModal.classList.add('open'));
-    document.getElementById('header-tech-btn').addEventListener('click', () => techModal.classList.add('open'));
-    function closeTechModal() { techModal.classList.remove('open'); }
-  </script>
+ <!-- KISAN SETU JAVASCRIPT -->
+<script src="lifestyle.js"></script>
+<script src="navbar.js"></script>
+<script src="stage-toggle.js"></script>
+<script src="verification.js"></script>
+<script src="stage3.js"></script>
+<script src="stage4.js"></script>
+<script src="stage5.js"></script>
+<script src="stage6.js"></script>
+<script src="stage7.js"></script>
+<script src="main.js"></script>
+ 
 </body>
 </html>

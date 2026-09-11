@@ -1,17 +1,45 @@
+// ==========================================
+// LIFESTYLE / TAB SWITCHING
+// ==========================================
+
 document.addEventListener('DOMContentLoaded', () => {
-  // Tab Switching Logic
-  const tabs = document.querySelectorAll('.tab-item');
+
+  const tabs =
+    document.querySelectorAll('.tab-item');
+
+
+  // ========================================
+  // TAB CLICK HANDLING
+  // ========================================
 
   tabs.forEach(tab => {
-    tab.addEventListener('click', function () {
-      // Remove active class from all tabs
-      tabs.forEach(t => t.classList.remove('active'));
 
-      // Add active class to clicked tab
+    tab.addEventListener('click', function () {
+
+      // Remove active state from all tabs
+      tabs.forEach(item => {
+        item.classList.remove('active');
+      });
+
+
+      // Activate selected tab
       this.classList.add('active');
 
-      const targetTab = this.getAttribute('data-tab');
-      console.log(`Switched to tab: ${targetTab}`);
+
+      // Get selected tab identifier
+      const targetTab =
+        this.getAttribute('data-tab');
+
+
+      // Useful during development
+      if (targetTab) {
+        console.log(
+          `Switched to tab: ${targetTab}`
+        );
+      }
+
     });
+
   });
+
 });

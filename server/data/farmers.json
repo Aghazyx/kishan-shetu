@@ -1,0 +1,14 @@
+[
+  {
+    "id": "FRM-DEMO-001",
+    "kccNumber": "KCC-PB-2024-8841",
+    "name": "Sardar Ramesh Singh",
+    "phone": "+91 98765-43210",
+    "landHoldingAcres": 4.5,
+    "state": "Punjab State",
+    "district": "Ludhiana",
+    "mandi": "Khanna, Ludhiana",
+    "verifiedBank": "State Bank of India (A/C ****3312)",
+    "createdAt": "2026-09-11T09:23:57.815Z"
+  }
+]
