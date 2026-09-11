@@ -1,0 +1,690 @@
+/* ================================================================
+   KISAN SETU ADMIN
+   A3 • FARMER MANAGEMENT
+   ================================================================ */
+
+
+/* ================================================================
+   PAGE LAYOUT
+   ================================================================ */
+
+.admin-page {
+    min-height: calc(100vh - 140px);
+    padding: 32px 42px 50px;
+}
+
+
+/* ================================================================
+   PAGE HEADER
+   ================================================================ */
+
+.admin-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.admin-section-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    opacity: 0.62;
+    margin-bottom: 7px;
+}
+
+.admin-page-header h1 {
+    margin: 0;
+    font-size: 34px;
+    line-height: 1.15;
+    font-weight: 800;
+}
+
+.admin-page-header p {
+    margin: 9px 0 0;
+    font-size: 15px;
+    opacity: 0.68;
+    max-width: 680px;
+}
+
+.admin-page-date {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+
+/* ================================================================
+   SUMMARY CARDS
+   ================================================================ */
+
+.farmer-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.farmer-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 108px;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.055);
+}
+
+.summary-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: rgba(34, 84, 61, 0.09);
+    font-size: 19px;
+}
+
+.summary-content {
+    min-width: 0;
+}
+
+.summary-content span {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.6;
+}
+
+.summary-content strong {
+    display: block;
+    font-size: 23px;
+    line-height: 1.15;
+    font-weight: 800;
+}
+
+
+/* ================================================================
+   FARMER MANAGEMENT PANEL
+   ================================================================ */
+
+.farmer-management-panel {
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.055);
+}
+
+
+/* ================================================================
+   PANEL HEADER
+   ================================================================ */
+
+.management-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    padding: 25px 28px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.management-panel-header h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.management-panel-header p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    opacity: 0.62;
+}
+
+
+/* ================================================================
+   SEARCH
+   ================================================================ */
+
+.farmer-search {
+    position: relative;
+    width: 340px;
+    flex-shrink: 0;
+}
+
+.farmer-search i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.farmer-search input {
+    width: 100%;
+    height: 42px;
+    box-sizing: border-box;
+    padding: 0 14px 0 38px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    font-size: 13px;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.farmer-search input:focus {
+    border-color: rgba(34, 84, 61, 0.45);
+    box-shadow: 0 0 0 3px rgba(34, 84, 61, 0.08);
+}
+
+
+/* ================================================================
+   STATUS MESSAGE
+   ================================================================ */
+
+.farmer-status-message {
+    margin: 18px 28px 0;
+    padding: 12px 15px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.farmer-status-message.error {
+    background: rgba(180, 50, 50, 0.08);
+    border: 1px solid rgba(180, 50, 50, 0.15);
+}
+
+.farmer-status-message.success {
+    background: rgba(40, 120, 70, 0.08);
+    border: 1px solid rgba(40, 120, 70, 0.15);
+}
+
+
+/* ================================================================
+   LOADING STATE
+   ================================================================ */
+
+.farmer-loading {
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    font-size: 14px;
+    opacity: 0.65;
+}
+
+
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
+
+.farmer-empty-state {
+    min-height: 260px;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.farmer-empty-state i {
+    margin-bottom: 15px;
+    font-size: 36px;
+    opacity: 0.3;
+}
+
+.farmer-empty-state h3 {
+    margin: 0 0 7px;
+    font-size: 18px;
+}
+
+.farmer-empty-state p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+
+/* ================================================================
+   FARMER TABLE
+   ================================================================ */
+
+.farmer-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.farmer-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.farmer-table th {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.025);
+    text-align: left;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    opacity: 0.58;
+}
+
+.farmer-table td {
+    padding: 17px 18px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.055);
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+.farmer-table tbody tr {
+    transition: background 0.18s ease;
+}
+
+.farmer-table tbody tr:hover {
+    background: rgba(34, 84, 61, 0.025);
+}
+
+.farmer-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* ================================================================
+   FARMER IDENTITY
+   ================================================================ */
+
+.farmer-identity {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 180px;
+}
+
+.farmer-avatar {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(34, 84, 61, 0.1);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.farmer-name {
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.farmer-phone {
+    margin-top: 3px;
+    font-size: 11px;
+    opacity: 0.55;
+}
+
+
+/* ================================================================
+   KCC
+   ================================================================ */
+
+.farmer-kcc {
+    white-space: nowrap;
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* ================================================================
+   LOCATION
+   ================================================================ */
+
+.farmer-location {
+    line-height: 1.35;
+}
+
+.farmer-location strong {
+    display: block;
+    font-size: 13px;
+}
+
+.farmer-location span {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    opacity: 0.55;
+}
+
+
+/* ================================================================
+   NUMERIC DATA
+   ================================================================ */
+
+.farmer-number {
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.farmer-secondary {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    opacity: 0.5;
+    font-weight: 500;
+}
+
+
+/* ================================================================
+   STATUS BADGE
+   ================================================================ */
+
+.farmer-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: rgba(40, 120, 70, 0.09);
+    font-size: 11px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.farmer-status-badge i {
+    font-size: 7px;
+}
+
+
+/* ================================================================
+   VIEW BUTTON
+   ================================================================ */
+
+.farmer-view-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-width: 72px;
+    height: 34px;
+    padding: 0 11px;
+    border: 1px solid rgba(0, 0, 0, 0.11);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 750;
+    transition: background 0.18s ease,
+                transform 0.18s ease,
+                box-shadow 0.18s ease;
+}
+
+.farmer-view-button:hover {
+    background: rgba(34, 84, 61, 0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    transform: translateY(-1px);
+}
+
+
+/* ================================================================
+   FARMER DETAILS MODAL
+   ================================================================ */
+
+.farmer-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+.farmer-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+}
+
+.farmer-modal-content {
+    position: relative;
+    width: min(900px, calc(100% - 40px));
+    max-height: calc(100vh - 70px);
+    margin: 35px auto;
+    overflow-y: auto;
+    border-radius: 18px;
+    background: white;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ================================================================
+   MODAL HEADER
+   ================================================================ */
+
+.farmer-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 25px 28px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.farmer-modal-header h2 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.modal-close-button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 9px;
+    background: rgba(0, 0, 0, 0.055);
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.18s ease;
+}
+
+.modal-close-button:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+
+/* ================================================================
+   DETAIL GRID
+   ================================================================ */
+
+.farmer-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin: 24px 28px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.07);
+}
+
+.detail-item {
+    min-height: 72px;
+    padding: 15px;
+    background: white;
+}
+
+.detail-item span {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    opacity: 0.52;
+}
+
+.detail-item strong {
+    display: block;
+    font-size: 13px;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+
+/* ================================================================
+   MODAL RECORD SECTIONS
+   ================================================================ */
+
+.modal-record-section {
+    margin: 0 28px 24px;
+    padding: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.018);
+}
+
+.modal-record-section h3 {
+    margin: 0 0 14px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.modal-record-section p {
+    margin: 0;
+    font-size: 12px;
+    opacity: 0.58;
+}
+
+
+/* ================================================================
+   MODAL RECORD DATA
+   ================================================================ */
+
+.modal-record-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.modal-record-item span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    opacity: 0.5;
+}
+
+.modal-record-item strong {
+    display: block;
+    font-size: 12px;
+}
+
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+
+@media (max-width: 1100px) {
+
+    .farmer-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .management-panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .farmer-search {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .admin-page {
+        padding: 25px 20px 40px;
+    }
+
+    .admin-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .farmer-detail-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modal-record-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 560px) {
+
+    .farmer-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .management-panel-header {
+        padding: 20px;
+    }
+
+    .farmer-table td,
+    .farmer-table th {
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+
+    .farmer-modal-content {
+        width: calc(100% - 20px);
+        margin: 10px auto;
+        max-height: calc(100vh - 20px);
+    }
+
+    .farmer-modal-header {
+        padding: 20px;
+    }
+
+    .farmer-detail-grid {
+        grid-template-columns: 1fr;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .modal-record-section {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .modal-record-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}

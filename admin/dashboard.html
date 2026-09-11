@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kisan Setu | Admin Dashboard</title>
+
+    <!-- Existing Kisan Setu Styles -->
+    <link rel="stylesheet" href="../main.css">
+    <link rel="stylesheet" href="../navbar.css">
+    <link rel="stylesheet" href="../footer.css">
+
+    <!-- Admin Styles -->
+    <link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="dashboard.css">
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+    <!-- =========================================================
+         ADMIN NAVBAR
+    ========================================================== -->
+
+    <header class="navbar">
+
+        <div class="navbar-left">
+
+            <div class="brand">
+
+                <i class="fa-solid fa-seedling"></i>
+
+                <span>Kisan Setu</span>
+
+            </div>
+
+            <span class="admin-label">
+                Administration Portal
+            </span>
+
+        </div>
+
+
+        <div class="navbar-right">
+
+            <div class="admin-user">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+                <span id="admin-user-name">
+                    Administrator
+                </span>
+
+            </div>
+
+            <button
+                id="admin-logout-button"
+                class="admin-logout-button"
+                type="button"
+            >
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         MAIN DASHBOARD
+    ========================================================== -->
+
+    <main class="admin-dashboard">
+
+        <!-- Dashboard Heading -->
+
+        <section class="dashboard-header">
+
+            <div>
+
+                <p class="dashboard-eyebrow">
+                    ADMINISTRATION
+                </p>
+
+                <h1>
+                    Dashboard Overview
+                </h1>
+
+                <p class="dashboard-subtitle">
+                    Monitor farmer procurement operations,
+                    mandi activity and payment processing.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-date">
+
+                <i class="fa-regular fa-calendar"></i>
+
+                <span id="dashboard-date">
+                    Loading date...
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             KPI CARDS
+        ====================================================== -->
+
+        <section class="dashboard-metrics">
+
+
+            <!-- Registered Farmers -->
+
+            <article class="metric-card">
+
+                <div class="metric-icon">
+
+                    <i class="fa-solid fa-users"></i>
+
+                </div>
+
+                <div class="metric-content">
+
+                    <span class="metric-label">
+                        Registered Farmers
+                    </span>
+
+                    <strong
+                        id="registered-farmers"
+                        class="metric-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Today's Bookings -->
+
+            <article class="metric-card">
+
+                <div class="metric-icon">
+
+                    <i class="fa-solid fa-calendar-check"></i>
+
+                </div>
+
+                <div class="metric-content">
+
+                    <span class="metric-label">
+                        Today's Bookings
+                    </span>
+
+                    <strong
+                        id="today-bookings"
+                        class="metric-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Active Queue -->
+
+            <article class="metric-card">
+
+                <div class="metric-icon">
+
+                    <i class="fa-solid fa-users-line"></i>
+
+                </div>
+
+                <div class="metric-content">
+
+                    <span class="metric-label">
+                        Active Queue
+                    </span>
+
+                    <strong
+                        id="active-queue"
+                        class="metric-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Procurement -->
+
+            <article class="metric-card">
+
+                <div class="metric-icon">
+
+                    <i class="fa-solid fa-weight-hanging"></i>
+
+                </div>
+
+                <div class="metric-content">
+
+                    <span class="metric-label">
+                        Today's Procurement
+                    </span>
+
+                    <strong
+                        id="today-procurement"
+                        class="metric-value"
+                    >
+                        --
+                    </strong>
+
+                    <small>
+                        Quintals
+                    </small>
+
+                </div>
+
+            </article>
+
+
+            <!-- Payments -->
+
+            <article class="metric-card">
+
+                <div class="metric-icon">
+
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+
+                </div>
+
+                <div class="metric-content">
+
+                    <span class="metric-label">
+                        Today's Payments
+                    </span>
+
+                    <strong
+                        id="today-payments"
+                        class="metric-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Completed -->
+
+            <article class="metric-card">
+
+                <div class="metric-icon">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </div>
+
+                <div class="metric-content">
+
+                    <span class="metric-label">
+                        Completed Transactions
+                    </span>
+
+                    <strong
+                        id="completed-transactions"
+                        class="metric-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+        <!-- =====================================================
+             OPERATIONAL OVERVIEW
+        ====================================================== -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- Crop Breakdown -->
+
+            <article class="dashboard-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Crop Procurement
+                        </h2>
+
+                        <p>
+                            Today's procurement by crop
+                        </p>
+
+                    </div>
+
+                    <i class="fa-solid fa-wheat-awn"></i>
+
+                </div>
+
+
+                <div
+                    id="crop-breakdown"
+                    class="panel-body"
+                >
+
+                    <div class="loading-state">
+
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+
+                        Loading crop data...
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- Quality Summary -->
+
+            <article class="dashboard-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Quality Summary
+                        </h2>
+
+                        <p>
+                            Today's quality assessment
+                        </p>
+
+                    </div>
+
+                    <i class="fa-solid fa-microscope"></i>
+
+                </div>
+
+
+                <div
+                    id="quality-summary"
+                    class="quality-summary"
+                >
+
+                    <div class="quality-item">
+
+                        <span>
+                            Grade A
+                        </span>
+
+                        <strong id="grade-a">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="quality-item">
+
+                        <span>
+                            Grade B
+                        </span>
+
+                        <strong id="grade-b">
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="quality-item">
+
+                        <span>
+                            Failed
+                        </span>
+
+                        <strong id="grade-failed">
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+        <!-- =====================================================
+             MANDI / CENTER STATUS
+        ====================================================== -->
+
+        <section class="dashboard-panel full-width">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2>
+                        Mandi & Center Status
+                    </h2>
+
+                    <p>
+                        Current booking capacity and utilization
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-warehouse"></i>
+
+            </div>
+
+
+            <div
+                id="center-status"
+                class="center-status"
+            >
+
+                <div class="loading-state">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    Loading center information...
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RECENT TRANSACTIONS
+        ====================================================== -->
+
+        <section class="dashboard-panel full-width">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2>
+                        Recent Transactions
+                    </h2>
+
+                    <p>
+                        Latest farmer procurement activity
+                    </p>
+
+                </div>
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table class="transactions-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Token
+                            </th>
+
+                            <th>
+                                Farmer
+                            </th>
+
+                            <th>
+                                Crop
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Center
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Payment
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="transactions-body">
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="table-loading"
+                            >
+
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                Loading transactions...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             REFRESH / SYSTEM STATUS
+        ====================================================== -->
+
+        <section class="dashboard-footer">
+
+            <div class="system-status">
+
+                <span
+                    id="system-status-indicator"
+                    class="status-dot"
+                ></span>
+
+                <span id="system-status-text">
+                    Connecting to Kisan Setu backend...
+                </span>
+
+            </div>
+
+
+            <button
+                id="refresh-dashboard"
+                class="refresh-button"
+                type="button"
+            >
+
+                <i class="fa-solid fa-arrows-rotate"></i>
+
+                Refresh Dashboard
+
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         ADMIN DASHBOARD JAVASCRIPT
+    ========================================================== -->
+
+    <script src="dashboard.js"></script>
+
+</body>
+</html>

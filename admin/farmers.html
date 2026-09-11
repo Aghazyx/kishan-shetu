@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Kisan Setu | Farmer Management
+    </title>
+
+
+    <!-- Existing Kisan Setu Styles -->
+
+    <link
+        rel="stylesheet"
+        href="../main.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../portal.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../navbar.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../footer.css"
+    >
+
+
+    <!-- Admin Styles -->
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="farmers.css"
+    >
+
+
+    <!-- Font Awesome -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ========================================================= -->
+    <!-- ADMIN HEADER -->
+    <!-- ========================================================= -->
+
+    <header class="admin-header">
+
+        <div class="admin-brand">
+
+            <div class="admin-brand-icon">
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+
+            <div>
+
+                <div class="admin-brand-title">
+                    Kisan Setu
+                </div>
+
+                <div class="admin-brand-subtitle">
+                    Administration Portal
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-header-right">
+
+            <div class="admin-user">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+                <span id="admin-user-name">
+                    admin
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="admin-logout-button"
+                class="admin-logout-button"
+            >
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================================= -->
+    <!-- ADMIN NAVIGATION -->
+    <!-- ========================================================= -->
+
+    <nav class="admin-navigation">
+
+        <a
+            href="dashboard.html"
+            class="admin-nav-item"
+        >
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            Dashboard
+
+        </a>
+
+
+        <a
+            href="farmers.html"
+            class="admin-nav-item active"
+        >
+
+            <i class="fa-solid fa-users"></i>
+
+            Farmers
+
+        </a>
+
+
+        <a
+            href="mandi.html"
+            class="admin-nav-item"
+        >
+
+            <i class="fa-solid fa-warehouse"></i>
+
+            Mandi & Slots
+
+        </a>
+
+
+        <a
+            href="queue.html"
+            class="admin-nav-item"
+        >
+
+            <i class="fa-solid fa-list-ol"></i>
+
+            Live Queue
+
+        </a>
+
+
+        <a
+            href="payments.html"
+            class="admin-nav-item"
+        >
+
+            <i class="fa-solid fa-money-bill-transfer"></i>
+
+            Payments
+
+        </a>
+
+
+        <a
+            href="reports.html"
+            class="admin-nav-item"
+        >
+
+            <i class="fa-solid fa-file-chart-column"></i>
+
+            Reports
+
+        </a>
+
+    </nav>
+
+
+
+    <!-- ========================================================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================================================= -->
+
+    <main class="admin-page">
+
+
+        <!-- ===================================================== -->
+        <!-- PAGE HEADER -->
+        <!-- ===================================================== -->
+
+        <section class="admin-page-header">
+
+            <div>
+
+                <div class="admin-section-label">
+                    ADMINISTRATION
+                </div>
+
+                <h1>
+                    Farmer Management
+                </h1>
+
+                <p>
+                    View registered farmers, verification details,
+                    procurement history and payment activity.
+                </p>
+
+            </div>
+
+
+            <div class="admin-page-date">
+
+                <i class="fa-regular fa-calendar"></i>
+
+                <span id="current-date">
+                    Loading...
+                </span>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- SUMMARY CARDS -->
+        <!-- ===================================================== -->
+
+        <section class="farmer-summary-grid">
+
+
+            <article class="farmer-summary-card">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+
+                <div class="summary-content">
+
+                    <span>
+                        Registered Farmers
+                    </span>
+
+                    <strong id="total-farmers">
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <article class="farmer-summary-card">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+
+                <div class="summary-content">
+
+                    <span>
+                        Active Bookings
+                    </span>
+
+                    <strong id="active-bookings">
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <article class="farmer-summary-card">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-weight-scale"></i>
+                </div>
+
+                <div class="summary-content">
+
+                    <span>
+                        Total Procurement
+                    </span>
+
+                    <strong id="total-procurement">
+                        0 qtl
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <article class="farmer-summary-card">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                </div>
+
+                <div class="summary-content">
+
+                    <span>
+                        Total Payout
+                    </span>
+
+                    <strong id="total-payout">
+                        ₹0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- FARMER MANAGEMENT PANEL -->
+        <!-- ===================================================== -->
+
+        <section class="farmer-management-panel">
+
+
+            <!-- ================================================= -->
+            <!-- PANEL HEADER -->
+            <!-- ================================================= -->
+
+            <div class="management-panel-header">
+
+                <div>
+
+                    <h2>
+                        Registered Farmers
+                    </h2>
+
+                    <p>
+                        Farmer registry synchronized with Kisan Setu
+                        procurement records.
+                    </p>
+
+                </div>
+
+
+                <div class="farmer-search">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input
+                        type="search"
+                        id="farmer-search-input"
+                        placeholder="Search farmer, KCC, phone or district..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- STATUS MESSAGE -->
+            <!-- ================================================= -->
+
+            <div
+                id="farmer-status-message"
+                class="farmer-status-message"
+                hidden
+            ></div>
+
+
+
+            <!-- ================================================= -->
+            <!-- LOADING -->
+            <!-- ================================================= -->
+
+            <div
+                id="farmer-loading"
+                class="farmer-loading"
+            >
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                <span>
+                    Loading farmer records...
+                </span>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- EMPTY STATE -->
+            <!-- ================================================= -->
+
+            <div
+                id="farmer-empty-state"
+                class="farmer-empty-state"
+                hidden
+            >
+
+                <i class="fa-solid fa-users-slash"></i>
+
+                <h3>
+                    No farmers found
+                </h3>
+
+                <p>
+                    No farmer records match the current search.
+                </p>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- FARMER TABLE -->
+            <!-- ================================================= -->
+
+            <div
+                id="farmer-table-container"
+                class="farmer-table-container"
+                hidden
+            >
+
+                <table class="farmer-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Farmer
+                            </th>
+
+                            <th>
+                                KCC Number
+                            </th>
+
+                            <th>
+                                Location
+                            </th>
+
+                            <th>
+                                Land
+                            </th>
+
+                            <th>
+                                Bookings
+                            </th>
+
+                            <th>
+                                Procurement
+                            </th>
+
+                            <th>
+                                Payout
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="farmer-table-body"
+                    >
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ===================================================== -->
+        <!-- FARMER DETAILS MODAL -->
+        <!-- ===================================================== -->
+
+        <div
+            id="farmer-details-modal"
+            class="farmer-modal"
+            hidden
+        >
+
+            <div class="farmer-modal-backdrop"></div>
+
+
+            <div class="farmer-modal-content">
+
+
+                <div class="farmer-modal-header">
+
+                    <div>
+
+                        <div class="admin-section-label">
+                            FARMER RECORD
+                        </div>
+
+                        <h2 id="modal-farmer-name">
+                            Farmer Details
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="close-farmer-modal"
+                        class="modal-close-button"
+                        aria-label="Close"
+                    >
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                    </button>
+
+                </div>
+
+
+
+                <div class="farmer-detail-grid">
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            KCC Number
+                        </span>
+
+                        <strong id="modal-kcc">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Phone
+                        </span>
+
+                        <strong id="modal-phone">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            State
+                        </span>
+
+                        <strong id="modal-state">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            District
+                        </span>
+
+                        <strong id="modal-district">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Mandi
+                        </span>
+
+                        <strong id="modal-mandi">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Land Holding
+                        </span>
+
+                        <strong id="modal-land">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Bank
+                        </span>
+
+                        <strong id="modal-bank">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Crops
+                        </span>
+
+                        <strong id="modal-crops">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Total Bookings
+                        </span>
+
+                        <strong id="modal-bookings">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Active Bookings
+                        </span>
+
+                        <strong id="modal-active-bookings">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Procurement
+                        </span>
+
+                        <strong id="modal-procurement">
+                            0 qtl
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span>
+                            Total Payout
+                        </span>
+
+                        <strong id="modal-payout">
+                            ₹0
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- LATEST BOOKING -->
+                <!-- ================================================= -->
+
+                <div class="modal-record-section">
+
+                    <h3>
+                        Latest Booking
+                    </h3>
+
+
+                    <div id="modal-latest-booking">
+
+                        <p>
+                            No booking history available.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- LATEST RECEIPT -->
+                <!-- ================================================= -->
+
+                <div class="modal-record-section">
+
+                    <h3>
+                        Latest Procurement Receipt
+                    </h3>
+
+
+                    <div id="modal-latest-receipt">
+
+                        <p>
+                            No procurement receipt available.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- ========================================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================================= -->
+
+    <footer class="admin-footer">
+
+        <div>
+            © 2026 Kisan Setu Administration Portal
+        </div>
+
+        <div>
+            Farmer Procurement Management System
+        </div>
+
+    </footer>
+
+
+
+    <!-- ========================================================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================================================= -->
+
+    <script src="admin.js"></script>
+
+    <script src="farmers.js"></script>
+
+
+</body>
+
+</html>

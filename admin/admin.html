@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DoCA Kisan Setu • Administration Portal</title>
+
+    <!-- ==========================================
+         EXISTING KISAN SETU VISUAL SYSTEM
+         ========================================== -->
+
+    <link
+        rel="stylesheet"
+        href="../main.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../portal.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../navbar.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../footer.css"
+    >
+
+    <!-- ==========================================
+         ADMIN-SPECIFIC STYLES
+         ========================================== -->
+
+    <link
+        rel="stylesheet"
+        href="admin.css"
+    >
+
+    <!-- ==========================================
+         FONT AWESOME
+         ========================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+
+<body class="admin-page">
+
+    <!-- ==========================================
+         ADMIN LOGIN PAGE
+         ========================================== -->
+
+    <main class="admin-login-wrapper">
+
+        <!-- ======================================
+             BRAND / GOVERNMENT IDENTITY
+             ====================================== -->
+
+        <section class="admin-login-brand">
+
+            <div class="admin-emblem">
+                <i class="fa-solid fa-building-columns"></i>
+            </div>
+
+            <div class="admin-brand-kicker">
+                DEPARTMENT OF CONSUMER AFFAIRS
+            </div>
+
+            <h1>
+                DoCA Kisan Setu
+            </h1>
+
+            <p class="admin-brand-title">
+                Administration Portal
+            </p>
+
+            <p class="admin-brand-description">
+                Secure access for Mandi Operations
+            </p>
+
+        </section>
+
+
+        <!-- ======================================
+             LOGIN CARD
+             ====================================== -->
+
+        <section class="admin-login-card">
+
+            <div class="admin-card-header">
+
+                <div class="admin-card-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <div>
+                    <span class="admin-section-label">
+                        AUTHORIZED ACCESS
+                    </span>
+
+                    <h2>
+                        Administrator Login
+                    </h2>
+
+                    <p>
+                        Access the Kisan Setu procurement
+                        administration console.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- ==================================
+                 LOGIN FORM
+                 ================================== -->
+
+            <form
+                id="admin-login-form"
+                autocomplete="off"
+            >
+
+                <!-- Username -->
+
+                <div class="admin-form-group">
+
+                    <label
+                        for="admin-username"
+                    >
+                        <i class="fa-solid fa-user"></i>
+                        Username
+                    </label>
+
+                    <div class="admin-input-wrapper">
+
+                        <i class="fa-solid fa-user-tie"></i>
+
+                        <input
+                            type="text"
+                            id="admin-username"
+                            name="username"
+                            placeholder="Enter administrator ID"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="admin-form-group">
+
+                    <label
+                        for="admin-password"
+                    >
+                        <i class="fa-solid fa-lock"></i>
+                        Password
+                    </label>
+
+                    <div class="admin-input-wrapper">
+
+                        <i class="fa-solid fa-key"></i>
+
+                        <input
+                            type="password"
+                            id="admin-password"
+                            name="password"
+                            placeholder="Enter secure password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="toggle-admin-password"
+                            class="admin-password-toggle"
+                            aria-label="Show password"
+                        >
+                            <i
+                                class="fa-solid fa-eye"
+                            ></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================
+                     SECURITY STATUS
+                     ================================== -->
+
+                <div class="admin-security-status">
+
+                    <div class="admin-status-dot"></div>
+
+                    <div>
+
+                        <strong>
+                            Secure Administrative Channel
+                        </strong>
+
+                        <span>
+                            Authorized personnel only
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================
+                     ERROR / SUCCESS MESSAGE
+                     ================================== -->
+
+                <div
+                    id="admin-login-message"
+                    class="admin-login-message"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+
+
+                <!-- ==================================
+                     LOGIN BUTTON
+                     ================================== -->
+
+                <button
+                    type="submit"
+                    id="admin-login-button"
+                    class="btn-action-dark admin-login-button"
+                >
+
+                    <span id="admin-login-button-text">
+                        Login to Dashboard
+                    </span>
+
+                    <i
+                        class="fa-solid fa-arrow-right"
+                    ></i>
+
+                </button>
+
+            </form>
+
+
+            <!-- ==================================
+                 DEMO ACCESS NOTE
+                 ================================== -->
+
+            <div class="admin-demo-note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <div>
+
+                    <strong>
+                        Prototype Environment
+                    </strong>
+
+                    <p>
+                        Administrative access is configured
+                        for the Kisan Setu demonstration
+                        environment.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             FOOTER / GOVERNMENT IDENTIFICATION
+             ====================================== -->
+
+        <footer class="admin-login-footer">
+
+            <div>
+
+                <strong>
+                    DoCA Kisan Setu
+                </strong>
+
+                <span>
+                    Department of Consumer Affairs
+                </span>
+
+            </div>
+
+            <div class="admin-footer-divider"></div>
+
+            <div>
+
+                <span>
+                    Ministry of Consumer Affairs,
+                    Food & Public Distribution
+                </span>
+
+                <span>
+                    National Informatics Centre
+                </span>
+
+            </div>
+
+        </footer>
+
+    </main>
+
+
+    <!-- ==========================================
+         ADMIN JAVASCRIPT
+         ========================================== -->
+
+    <script
+        src="admin.js"
+    ></script>
+
+</body>
+</html>
