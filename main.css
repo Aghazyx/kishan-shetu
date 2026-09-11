@@ -1,0 +1,47 @@
+:root {
+  --bg-olive: #eceee5;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --dark-olive: #3f4732;
+  --medium-olive: #535d43;
+  --light-olive: #8a9674;
+  --accent-badge: #d4cf48;
+  --text-main: #2b3123;
+  --text-muted: #6b725c;
+  --border-subtle: rgba(63, 71, 50, 0.15);
+  --shadow-soft: 0 10px 30px rgba(63, 71, 50, 0.06);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  background-color: var(--bg-olive);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.8) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(200, 205, 185, 0.5) 0px, transparent 50%);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.glass-box {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}

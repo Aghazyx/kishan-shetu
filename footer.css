@@ -1,0 +1,57 @@
+.system-footer {
+  background: #3f4732;
+  color: #e2e8d5;
+  padding: 24px 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.footer-left h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.footer-left p {
+  font-size: 11px;
+  color: #b3bda5;
+  font-weight: 600;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.active-indicator-pill {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #a8f5b4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.active-dot {
+  width: 8px;
+  height: 8px;
+  background: #3cd070;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #3cd070;
+}
+
+.footer-links {
+  font-size: 12px;
+  font-weight: 600;
+  color: #dbe2d1;
+}
