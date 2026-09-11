@@ -1,0 +1,436 @@
+/* =========================================================
+   KISAN SETU PORTAL GATEWAY
+   Separate from farmer-side portal.css
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #243229;
+    background: #f4f7f2;
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.gateway-page {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 40px 24px;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(72, 116, 79, 0.10),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(110, 142, 86, 0.10),
+            transparent 35%
+        ),
+        #f4f7f2;
+}
+
+.gateway-container {
+    width: min(1100px, 100%);
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.gateway-header {
+    display: flex;
+    justify-content: center;
+
+    margin-bottom: 46px;
+}
+
+.gateway-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.gateway-brand-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 8px 30px rgba(34, 55, 39, 0.10);
+
+    font-size: 28px;
+}
+
+.gateway-brand h1 {
+    margin: 0;
+
+    font-size: 30px;
+    font-weight: 700;
+
+    letter-spacing: -0.5px;
+}
+
+.gateway-brand p {
+    margin: 5px 0 0;
+
+    font-size: 13px;
+
+    color: #718076;
+}
+
+
+/* =========================================================
+   HEADING
+   ========================================================= */
+
+.gateway-heading {
+    text-align: center;
+
+    margin-bottom: 34px;
+}
+
+.gateway-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 1.4px;
+
+    color: #66816c;
+}
+
+.gateway-heading h2 {
+    margin: 0 0 10px;
+
+    font-size: 34px;
+    line-height: 1.15;
+}
+
+.gateway-heading p {
+    margin: 0;
+
+    font-size: 14px;
+
+    color: #718076;
+}
+
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.gateway-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 24px;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.gateway-card {
+    display: flex;
+    flex-direction: column;
+
+    padding: 34px;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border: 1px solid #e2e9e3;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 12px 40px rgba(35, 55, 40, 0.07);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.gateway-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 18px 50px rgba(35, 55, 40, 0.11);
+}
+
+
+/* =========================================================
+   CARD ICON
+   ========================================================= */
+
+.gateway-card-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 22px;
+
+    border-radius: 14px;
+
+    background: #f1f5f0;
+
+    font-size: 26px;
+}
+
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.gateway-card-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+
+    color: #728078;
+}
+
+.gateway-card h3 {
+    margin: 0 0 12px;
+
+    font-size: 25px;
+}
+
+.gateway-card p {
+    margin: 0 0 20px;
+
+    font-size: 14px;
+
+    line-height: 1.65;
+
+    color: #6d7971;
+}
+
+
+/* =========================================================
+   LIST
+   ========================================================= */
+
+.gateway-list {
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0 0 28px;
+}
+
+.gateway-list li {
+    position: relative;
+
+    padding-left: 20px;
+
+    margin-bottom: 9px;
+
+    font-size: 13px;
+
+    color: #4f5f54;
+}
+
+.gateway-list li::before {
+    content: "✓";
+
+    position: absolute;
+
+    left: 0;
+
+    font-weight: 700;
+
+    color: #64836b;
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.gateway-button {
+    width: 100%;
+
+    margin-top: auto;
+
+    padding: 14px 18px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        opacity 0.18s ease;
+}
+
+.gateway-button:hover {
+    transform: translateY(-1px);
+
+    opacity: 0.92;
+}
+
+.gateway-button:active {
+    transform: translateY(0);
+}
+
+.gateway-farmer-button {
+    background: #5e8066;
+
+    color: #ffffff;
+}
+
+.gateway-admin-button {
+    background: #34473b;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   SYSTEM INFORMATION
+   ========================================================= */
+
+.gateway-system-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 28px;
+
+    margin-top: 30px;
+}
+
+.gateway-info-item {
+    font-size: 11px;
+
+    color: #7b877e;
+}
+
+.gateway-info-item span {
+    margin-right: 6px;
+
+    font-size: 8px;
+
+    color: #6d8b73;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.gateway-footer {
+    margin-top: 36px;
+
+    text-align: center;
+
+    color: #8a948d;
+
+    font-size: 10px;
+}
+
+.gateway-footer p {
+    margin: 4px 0;
+}
+
+.gateway-footer span {
+    margin: 0 6px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+    .gateway-page {
+        padding: 28px 16px;
+    }
+
+    .gateway-header {
+        margin-bottom: 34px;
+    }
+
+    .gateway-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gateway-heading h2 {
+        font-size: 28px;
+    }
+
+    .gateway-card {
+        padding: 26px;
+    }
+
+    .gateway-system-info {
+        flex-direction: column;
+
+        gap: 10px;
+    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+    .gateway-card,
+    .gateway-button {
+        transition: none;
+    }
+}

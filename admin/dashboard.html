@@ -17,7 +17,9 @@
 
     <!-- Admin Styles -->
     <link rel="stylesheet" href="admin.css">
-<link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="admin_navbar.css">
+
     <!-- Font Awesome -->
     <link
         rel="stylesheet"
@@ -47,10 +49,77 @@
                 Administration Portal
             </span>
 
+
+            <!-- =================================================
+                 ADMIN MODULE NAVIGATION
+            ================================================== -->
+
+            <nav
+                class="admin-navigation"
+                aria-label="Admin Portal Navigation"
+            >
+
+                <a
+                    href="dashboard.html"
+                    data-admin-page="dashboard"
+                >
+                    Dashboard
+                </a>
+
+                <a
+                    href="farmers.html"
+                    data-admin-page="farmers"
+                >
+                    Farmers
+                </a>
+
+                <a
+                    href="mandi.html"
+                    data-admin-page="mandi"
+                >
+                    Mandi
+                </a>
+
+                <a
+                    href="queue.html"
+                    data-admin-page="queue"
+                >
+                    Queue
+                </a>
+
+                <a
+                    href="payment.html"
+                    data-admin-page="payments"
+                >
+                    Payments
+                </a>
+
+                <a
+                    href="reports.html"
+                    data-admin-page="reports"
+                >
+                    Reports
+                </a>
+
+            </nav>
+
         </div>
 
 
+        <!-- =====================================================
+             ADMIN ACCOUNT / PORTAL SWITCH
+        ====================================================== -->
+
         <div class="navbar-right">
+
+            <a
+                href="../index.html"
+                class="admin-farmer-portal-button"
+                title="Open Farmer Portal"
+            >
+                Farmer Portal →
+            </a>
+
 
             <div class="admin-user">
 
@@ -61,6 +130,7 @@
                 </span>
 
             </div>
+
 
             <button
                 id="admin-logout-button"
@@ -595,6 +665,12 @@
 
     </main>
 
+
+    <!-- =========================================================
+         SHARED ADMIN NAVIGATION
+    ========================================================== -->
+
+    <script src="admin-navigation.js"></script>
 
     <!-- =========================================================
          ADMIN DASHBOARD JAVASCRIPT

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Kisan Setu | Mandi & Slot Management</title>
+
+    <!-- Core Styles -->
+    <link rel="stylesheet" href="../main.css">
+    <link rel="stylesheet" href="../footer.css">
+
+    <!-- Admin Styles -->
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="admin_navbar.css">
+
+    <!-- A4 Styles -->
+    <link rel="stylesheet" href="mandi.css">
+
+    <!-- Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ============================================================
+         ADMIN NAVIGATION
+    ============================================================= -->
+
+    <header class="admin-navbar">
+
+        <div class="admin-navbar-left">
+
+            <a
+                href="dashboard.html"
+                class="admin-brand"
+            >
+
+                <span class="admin-brand-icon">
+                    <i class="fa-solid fa-leaf"></i>
+                </span>
+
+                <span class="admin-brand-name">
+                    Kisan Setu
+                </span>
+
+            </a>
+
+
+            <span class="admin-navbar-divider"></span>
+
+
+            <span class="admin-portal-title">
+                Administration Portal
+            </span>
+
+        </div>
+
+
+        <div class="admin-navbar-right">
+
+            <div class="admin-user">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+                <span id="admin-username">
+                    admin
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="admin-logout-button"
+                class="admin-logout-button"
+            >
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ============================================================
+         ADMIN PORTAL NAVIGATION
+    ============================================================= -->
+
+    <nav
+        class="admin-navigation"
+        aria-label="Administration navigation"
+    >
+
+        <a
+            href="dashboard.html"
+            class="admin-nav-item"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="farmers.html"
+            class="admin-nav-item"
+        >
+            Farmers
+        </a>
+
+
+        <a
+            href="mandi.html"
+            class="admin-nav-item active"
+        >
+            Mandi & Slots
+        </a>
+
+
+        <a
+            href="queue.html"
+            class="admin-nav-item"
+        >
+            Live Queue
+        </a>
+
+
+        <a
+            href="payment.html"
+            class="admin-nav-item"
+        >
+            Payments
+        </a>
+
+
+        <a
+            href="reports.html"
+            class="admin-nav-item"
+        >
+            Reports
+        </a>
+
+
+        <a
+            href="../index.html"
+            class="admin-nav-item admin-farmer-portal-button"
+        >
+            Farmer Portal
+        </a>
+
+    </nav>
+
+
+    <!-- ============================================================
+         MAIN CONTENT
+    ============================================================= -->
+
+    <main class="mandi-page">
+
+
+        <!-- ========================================================
+             PAGE HEADER
+        ========================================================= -->
+
+        <section class="mandi-page-header">
+
+            <div>
+
+                <div class="mandi-eyebrow">
+                    A4 • MANDI OPERATIONS
+                </div>
+
+                <h1>
+                    Mandi & Slot Management
+                </h1>
+
+                <p>
+                    Manage procurement centers, booking capacity,
+                    time slots and daily mandi operations.
+                </p>
+
+            </div>
+
+
+            <div class="mandi-header-actions">
+
+                <button
+                    type="button"
+                    id="refresh-mandi-button"
+                    class="mandi-secondary-button"
+                >
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             CONNECTION STATUS
+        ========================================================= -->
+
+        <section
+            id="mandi-connection-status"
+            class="mandi-connection-status"
+        >
+
+            <span class="status-dot"></span>
+
+
+            <span id="mandi-connection-text">
+                Connecting to backend...
+            </span>
+
+
+            <span class="status-separator">
+                •
+            </span>
+
+
+            <span id="mandi-last-updated">
+                Waiting for data
+            </span>
+
+        </section>
+
+
+        <!-- ========================================================
+             SUMMARY CARDS
+        ========================================================= -->
+
+        <section class="mandi-summary-grid">
+
+
+            <!-- Total Capacity -->
+
+            <article class="mandi-summary-card">
+
+                <div class="mandi-summary-icon">
+
+                    <i class="fa-solid fa-warehouse"></i>
+
+                </div>
+
+
+                <div class="mandi-summary-content">
+
+                    <span class="mandi-summary-label">
+                        Total Capacity
+                    </span>
+
+
+                    <strong
+                        id="total-capacity"
+                        class="mandi-summary-value"
+                    >
+                        0 qtl
+                    </strong>
+
+
+                    <span class="mandi-summary-meta">
+                        Across active centers
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- Booked Quantity -->
+
+            <article class="mandi-summary-card">
+
+                <div class="mandi-summary-icon">
+
+                    <i class="fa-solid fa-boxes-stacked"></i>
+
+                </div>
+
+
+                <div class="mandi-summary-content">
+
+                    <span class="mandi-summary-label">
+                        Booked Quantity
+                    </span>
+
+
+                    <strong
+                        id="total-booked"
+                        class="mandi-summary-value"
+                    >
+                        0 qtl
+                    </strong>
+
+
+                    <span class="mandi-summary-meta">
+                        Current booking load
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- Available Capacity -->
+
+            <article class="mandi-summary-card">
+
+                <div class="mandi-summary-icon">
+
+                    <i class="fa-solid fa-chart-simple"></i>
+
+                </div>
+
+
+                <div class="mandi-summary-content">
+
+                    <span class="mandi-summary-label">
+                        Available Capacity
+                    </span>
+
+
+                    <strong
+                        id="total-remaining"
+                        class="mandi-summary-value"
+                    >
+                        0 qtl
+                    </strong>
+
+
+                    <span class="mandi-summary-meta">
+                        Remaining procurement capacity
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- Today's Bookings -->
+
+            <article class="mandi-summary-card">
+
+                <div class="mandi-summary-icon">
+
+                    <i class="fa-solid fa-calendar-check"></i>
+
+                </div>
+
+
+                <div class="mandi-summary-content">
+
+                    <span class="mandi-summary-label">
+                        Today's Bookings
+                    </span>
+
+
+                    <strong
+                        id="today-bookings"
+                        class="mandi-summary-value"
+                    >
+                        0
+                    </strong>
+
+
+                    <span class="mandi-summary-meta">
+                        Scheduled arrivals
+                    </span>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- ========================================================
+             CENTER STATUS
+        ========================================================= -->
+
+        <section class="mandi-panel">
+
+            <div class="mandi-panel-header">
+
+                <div>
+
+                    <h2>
+                        Mandi & Center Status
+                    </h2>
+
+                    <p>
+                        Current capacity, utilization and operational
+                        status of procurement centers.
+                    </p>
+
+                </div>
+
+
+                <div class="mandi-panel-icon">
+
+                    <i class="fa-solid fa-warehouse"></i>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="center-status-container"
+                class="center-status-container"
+            >
+
+                <!-- Populated by mandi.js -->
+
+                <div class="mandi-loading">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    <span>
+                        Loading center information...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             SLOT MANAGEMENT
+        ========================================================= -->
+
+        <section class="mandi-panel">
+
+            <div class="mandi-panel-header">
+
+                <div>
+
+                    <h2>
+                        Today's Slot Management
+                    </h2>
+
+                    <p>
+                        Monitor scheduled farmer arrivals and slot
+                        occupancy for the current operating day.
+                    </p>
+
+                </div>
+
+
+                <div class="mandi-panel-icon">
+
+                    <i class="fa-solid fa-calendar-days"></i>
+
+                </div>
+
+            </div>
+
+
+            <div class="slot-summary-grid">
+
+                <div class="slot-summary-item">
+
+                    <span class="slot-summary-label">
+                        Total Slots
+                    </span>
+
+                    <strong id="total-slots">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="slot-summary-item">
+
+                    <span class="slot-summary-label">
+                        Booked Slots
+                    </span>
+
+                    <strong id="booked-slots">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="slot-summary-item">
+
+                    <span class="slot-summary-label">
+                        Available Slots
+                    </span>
+
+                    <strong id="available-slots">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="slot-summary-item">
+
+                    <span class="slot-summary-label">
+                        Active Queue
+                    </span>
+
+                    <strong id="active-slot-queue">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- Slot List -->
+
+            <div
+                id="slot-list"
+                class="slot-list"
+            >
+
+                <!-- Populated by mandi.js -->
+
+                <div class="mandi-empty-state">
+
+                    <i class="fa-solid fa-calendar-xmark"></i>
+
+                    <h3>
+                        No slot information available
+                    </h3>
+
+                    <p>
+                        Slot data will appear here once the backend
+                        is connected.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             TODAY'S BOOKINGS
+        ========================================================= -->
+
+        <section class="mandi-panel">
+
+            <div class="mandi-panel-header">
+
+                <div>
+
+                    <h2>
+                        Today's Bookings
+                    </h2>
+
+                    <p>
+                        Farmer arrival bookings registered for today.
+                    </p>
+
+                </div>
+
+
+                <div class="mandi-panel-icon">
+
+                    <i class="fa-solid fa-ticket"></i>
+
+                </div>
+
+            </div>
+
+
+            <!-- Filters -->
+
+            <div class="mandi-booking-toolbar">
+
+                <div class="mandi-search-wrapper">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                    <input
+                        type="search"
+                        id="booking-search"
+                        placeholder="Search token, farmer or KCC number..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <select
+                    id="center-filter"
+                    class="mandi-filter-select"
+                >
+
+                    <option value="all">
+                        All Centers
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="status-filter"
+                    class="mandi-filter-select"
+                >
+
+                    <option value="all">
+                        All Statuses
+                    </option>
+
+                    <option value="Scheduled">
+                        Scheduled
+                    </option>
+
+                    <option value="Active Gate Queue">
+                        Active Gate Queue
+                    </option>
+
+                    <option value="Weighbridge">
+                        Weighbridge
+                    </option>
+
+                    <option value="Quality Approved">
+                        Quality Approved
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Booking Table -->
+
+            <div class="mandi-table-wrapper">
+
+                <table class="mandi-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                TOKEN
+                            </th>
+
+                            <th>
+                                FARMER
+                            </th>
+
+                            <th>
+                                CROP
+                            </th>
+
+                            <th>
+                                QUANTITY
+                            </th>
+
+                            <th>
+                                DATE
+                            </th>
+
+                            <th>
+                                SLOT
+                            </th>
+
+                            <th>
+                                CENTER
+                            </th>
+
+                            <th>
+                                STATUS
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="booking-table-body">
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="mandi-table-loading"
+                            >
+
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                Loading bookings...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Empty / Error Message -->
+
+            <div
+                id="booking-empty-state"
+                class="mandi-empty-state hidden"
+            >
+
+                <i class="fa-solid fa-calendar-xmark"></i>
+
+                <h3>
+                    No bookings found
+                </h3>
+
+                <p>
+                    No bookings match the selected filters.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             OPERATIONAL NOTES
+        ========================================================= -->
+
+        <section class="mandi-info-grid">
+
+
+            <article class="mandi-info-card">
+
+                <div class="mandi-info-icon">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Capacity Monitoring
+                    </h3>
+
+                    <p>
+                        Center utilization is calculated from the
+                        procurement quantities currently recorded
+                        in the booking registry.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <article class="mandi-info-card">
+
+                <div class="mandi-info-icon">
+
+                    <i class="fa-solid fa-route"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Overflow Routing
+                    </h3>
+
+                    <p>
+                        Bookings exceeding the main center capacity
+                        can be identified for overflow facility
+                        allocation.
+                    </p>
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </main>
+
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================= -->
+
+    <footer class="admin-footer">
+
+        <div>
+
+            <strong>
+                Kisan Setu
+            </strong>
+
+            <span>
+                Administration Portal
+            </span>
+
+        </div>
+
+
+        <div>
+            Backend connected • Mandi Operations
+        </div>
+
+    </footer>
+
+
+    <!-- ============================================================
+         JAVASCRIPT
+    ============================================================= -->
+
+    <script src="mandi.js"></script>
+
+</body>
+
+</html>

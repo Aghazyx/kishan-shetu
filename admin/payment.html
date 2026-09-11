@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Payment Monitoring | Kisan Setu Admin Portal
+  </title>
+
+
+  <!-- ============================================================
+       SHARED STYLES
+       ============================================================ -->
+
+  <link
+    rel="stylesheet"
+    href="../main.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="admin_navbar.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../footer.css"
+  >
+
+
+  <!-- ============================================================
+       A6 PAGE STYLES
+       ============================================================ -->
+
+  <link
+    rel="stylesheet"
+    href="payment.css"
+  >
+
+
+  <!-- ============================================================
+       FONT AWESOME
+       ============================================================ -->
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+
+</head>
+
+
+<body>
+
+
+  <!-- ============================================================
+       ADMIN NAVBAR
+       ============================================================ -->
+
+  <header class="admin-navbar">
+
+    <div class="admin-navbar-left">
+
+      <div class="admin-brand">
+
+        <div class="admin-brand-icon">
+          <i class="fa-solid fa-seedling"></i>
+        </div>
+
+        <span class="admin-brand-name">
+          Kisan Setu
+        </span>
+
+      </div>
+
+
+      <div class="admin-navbar-divider"></div>
+
+
+      <span class="admin-portal-title">
+        Admin Portal
+      </span>
+
+    </div>
+
+
+    <div class="admin-navbar-right">
+
+      <div class="admin-user">
+
+        <i class="fa-solid fa-user-shield"></i>
+
+        <span id="admin-user-name">
+          Administrator
+        </span>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="admin-logout-button"
+        id="admin-logout-button"
+      >
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        <span>
+          Logout
+        </span>
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- ============================================================
+       A6 • PAYMENT MONITORING
+       ============================================================ -->
+
+  <main class="payment-page">
+
+
+    <!-- ==========================================================
+         PAGE HEADER
+         ========================================================== -->
+
+    <section class="payment-page-header">
+
+      <div class="payment-title-group">
+
+        <div class="payment-title-icon">
+
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+
+        </div>
+
+
+        <div>
+
+          <h1>
+            Payment Monitoring
+          </h1>
+
+          <p>
+            Track procurement payments, PFMS processing, and DBT
+            disbursement status.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="payment-refresh-button"
+        id="refresh-payment-button"
+      >
+
+        <i class="fa-solid fa-rotate"></i>
+
+        <span>
+          Refresh Payments
+        </span>
+
+      </button>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         CONNECTION STATUS
+         ========================================================== -->
+
+    <section
+      class="payment-connection-bar"
+      aria-live="polite"
+    >
+
+      <div class="payment-connection-status">
+
+        <span
+          class="payment-status-dot"
+          id="payment-status-dot"
+        ></span>
+
+
+        <span
+          id="payment-connection-text"
+        >
+          Connecting to payment service...
+        </span>
+
+      </div>
+
+
+      <span class="payment-connection-separator">
+        |
+      </span>
+
+
+      <span class="payment-last-updated-label">
+        Last updated:
+      </span>
+
+
+      <span
+        id="payment-last-updated"
+        class="payment-last-updated"
+      >
+        --
+      </span>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         PAYMENT SUMMARY
+         ========================================================== -->
+
+    <section class="payment-summary-grid">
+
+
+      <!-- TOTAL PAYMENT VALUE -->
+
+      <article class="payment-summary-card">
+
+        <div class="payment-summary-icon">
+
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+
+        </div>
+
+
+        <div class="payment-summary-content">
+
+          <span class="payment-summary-label">
+            Total Payment Value
+          </span>
+
+          <strong
+            id="total-payment-value"
+            class="payment-summary-value"
+          >
+            ₹0
+          </strong>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- PENDING PAYMENTS -->
+
+      <article class="payment-summary-card">
+
+        <div class="payment-summary-icon">
+
+          <i class="fa-solid fa-clock"></i>
+
+        </div>
+
+
+        <div class="payment-summary-content">
+
+          <span class="payment-summary-label">
+            Pending Payments
+          </span>
+
+          <strong
+            id="pending-payment-count"
+            class="payment-summary-value"
+          >
+            0
+          </strong>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- PFMS BATCHED -->
+
+      <article class="payment-summary-card">
+
+        <div class="payment-summary-icon">
+
+          <i class="fa-solid fa-building-columns"></i>
+
+        </div>
+
+
+        <div class="payment-summary-content">
+
+          <span class="payment-summary-label">
+            PFMS Batched
+          </span>
+
+          <strong
+            id="pfms-batched-count"
+            class="payment-summary-value"
+          >
+            0
+          </strong>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- DBT DISPATCHED -->
+
+      <article class="payment-summary-card">
+
+        <div class="payment-summary-icon">
+
+          <i class="fa-solid fa-money-bill-transfer"></i>
+
+        </div>
+
+
+        <div class="payment-summary-content">
+
+          <span class="payment-summary-label">
+            DBT Dispatched
+          </span>
+
+          <strong
+            id="dbt-dispatched-count"
+            class="payment-summary-value"
+          >
+            0
+          </strong>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         PAYMENT MONITORING PANEL
+         ========================================================== -->
+
+    <section class="payment-monitoring-panel">
+
+
+      <!-- PANEL HEADER -->
+
+      <div class="payment-panel-header">
+
+        <div>
+
+          <h2>
+            Payment Transactions
+          </h2>
+
+          <p>
+            Monitor farmer-wise procurement payment processing
+            across all procurement centers.
+          </p>
+
+        </div>
+
+
+        <span class="payment-live-badge">
+
+          <span class="payment-live-dot"></span>
+
+          Live Updates
+
+        </span>
+
+      </div>
+
+
+
+      <!-- ========================================================
+           FILTER TOOLBAR
+           ======================================================== -->
+
+      <div class="payment-filter-toolbar">
+
+
+        <!-- SEARCH -->
+
+        <div class="payment-filter-group payment-search-group">
+
+          <label
+            for="payment-search"
+          >
+            Search
+          </label>
+
+
+          <div class="payment-search-wrapper">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+
+            <input
+              type="search"
+              id="payment-search"
+              placeholder="Search farmer, KCC, token..."
+              autocomplete="off"
+            >
+
+          </div>
+
+        </div>
+
+
+
+        <!-- CENTER -->
+
+        <div class="payment-filter-group">
+
+          <label
+            for="payment-center-filter"
+          >
+            Mandi Center
+          </label>
+
+
+          <select
+            id="payment-center-filter"
+          >
+
+            <option value="all">
+              All Centers
+            </option>
+
+            <option value="Mandi-Center-01">
+              Mandi-Center-01
+            </option>
+
+            <option value="Mandi-Center-02">
+              Mandi-Center-02
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- PAYMENT STATUS -->
+
+        <div class="payment-filter-group">
+
+          <label
+            for="payment-status-filter"
+          >
+            Payment Status
+          </label>
+
+
+          <select
+            id="payment-status-filter"
+          >
+
+            <option value="all">
+              All Statuses
+            </option>
+
+            <option value="pending">
+              Pending
+            </option>
+
+            <option value="pfms-batched">
+              PFMS Batched
+            </option>
+
+            <option value="dbt-dispatched">
+              DBT Dispatched
+            </option>
+
+            <option value="failed">
+              Failed
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- DATE -->
+
+        <div class="payment-filter-group">
+
+          <label
+            for="payment-date-filter"
+          >
+            Date
+          </label>
+
+
+          <select
+            id="payment-date-filter"
+          >
+
+            <option value="all">
+              All Dates
+            </option>
+
+            <option value="today">
+              Today
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ========================================================
+           PAYMENT TABLE
+           ======================================================== -->
+
+      <div class="payment-table-wrapper">
+
+        <table class="payment-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Transaction
+              </th>
+
+              <th>
+                Farmer / KCC
+              </th>
+
+              <th>
+                Token
+              </th>
+
+              <th>
+                Center
+              </th>
+
+              <th>
+                Quantity
+              </th>
+
+              <th>
+                Payable Amount
+              </th>
+
+              <th>
+                Payment Status
+              </th>
+
+              <th>
+                Updated
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="payment-table-body">
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="payment-loading-cell"
+              >
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                Loading payment transactions...
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+
+      <!-- ========================================================
+           EMPTY STATE
+           ======================================================== -->
+
+      <div
+        id="payment-empty-state"
+        class="payment-empty-state"
+        hidden
+      >
+
+        <div class="payment-empty-icon">
+
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+
+        </div>
+
+
+        <h3>
+          No Payment Transactions
+        </h3>
+
+
+        <p>
+          There are currently no payment records matching
+          the selected filters.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         PAYMENT STATUS LEGEND
+         ========================================================== -->
+
+    <section class="payment-status-legend">
+
+
+      <div class="payment-legend-item">
+
+        <span class="payment-legend-dot pending"></span>
+
+        <div>
+
+          <strong>
+            Pending
+          </strong>
+
+          <span>
+            Payment is awaiting processing.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="payment-legend-item">
+
+        <span class="payment-legend-dot pfms-batched"></span>
+
+        <div>
+
+          <strong>
+            PFMS Batched
+          </strong>
+
+          <span>
+            Payment has been added to the PFMS batch.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="payment-legend-item">
+
+        <span class="payment-legend-dot dbt-dispatched"></span>
+
+        <div>
+
+          <strong>
+            DBT Dispatched
+          </strong>
+
+          <span>
+            Payment has been dispatched for beneficiary transfer.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="payment-legend-item">
+
+        <span class="payment-legend-dot failed"></span>
+
+        <div>
+
+          <strong>
+            Failed
+          </strong>
+
+          <span>
+            Payment requires administrative review.
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         PAYMENT INFORMATION
+         ========================================================== -->
+
+    <section class="payment-info-panel">
+
+
+      <div class="payment-info-item">
+
+        <div class="payment-info-icon">
+
+          <i class="fa-solid fa-shield-halved"></i>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            Secure Payment Tracking
+          </strong>
+
+          <span>
+            Payment references and beneficiary records are
+            monitored through authenticated admin access.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="payment-info-item">
+
+        <div class="payment-info-icon">
+
+          <i class="fa-solid fa-building-columns"></i>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            PFMS Processing
+          </strong>
+
+          <span>
+            Procurement liabilities are tracked from receipt
+            generation through payment processing.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="payment-info-item">
+
+        <div class="payment-info-icon">
+
+          <i class="fa-solid fa-money-bill-transfer"></i>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            DBT Monitoring
+          </strong>
+
+          <span>
+            Dispatched payments can be monitored using PFMS
+            references and transaction identifiers.
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+
+  <footer class="admin-footer">
+
+    <div class="admin-footer-left">
+
+      <i class="fa-solid fa-seedling"></i>
+
+      <strong>
+        Kisan Setu
+      </strong>
+
+    </div>
+
+
+    <span class="admin-footer-right">
+      Digital Agriculture Procurement Platform
+    </span>
+
+  </footer>
+
+
+
+  <!-- ============================================================
+       A6 JAVASCRIPT
+       ============================================================ -->
+
+  <script src="payment.js"></script>
+
+</body>
+
+</html>

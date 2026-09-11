@@ -15,7 +15,9 @@
     </title>
 
 
-    <!-- Existing Kisan Setu Styles -->
+    <!-- =========================================================
+         EXISTING KISAN SETU STYLES
+    ========================================================== -->
 
     <link
         rel="stylesheet"
@@ -38,7 +40,9 @@
     >
 
 
-    <!-- Admin Styles -->
+    <!-- =========================================================
+         ADMIN STYLES
+    ========================================================== -->
 
     <link
         rel="stylesheet"
@@ -50,8 +54,15 @@
         href="farmers.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="admin_navbar.css"
+    >
 
-    <!-- Font Awesome -->
+
+    <!-- =========================================================
+         FONT AWESOME
+    ========================================================== -->
 
     <link
         rel="stylesheet"
@@ -64,17 +75,20 @@
 <body>
 
 
-    <!-- ========================================================= -->
-    <!-- ADMIN HEADER -->
-    <!-- ========================================================= -->
+    <!-- =========================================================
+         ADMIN HEADER
+    ========================================================== -->
 
     <header class="admin-header">
 
         <div class="admin-brand">
 
             <div class="admin-brand-icon">
+
                 <i class="fa-solid fa-seedling"></i>
+
             </div>
+
 
             <div>
 
@@ -91,7 +105,120 @@
         </div>
 
 
+        <!-- =====================================================
+             ADMIN NAVIGATION
+        ====================================================== -->
+
+        <nav
+            class="admin-navigation"
+            aria-label="Admin Portal Navigation"
+        >
+
+            <a
+                href="dashboard.html"
+                class="admin-nav-item"
+                data-admin-page="dashboard"
+            >
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                Dashboard
+
+            </a>
+
+
+            <a
+                href="farmers.html"
+                class="admin-nav-item active"
+                data-admin-page="farmers"
+            >
+
+                <i class="fa-solid fa-users"></i>
+
+                Farmers
+
+            </a>
+
+
+            <a
+                href="mandi.html"
+                class="admin-nav-item"
+                data-admin-page="mandi"
+            >
+
+                <i class="fa-solid fa-warehouse"></i>
+
+                Mandi & Slots
+
+            </a>
+
+
+            <a
+                href="queue.html"
+                class="admin-nav-item"
+                data-admin-page="queue"
+            >
+
+                <i class="fa-solid fa-list-ol"></i>
+
+                Live Queue
+
+            </a>
+
+
+            <a
+                href="payment.html"
+                class="admin-nav-item"
+                data-admin-page="payments"
+            >
+
+                <i class="fa-solid fa-money-bill-transfer"></i>
+
+                Payments
+
+            </a>
+
+
+            <a
+                href="reports.html"
+                class="admin-nav-item"
+                data-admin-page="reports"
+            >
+
+                <i class="fa-solid fa-file-chart-column"></i>
+
+                Reports
+
+            </a>
+
+        </nav>
+
+
+        <!-- =====================================================
+             ADMIN ACCOUNT / PORTAL SWITCH
+        ====================================================== -->
+
         <div class="admin-header-right">
+
+
+            <!-- Farmer Portal Switch -->
+
+            <a
+                href="../index.html"
+                class="admin-farmer-portal-button"
+                title="Open Farmer Portal"
+            >
+
+                <i class="fa-solid fa-user"></i>
+
+                Farmer Portal
+
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+            </a>
+
+
+            <!-- Admin User -->
 
             <div class="admin-user">
 
@@ -103,6 +230,8 @@
 
             </div>
 
+
+            <!-- Logout -->
 
             <button
                 type="button"
@@ -122,97 +251,16 @@
 
 
 
-    <!-- ========================================================= -->
-    <!-- ADMIN NAVIGATION -->
-    <!-- ========================================================= -->
-
-    <nav class="admin-navigation">
-
-        <a
-            href="dashboard.html"
-            class="admin-nav-item"
-        >
-
-            <i class="fa-solid fa-chart-line"></i>
-
-            Dashboard
-
-        </a>
-
-
-        <a
-            href="farmers.html"
-            class="admin-nav-item active"
-        >
-
-            <i class="fa-solid fa-users"></i>
-
-            Farmers
-
-        </a>
-
-
-        <a
-            href="mandi.html"
-            class="admin-nav-item"
-        >
-
-            <i class="fa-solid fa-warehouse"></i>
-
-            Mandi & Slots
-
-        </a>
-
-
-        <a
-            href="queue.html"
-            class="admin-nav-item"
-        >
-
-            <i class="fa-solid fa-list-ol"></i>
-
-            Live Queue
-
-        </a>
-
-
-        <a
-            href="payments.html"
-            class="admin-nav-item"
-        >
-
-            <i class="fa-solid fa-money-bill-transfer"></i>
-
-            Payments
-
-        </a>
-
-
-        <a
-            href="reports.html"
-            class="admin-nav-item"
-        >
-
-            <i class="fa-solid fa-file-chart-column"></i>
-
-            Reports
-
-        </a>
-
-    </nav>
-
-
-
-    <!-- ========================================================= -->
-    <!-- MAIN CONTENT -->
-    <!-- ========================================================= -->
+    <!-- =========================================================
+         MAIN CONTENT
+    ========================================================== -->
 
     <main class="admin-page">
 
 
-        <!-- ===================================================== -->
-        <!-- PAGE HEADER -->
-        <!-- ===================================================== -->
+        <!-- =====================================================
+             PAGE HEADER
+        ====================================================== -->
 
         <section class="admin-page-header">
 
@@ -248,17 +296,21 @@
 
 
 
-        <!-- ===================================================== -->
-        <!-- SUMMARY CARDS -->
-        <!-- ===================================================== -->
+        <!-- =====================================================
+             SUMMARY CARDS
+        ====================================================== -->
 
         <section class="farmer-summary-grid">
 
 
+            <!-- Registered Farmers -->
+
             <article class="farmer-summary-card">
 
                 <div class="summary-icon">
+
                     <i class="fa-solid fa-users"></i>
+
                 </div>
 
                 <div class="summary-content">
@@ -276,10 +328,14 @@
             </article>
 
 
+            <!-- Active Bookings -->
+
             <article class="farmer-summary-card">
 
                 <div class="summary-icon">
+
                     <i class="fa-solid fa-calendar-check"></i>
+
                 </div>
 
                 <div class="summary-content">
@@ -297,10 +353,14 @@
             </article>
 
 
+            <!-- Total Procurement -->
+
             <article class="farmer-summary-card">
 
                 <div class="summary-icon">
+
                     <i class="fa-solid fa-weight-scale"></i>
+
                 </div>
 
                 <div class="summary-content">
@@ -318,10 +378,14 @@
             </article>
 
 
+            <!-- Total Payout -->
+
             <article class="farmer-summary-card">
 
                 <div class="summary-icon">
+
                     <i class="fa-solid fa-indian-rupee-sign"></i>
+
                 </div>
 
                 <div class="summary-content">
@@ -343,16 +407,16 @@
 
 
 
-        <!-- ===================================================== -->
-        <!-- FARMER MANAGEMENT PANEL -->
-        <!-- ===================================================== -->
+        <!-- =====================================================
+             FARMER MANAGEMENT PANEL
+        ====================================================== -->
 
         <section class="farmer-management-panel">
 
 
-            <!-- ================================================= -->
-            <!-- PANEL HEADER -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 PANEL HEADER
+            ================================================== -->
 
             <div class="management-panel-header">
 
@@ -387,9 +451,9 @@
 
 
 
-            <!-- ================================================= -->
-            <!-- STATUS MESSAGE -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 STATUS MESSAGE
+            ================================================== -->
 
             <div
                 id="farmer-status-message"
@@ -399,9 +463,9 @@
 
 
 
-            <!-- ================================================= -->
-            <!-- LOADING -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 LOADING
+            ================================================== -->
 
             <div
                 id="farmer-loading"
@@ -418,9 +482,9 @@
 
 
 
-            <!-- ================================================= -->
-            <!-- EMPTY STATE -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
 
             <div
                 id="farmer-empty-state"
@@ -442,9 +506,9 @@
 
 
 
-            <!-- ================================================= -->
-            <!-- FARMER TABLE -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 FARMER TABLE
+            ================================================== -->
 
             <div
                 id="farmer-table-container"
@@ -499,9 +563,7 @@
                     </thead>
 
 
-                    <tbody
-                        id="farmer-table-body"
-                    >
+                    <tbody id="farmer-table-body">
 
                     </tbody>
 
@@ -514,9 +576,9 @@
 
 
 
-        <!-- ===================================================== -->
-        <!-- FARMER DETAILS MODAL -->
-        <!-- ===================================================== -->
+        <!-- =====================================================
+             FARMER DETAILS MODAL
+        ====================================================== -->
 
         <div
             id="farmer-details-modal"
@@ -529,6 +591,8 @@
 
             <div class="farmer-modal-content">
 
+
+                <!-- Modal Header -->
 
                 <div class="farmer-modal-header">
 
@@ -559,6 +623,8 @@
                 </div>
 
 
+
+                <!-- Farmer Details -->
 
                 <div class="farmer-detail-grid">
 
@@ -723,9 +789,9 @@
 
 
 
-                <!-- ================================================= -->
-                <!-- LATEST BOOKING -->
-                <!-- ================================================= -->
+                <!-- =================================================
+                     LATEST BOOKING
+                ================================================== -->
 
                 <div class="modal-record-section">
 
@@ -746,9 +812,9 @@
 
 
 
-                <!-- ================================================= -->
-                <!-- LATEST RECEIPT -->
-                <!-- ================================================= -->
+                <!-- =================================================
+                     LATEST RECEIPT
+                ================================================== -->
 
                 <div class="modal-record-section">
 
@@ -777,9 +843,9 @@
 
 
 
-    <!-- ========================================================= -->
-    <!-- FOOTER -->
-    <!-- ========================================================= -->
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
 
     <footer class="admin-footer">
 
@@ -795,9 +861,9 @@
 
 
 
-    <!-- ========================================================= -->
-    <!-- JAVASCRIPT -->
-    <!-- ========================================================= -->
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
 
     <script src="admin.js"></script>
 

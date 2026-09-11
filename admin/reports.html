@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Reports & Analytics | Kisan Setu Admin Portal
+  </title>
+
+
+  <!-- ============================================================
+       SHARED STYLES
+       ============================================================ -->
+
+  <link
+    rel="stylesheet"
+    href="../main.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="admin_navbar.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../footer.css"
+  >
+
+
+  <!-- ============================================================
+       A7 PAGE STYLES
+       ============================================================ -->
+
+  <link
+    rel="stylesheet"
+    href="reports.css"
+  >
+
+
+  <!-- ============================================================
+       FONT AWESOME
+       ============================================================ -->
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+
+</head>
+
+
+<body>
+
+
+  <!-- ============================================================
+       ADMIN NAVBAR
+       ============================================================ -->
+
+  <header class="admin-navbar">
+
+    <div class="admin-navbar-left">
+
+      <div class="admin-brand">
+
+        <div class="admin-brand-icon">
+
+          <i class="fa-solid fa-seedling"></i>
+
+        </div>
+
+
+        <span class="admin-brand-name">
+          Kisan Setu
+        </span>
+
+      </div>
+
+
+      <div class="admin-navbar-divider"></div>
+
+
+      <span class="admin-portal-title">
+        Admin Portal
+      </span>
+
+    </div>
+
+
+    <div class="admin-navbar-right">
+
+      <div class="admin-user">
+
+        <i class="fa-solid fa-user-shield"></i>
+
+        <span id="admin-user-name">
+          Administrator
+        </span>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="admin-logout-button"
+        id="admin-logout-button"
+      >
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        <span>
+          Logout
+        </span>
+
+      </button>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- ============================================================
+       ADMIN NAVIGATION
+       ============================================================ -->
+
+  <nav
+    class="admin-navigation"
+    aria-label="Admin portal navigation"
+  >
+
+    <a
+      href="dashboard.html"
+      class="admin-nav-item"
+    >
+      <i class="fa-solid fa-chart-line"></i>
+      <span>Dashboard</span>
+    </a>
+
+
+    <a
+      href="farmers.html"
+      class="admin-nav-item"
+    >
+      <i class="fa-solid fa-users"></i>
+      <span>Farmers</span>
+    </a>
+
+
+    <a
+      href="mandi.html"
+      class="admin-nav-item"
+    >
+      <i class="fa-solid fa-warehouse"></i>
+      <span>Mandi &amp; Slots</span>
+    </a>
+
+
+    <a
+      href="queue.html"
+      class="admin-nav-item"
+    >
+      <i class="fa-solid fa-list-ol"></i>
+      <span>Live Queue</span>
+    </a>
+
+
+    <a
+      href="payment.html"
+      class="admin-nav-item"
+    >
+      <i class="fa-solid fa-money-bill-transfer"></i>
+      <span>Payments</span>
+    </a>
+
+
+    <a
+      href="reports.html"
+      class="admin-nav-item active"
+      aria-current="page"
+    >
+      <i class="fa-solid fa-chart-column"></i>
+      <span>Reports</span>
+    </a>
+
+
+    <a
+      href="../index.html"
+      class="admin-nav-item admin-farmer-portal-button"
+    >
+      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      <span>Farmer Portal</span>
+    </a>
+
+  </nav>
+
+
+
+  <!-- ============================================================
+       A7 • REPORTS & ANALYTICS
+       ============================================================ -->
+
+  <main class="reports-page">
+
+
+    <!-- ==========================================================
+         PAGE HEADER
+         ========================================================== -->
+
+    <section class="reports-page-header">
+
+      <div class="reports-title-group">
+
+        <div class="reports-title-icon">
+
+          <i class="fa-solid fa-chart-column"></i>
+
+        </div>
+
+
+        <div>
+
+          <h1>
+            Reports & Analytics
+          </h1>
+
+          <p>
+            Analyze procurement, farmer activity, mandi performance,
+            quality, and payment operations.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="reports-header-actions">
+
+        <button
+          type="button"
+          class="reports-refresh-button"
+          id="refresh-reports-button"
+        >
+
+          <i class="fa-solid fa-rotate"></i>
+
+          <span>
+            Refresh Reports
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="reports-export-button"
+          id="export-report-button"
+        >
+
+          <i class="fa-solid fa-file-csv"></i>
+
+          <span>
+            Export Report
+          </span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         CONNECTION STATUS
+         ========================================================== -->
+
+    <section
+      class="reports-connection-bar"
+      aria-live="polite"
+    >
+
+      <div class="reports-connection-status">
+
+        <span
+          class="reports-status-dot"
+          id="reports-status-dot"
+        ></span>
+
+
+        <span id="reports-connection-text">
+          Connecting to analytics service...
+        </span>
+
+      </div>
+
+
+      <span class="reports-connection-separator">
+        |
+      </span>
+
+
+      <span class="reports-last-updated-label">
+        Last updated:
+      </span>
+
+
+      <span
+        id="reports-last-updated"
+        class="reports-last-updated"
+      >
+        --
+      </span>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         REPORT FILTERS
+         ========================================================== -->
+
+    <section class="reports-filter-panel">
+
+      <div class="reports-filter-header">
+
+        <div>
+
+          <h2>
+            Report Filters
+          </h2>
+
+          <p>
+            Select the reporting period and operational dimensions.
+          </p>
+
+        </div>
+
+
+        <span class="reports-live-badge">
+
+          <span class="reports-live-dot"></span>
+
+          Live Data
+
+        </span>
+
+      </div>
+
+
+      <div class="reports-filter-grid">
+
+
+        <!-- ======================================================
+             REPORTING PERIOD
+             ====================================================== -->
+
+        <div class="reports-filter-group">
+
+          <label for="report-date-filter">
+            Reporting Period
+          </label>
+
+
+          <select id="report-date-filter">
+
+            <option value="all">
+              All Available Data
+            </option>
+
+            <option value="today">
+              Today
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- ======================================================
+             MANDI CENTER
+             ====================================================== -->
+
+        <div class="reports-filter-group">
+
+          <label for="report-center-filter">
+            Mandi Center
+          </label>
+
+
+          <select id="report-center-filter">
+
+            <option value="all">
+              All Centers
+            </option>
+
+            <option value="Mandi-Center-01">
+              Mandi-Center-01
+            </option>
+
+            <option value="Mandi-Center-02">
+              Mandi-Center-02
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- ======================================================
+             CROP
+             ====================================================== -->
+
+        <div class="reports-filter-group">
+
+          <label for="report-crop-filter">
+            Crop
+          </label>
+
+
+          <select id="report-crop-filter">
+
+            <option value="all">
+              All Crops
+            </option>
+
+            <option value="wheat">
+              Wheat
+            </option>
+
+            <option value="paddy">
+              Paddy
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- ======================================================
+             REPORT TYPE
+             ====================================================== -->
+
+        <div class="reports-filter-group">
+
+          <label for="report-type-filter">
+            Report Type
+          </label>
+
+
+          <select id="report-type-filter">
+
+            <option value="overview">
+              Procurement Overview
+            </option>
+
+            <option value="crop">
+              Crop Analytics
+            </option>
+
+            <option value="center">
+              Mandi Performance
+            </option>
+
+            <option value="payment">
+              Payment Analytics
+            </option>
+
+            <option value="quality">
+              Quality Analytics
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         OVERVIEW SUMMARY
+         ========================================================== -->
+
+    <section class="reports-summary-grid">
+
+
+      <!-- REGISTERED FARMERS -->
+
+      <article class="reports-summary-card">
+
+        <div class="reports-summary-icon">
+
+          <i class="fa-solid fa-users"></i>
+
+        </div>
+
+
+        <div class="reports-summary-content">
+
+          <span class="reports-summary-label">
+            Registered Farmers
+          </span>
+
+
+          <strong
+            id="report-registered-farmers"
+            class="reports-summary-value"
+          >
+            0
+          </strong>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- TOTAL PROCUREMENT -->
+
+      <article class="reports-summary-card">
+
+        <div class="reports-summary-icon">
+
+          <i class="fa-solid fa-wheat-awn"></i>
+
+        </div>
+
+
+        <div class="reports-summary-content">
+
+          <span class="reports-summary-label">
+            Total Procurement
+          </span>
+
+
+          <strong
+            id="report-total-procurement"
+            class="reports-summary-value"
+          >
+            0.00 qtl
+          </strong>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- TOTAL TRANSACTIONS -->
+
+      <article class="reports-summary-card">
+
+        <div class="reports-summary-icon">
+
+          <i class="fa-solid fa-receipt"></i>
+
+        </div>
+
+
+        <div class="reports-summary-content">
+
+          <span class="reports-summary-label">
+            Total Transactions
+          </span>
+
+
+          <strong
+            id="report-total-transactions"
+            class="reports-summary-value"
+          >
+            0
+          </strong>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- TOTAL PAYMENT -->
+
+      <article class="reports-summary-card">
+
+        <div class="reports-summary-icon">
+
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+
+        </div>
+
+
+        <div class="reports-summary-content">
+
+          <span class="reports-summary-label">
+            Total Payment Value
+          </span>
+
+
+          <strong
+            id="report-total-payment"
+            class="reports-summary-value"
+          >
+            ₹0
+          </strong>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         CROP + MANDI ANALYTICS
+         ========================================================== -->
+
+    <section class="reports-analytics-grid">
+
+
+      <!-- ========================================================
+           CROP ANALYTICS
+           ======================================================== -->
+
+      <article class="reports-panel reports-crop-panel">
+
+        <div class="reports-panel-header">
+
+          <div>
+
+            <h2>
+              Crop Analytics
+            </h2>
+
+            <p>
+              Procurement and payment distribution by crop.
+            </p>
+
+          </div>
+
+
+          <i class="fa-solid fa-wheat-awn"></i>
+
+        </div>
+
+
+        <div
+          id="crop-analytics-container"
+          class="reports-data-list"
+        >
+
+          <div class="reports-loading-row">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            Loading crop analytics...
+
+          </div>
+
+        </div>
+
+
+        <div class="reports-chart-container">
+
+          <canvas
+            id="crop-analytics-chart"
+            aria-label="Crop procurement analytics chart"
+          ></canvas>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- ========================================================
+           MANDI PERFORMANCE
+           ======================================================== -->
+
+      <article class="reports-panel reports-center-panel">
+
+        <div class="reports-panel-header">
+
+          <div>
+
+            <h2>
+              Mandi Performance
+            </h2>
+
+            <p>
+              Center-wise capacity and procurement performance.
+            </p>
+
+          </div>
+
+
+          <i class="fa-solid fa-warehouse"></i>
+
+        </div>
+
+
+        <div
+          id="center-analytics-container"
+          class="reports-data-list"
+        >
+
+          <div class="reports-loading-row">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            Loading center analytics...
+
+          </div>
+
+        </div>
+
+
+        <div class="reports-chart-container">
+
+          <canvas
+            id="center-analytics-chart"
+            aria-label="Mandi center performance chart"
+          ></canvas>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         PAYMENT + QUALITY ANALYTICS
+         ========================================================== -->
+
+    <section class="reports-analytics-grid">
+
+
+      <!-- ========================================================
+           PAYMENT ANALYTICS
+           ======================================================== -->
+
+      <article class="reports-panel reports-payment-panel">
+
+        <div class="reports-panel-header">
+
+          <div>
+
+            <h2>
+              Payment Analytics
+            </h2>
+
+            <p>
+              Procurement liability and payment processing status.
+            </p>
+
+          </div>
+
+
+          <i class="fa-solid fa-money-bill-transfer"></i>
+
+        </div>
+
+
+        <div class="reports-status-grid">
+
+
+          <div class="reports-status-item">
+
+            <span class="reports-status-item-label">
+              Pending
+            </span>
+
+            <strong id="report-pending-payments">
+              0
+            </strong>
+
+          </div>
+
+
+          <div class="reports-status-item">
+
+            <span class="reports-status-item-label">
+              PFMS Batched
+            </span>
+
+            <strong id="report-pfms-batched">
+              0
+            </strong>
+
+          </div>
+
+
+          <div class="reports-status-item">
+
+            <span class="reports-status-item-label">
+              DBT Dispatched
+            </span>
+
+            <strong id="report-dbt-dispatched">
+              0
+            </strong>
+
+          </div>
+
+
+          <div class="reports-status-item">
+
+            <span class="reports-status-item-label">
+              Failed
+            </span>
+
+            <strong id="report-failed-payments">
+              0
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="reports-payment-total">
+
+          <span>
+            Total Payment Liability
+          </span>
+
+
+          <strong id="report-payment-liability">
+            ₹0
+          </strong>
+
+        </div>
+
+      </article>
+
+
+
+      <!-- ========================================================
+           QUALITY ANALYTICS
+           ======================================================== -->
+
+      <article class="reports-panel reports-quality-panel">
+
+        <div class="reports-panel-header">
+
+          <div>
+
+            <h2>
+              Quality Analytics
+            </h2>
+
+            <p>
+              Procurement quality classification across receipts.
+            </p>
+
+          </div>
+
+
+          <i class="fa-solid fa-circle-check"></i>
+
+        </div>
+
+
+        <div class="reports-quality-grid">
+
+
+          <!-- GRADE A -->
+
+          <div class="reports-quality-item">
+
+            <span class="reports-quality-dot grade-a"></span>
+
+
+            <div>
+
+              <span>
+                Grade A
+              </span>
+
+              <strong id="report-grade-a">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- GRADE B -->
+
+          <div class="reports-quality-item">
+
+            <span class="reports-quality-dot grade-b"></span>
+
+
+            <div>
+
+              <span>
+                Grade B
+              </span>
+
+              <strong id="report-grade-b">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+
+
+          <!-- FAILED -->
+
+          <div class="reports-quality-item">
+
+            <span class="reports-quality-dot failed"></span>
+
+
+            <div>
+
+              <span>
+                Failed
+              </span>
+
+              <strong id="report-quality-failed">
+                0
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="reports-payment-total">
+
+          <span>
+            Total Quality Records
+          </span>
+
+
+          <strong id="report-quality-total">
+            0
+          </strong>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         QUALITY CHART
+         ========================================================== -->
+
+    <section class="reports-panel reports-quality-chart-panel">
+
+      <div class="reports-panel-header">
+
+        <div>
+
+          <h2>
+            Quality Distribution
+          </h2>
+
+          <p>
+            Distribution of procurement quality classifications.
+          </p>
+
+        </div>
+
+
+        <i class="fa-solid fa-chart-pie"></i>
+
+      </div>
+
+
+      <div class="reports-chart-container reports-quality-chart-container">
+
+        <canvas
+          id="quality-report-chart"
+          aria-label="Quality distribution chart"
+        ></canvas>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         DAILY PERFORMANCE
+         ========================================================== -->
+
+    <section class="reports-panel reports-daily-panel">
+
+      <div class="reports-panel-header">
+
+        <div>
+
+          <h2>
+            Daily Performance
+          </h2>
+
+          <p>
+            Procurement volume and payment value across recorded dates.
+          </p>
+
+        </div>
+
+
+        <i class="fa-solid fa-chart-line"></i>
+
+      </div>
+
+
+      <div class="reports-chart-container">
+
+        <canvas
+          id="daily-report-chart"
+          aria-label="Daily procurement performance chart"
+        ></canvas>
+
+      </div>
+
+
+      <div class="reports-table-wrapper">
+
+        <table class="reports-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Transactions
+              </th>
+
+              <th>
+                Procurement
+              </th>
+
+              <th>
+                Payment Value
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="daily-performance-body">
+
+            <tr>
+
+              <td
+                colspan="4"
+                class="reports-loading-cell"
+              >
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                Loading daily performance...
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         RECENT PROCUREMENT ACTIVITY
+         ========================================================== -->
+
+    <section class="reports-panel reports-activity-panel">
+
+
+      <div class="reports-panel-header">
+
+        <div>
+
+          <h2>
+            Recent Procurement Activity
+          </h2>
+
+          <p>
+            Latest farmer procurement transactions recorded by
+            the platform.
+          </p>
+
+        </div>
+
+
+        <span
+          id="report-activity-count"
+          class="reports-record-count"
+        >
+          0 records
+        </span>
+
+      </div>
+
+
+      <div class="reports-table-wrapper">
+
+        <table class="reports-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Token
+              </th>
+
+              <th>
+                Farmer / KCC
+              </th>
+
+              <th>
+                Crop
+              </th>
+
+              <th>
+                Quantity
+              </th>
+
+              <th>
+                Center
+              </th>
+
+              <th>
+                Quality
+              </th>
+
+              <th>
+                Payment
+              </th>
+
+              <th>
+                Date
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="reports-activity-table-body">
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="reports-loading-cell"
+              >
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                Loading procurement activity...
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div
+        id="reports-activity-empty-state"
+        class="reports-empty-state"
+        hidden
+      >
+
+        <div class="reports-empty-icon">
+
+          <i class="fa-solid fa-chart-simple"></i>
+
+        </div>
+
+
+        <h3>
+          No Procurement Activity
+        </h3>
+
+
+        <p>
+          No transactions match the selected report filters.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ==========================================================
+         REPORT INFORMATION
+         ========================================================== -->
+
+    <section class="reports-info-panel">
+
+
+      <div class="reports-info-item">
+
+        <div class="reports-info-icon">
+
+          <i class="fa-solid fa-database"></i>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            Integrated Data
+          </strong>
+
+          <span>
+            Reports are generated from farmer, booking, receipt,
+            queue, and payment records.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="reports-info-item">
+
+        <div class="reports-info-icon">
+
+          <i class="fa-solid fa-chart-line"></i>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            Operational Analytics
+          </strong>
+
+          <span>
+            Procurement, mandi utilization, quality, and payment
+            metrics are calculated from recorded transactions.
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="reports-info-item">
+
+        <div class="reports-info-icon">
+
+          <i class="fa-solid fa-file-export"></i>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            Report Export
+          </strong>
+
+          <span>
+            Current prototype supports exporting the displayed
+            procurement report as a CSV file.
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+
+  <footer class="admin-footer">
+
+    <div class="admin-footer-left">
+
+      <i class="fa-solid fa-seedling"></i>
+
+      <strong>
+        Kisan Setu
+      </strong>
+
+    </div>
+
+
+    <span class="admin-footer-right">
+      Digital Agriculture Procurement Platform
+    </span>
+
+  </footer>
+
+
+
+  <!-- ============================================================
+       CHART.JS
+       ============================================================ -->
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
+  <!-- ============================================================
+       A7 JAVASCRIPT
+       ============================================================ -->
+
+  <script src="reports.js"></script>
+
+</body>
+
+</html>

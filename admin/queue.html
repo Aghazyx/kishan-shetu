@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Live Queue | Kisan Setu Admin</title>
+
+
+    <!-- ============================================================
+         SHARED PROJECT STYLES
+    ============================================================= -->
+
+    <link rel="stylesheet" href="../main.css">
+    <link rel="stylesheet" href="admin_navbar.css">
+    <link rel="stylesheet" href="../footer.css">
+
+
+    <!-- ============================================================
+         A5 PAGE STYLES
+    ============================================================= -->
+
+    <link rel="stylesheet" href="queue.css">
+
+
+    <!-- ============================================================
+         FONT AWESOME
+    ============================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ============================================================
+         ADMIN NAVBAR
+    ============================================================= -->
+
+    <header class="admin-navbar">
+
+        <div class="admin-navbar-left">
+
+            <a
+                href="dashboard.html"
+                class="admin-brand"
+            >
+
+                <span class="admin-brand-icon">
+
+                    <i class="fa-solid fa-wheat-awn"></i>
+
+                </span>
+
+
+                <span class="admin-brand-name">
+                    Kisan Setu
+                </span>
+
+            </a>
+
+
+            <span class="admin-navbar-divider"></span>
+
+
+            <span class="admin-portal-title">
+                Administration Portal
+            </span>
+
+        </div>
+
+
+        <div class="admin-navbar-right">
+
+            <div class="admin-user">
+
+                <i class="fa-solid fa-user-shield"></i>
+
+                <span id="admin-user-name">
+                    Administrator
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="admin-logout-button"
+                id="admin-logout-button"
+            >
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ============================================================
+         ADMIN PORTAL NAVIGATION
+    ============================================================= -->
+
+    <nav
+        class="admin-navigation"
+        aria-label="Administration navigation"
+    >
+
+        <a
+            href="dashboard.html"
+            class="admin-nav-item"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="farmers.html"
+            class="admin-nav-item"
+        >
+            Farmers
+        </a>
+
+
+        <a
+            href="mandi.html"
+            class="admin-nav-item"
+        >
+            Mandi & Slots
+        </a>
+
+
+        <a
+            href="queue.html"
+            class="admin-nav-item active"
+        >
+            Live Queue
+        </a>
+
+
+        <a
+            href="payment.html"
+            class="admin-nav-item"
+        >
+            Payments
+        </a>
+
+
+        <a
+            href="reports.html"
+            class="admin-nav-item"
+        >
+            Reports
+        </a>
+
+
+        <a
+            href="../index.html"
+            class="admin-nav-item admin-farmer-portal-button"
+        >
+            Farmer Portal
+        </a>
+
+    </nav>
+
+
+    <!-- ============================================================
+         A5 LIVE QUEUE PAGE
+    ============================================================= -->
+
+    <main class="queue-page">
+
+
+        <!-- ========================================================
+             PAGE HEADER
+        ========================================================= -->
+
+        <section class="queue-page-header">
+
+            <div class="queue-header-content">
+
+                <div class="queue-header-icon">
+
+                    <i class="fa-solid fa-list-ol"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h1>
+                        Live Procurement Queue
+                    </h1>
+
+
+                    <p>
+                        Monitor farmer arrivals, token positions,
+                        and real-time procurement activity.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="queue-header-actions">
+
+                <button
+                    type="button"
+                    class="queue-refresh-button"
+                    id="refresh-queue-button"
+                >
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    Refresh Queue
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             CONNECTION STATUS
+        ========================================================= -->
+
+        <section class="queue-connection-bar">
+
+            <div class="queue-connection-status">
+
+                <span
+                    class="status-dot"
+                    id="queue-status-dot"
+                ></span>
+
+
+                <span id="queue-connection-text">
+                    Connecting to live queue...
+                </span>
+
+            </div>
+
+
+            <div class="queue-connection-divider"></div>
+
+
+            <div class="queue-last-updated">
+
+                Last updated:
+
+                <span id="queue-last-updated">
+                    --
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             QUEUE SUMMARY
+        ========================================================= -->
+
+        <section class="queue-summary-grid">
+
+
+            <!-- Currently Serving -->
+
+            <article class="queue-summary-card">
+
+                <div class="queue-summary-icon">
+
+                    <i class="fa-solid fa-person-circle-check"></i>
+
+                </div>
+
+
+                <div class="queue-summary-content">
+
+                    <span class="queue-summary-label">
+                        Currently Serving
+                    </span>
+
+
+                    <strong id="currently-serving">
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Waiting -->
+
+            <article class="queue-summary-card">
+
+                <div class="queue-summary-icon">
+
+                    <i class="fa-solid fa-users"></i>
+
+                </div>
+
+
+                <div class="queue-summary-content">
+
+                    <span class="queue-summary-label">
+                        Waiting
+                    </span>
+
+
+                    <strong id="waiting-count">
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Checked In -->
+
+            <article class="queue-summary-card">
+
+                <div class="queue-summary-icon">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                </div>
+
+
+                <div class="queue-summary-content">
+
+                    <span class="queue-summary-label">
+                        Checked In
+                    </span>
+
+
+                    <strong id="checked-in-count">
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Completed -->
+
+            <article class="queue-summary-card">
+
+                <div class="queue-summary-icon">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </div>
+
+
+                <div class="queue-summary-content">
+
+                    <span class="queue-summary-label">
+                        Completed Today
+                    </span>
+
+
+                    <strong id="completed-count">
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- ========================================================
+             QUEUE CONTROL / FILTER PANEL
+        ========================================================= -->
+
+        <section class="queue-control-panel">
+
+            <div class="queue-control-header">
+
+                <div>
+
+                    <h2>
+                        Queue Monitoring
+                    </h2>
+
+
+                    <p>
+                        Track the live position of farmers
+                        across procurement centers.
+                    </p>
+
+                </div>
+
+
+                <div class="queue-live-indicator">
+
+                    <span
+                        class="live-dot"
+                        id="queue-live-dot"
+                    ></span>
+
+
+                    <span>
+                        Live Updates
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="queue-filters">
+
+
+                <!-- Search -->
+
+                <div class="queue-search">
+
+                    <label for="queue-search">
+                        Search
+                    </label>
+
+
+                    <div class="queue-search-input">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                        <input
+                            type="search"
+                            id="queue-search"
+                            placeholder="Search token, farmer, KCC..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- Center Filter -->
+
+                <div class="queue-filter">
+
+                    <label for="queue-center-filter">
+                        Mandi Center
+                    </label>
+
+
+                    <select id="queue-center-filter">
+
+                        <option value="all">
+                            All Centers
+                        </option>
+
+
+                        <option value="Mandi-Center-01">
+                            Mandi-Center-01
+                        </option>
+
+
+                        <option value="Mandi-Center-02">
+                            Mandi-Center-02
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Slot Filter -->
+
+                <div class="queue-filter">
+
+                    <label for="queue-slot-filter">
+                        Time Slot
+                    </label>
+
+
+                    <select id="queue-slot-filter">
+
+                        <option value="all">
+                            All Slots
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Status Filter -->
+
+                <div class="queue-filter">
+
+                    <label for="queue-status-filter">
+                        Status
+                    </label>
+
+
+                    <select id="queue-status-filter">
+
+                        <option value="all">
+                            All Statuses
+                        </option>
+
+
+                        <option value="waiting">
+                            Waiting
+                        </option>
+
+
+                        <option value="checked-in">
+                            Checked In
+                        </option>
+
+
+                        <option value="serving">
+                            Serving
+                        </option>
+
+
+                        <option value="completed">
+                            Completed
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             CURRENTLY SERVING
+        ========================================================= -->
+
+        <section class="queue-current-panel">
+
+            <div class="queue-section-heading">
+
+                <div>
+
+                    <h2>
+                        Currently Serving
+                    </h2>
+
+
+                    <p>
+                        Farmer currently being processed
+                        at the procurement center.
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="queue-serving-badge"
+                    id="serving-status-badge"
+                >
+                    No Active Token
+                </span>
+
+            </div>
+
+
+            <div
+                class="currently-serving-card"
+                id="currently-serving-card"
+            >
+
+                <div class="serving-placeholder">
+
+                    <i class="fa-solid fa-hourglass-half"></i>
+
+
+                    <span>
+                        No farmer is currently being served.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             LIVE QUEUE TABLE
+        ========================================================= -->
+
+        <section class="queue-table-panel">
+
+            <div class="queue-section-heading">
+
+                <div>
+
+                    <h2>
+                        Farmer Queue
+                    </h2>
+
+
+                    <p>
+                        Real-time token and queue position
+                        for today's scheduled farmers.
+                    </p>
+
+                </div>
+
+
+                <div class="queue-total-count">
+
+                    <span>
+                        Total in Queue
+                    </span>
+
+
+                    <strong id="total-queue-count">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="queue-table-wrapper">
+
+                <table class="queue-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Position
+                            </th>
+
+
+                            <th>
+                                Token
+                            </th>
+
+
+                            <th>
+                                Farmer / KCC
+                            </th>
+
+
+                            <th>
+                                Time Slot
+                            </th>
+
+
+                            <th>
+                                Center
+                            </th>
+
+
+                            <th>
+                                Vehicle
+                            </th>
+
+
+                            <th>
+                                Status
+                            </th>
+
+
+                            <th>
+                                Updated
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="queue-table-body">
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="queue-loading-cell"
+                            >
+
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                Loading live queue...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Empty State -->
+
+            <div
+                class="queue-empty-state"
+                id="queue-empty-state"
+                hidden
+            >
+
+                <div class="queue-empty-icon">
+
+                    <i class="fa-solid fa-users-slash"></i>
+
+                </div>
+
+
+                <h3>
+                    No Farmers in Queue
+                </h3>
+
+
+                <p>
+                    There are currently no active farmers
+                    waiting for procurement.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             QUEUE LEGEND
+        ========================================================= -->
+
+        <section class="queue-info-panel">
+
+
+            <div class="queue-info-item">
+
+                <span class="queue-status-dot waiting"></span>
+
+
+                <div>
+
+                    <strong>
+                        Waiting
+                    </strong>
+
+
+                    <span>
+                        Farmer has an active token and is
+                        waiting for their turn.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="queue-info-item">
+
+                <span class="queue-status-dot checked-in"></span>
+
+
+                <div>
+
+                    <strong>
+                        Checked In
+                    </strong>
+
+
+                    <span>
+                        Farmer has arrived and completed
+                        gate verification.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="queue-info-item">
+
+                <span class="queue-status-dot serving"></span>
+
+
+                <div>
+
+                    <strong>
+                        Serving
+                    </strong>
+
+
+                    <span>
+                        Farmer is currently undergoing
+                        procurement processing.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="queue-info-item">
+
+                <span class="queue-status-dot completed"></span>
+
+
+                <div>
+
+                    <strong>
+                        Completed
+                    </strong>
+
+
+                    <span>
+                        Procurement process has been completed.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================= -->
+
+    <footer class="admin-footer">
+
+        <div class="admin-footer-content">
+
+            <div class="admin-footer-brand">
+
+                <i class="fa-solid fa-wheat-awn"></i>
+
+                <span>
+                    Kisan Setu
+                </span>
+
+            </div>
+
+
+            <div class="admin-footer-text">
+                Digital Agriculture Procurement Platform
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- ============================================================
+         A5 JAVASCRIPT
+    ============================================================= -->
+
+    <script src="queue.js"></script>
+
+</body>
+
+</html>

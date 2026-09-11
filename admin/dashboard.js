@@ -138,6 +138,10 @@ async function fetchDashboardData() {
         );
 
 
+        // --------------------------------------------------------
+        // SESSION EXPIRED
+        // --------------------------------------------------------
+
         if (response.status === 401) {
 
             sessionStorage.removeItem(
@@ -146,6 +150,10 @@ async function fetchDashboardData() {
 
             sessionStorage.removeItem(
                 'kisanSetuAdminAuthenticated'
+            );
+
+            sessionStorage.removeItem(
+                'kisanSetuAdminUser'
             );
 
             window.location.href = 'admin.html';
@@ -166,6 +174,10 @@ async function fetchDashboardData() {
 
         }
 
+
+        // --------------------------------------------------------
+        // RENDER
+        // --------------------------------------------------------
 
         renderDashboard(data);
 
@@ -334,8 +346,13 @@ function renderCropBreakdown(cropBreakdown) {
 
         container.innerHTML = `
             <div class="empty-state">
+
                 <i class="fa-solid fa-wheat-awn"></i>
-                <p>No procurement recorded today.</p>
+
+                <p>
+                    No procurement recorded today.
+                </p>
+
             </div>
         `;
 
@@ -364,7 +381,8 @@ function renderCropBreakdown(cropBreakdown) {
                             <span class="crop-transactions">
                                 ${formatNumber(
                                     data.transactions
-                                )} transaction(s)
+                                )}
+                                transaction(s)
                             </span>
 
                         </div>
@@ -450,12 +468,17 @@ function renderCenterStatus(centers) {
     }
 
 
-    if (centers.length === 0) {
+    if (!Array.isArray(centers) || centers.length === 0) {
 
         container.innerHTML = `
             <div class="empty-state">
+
                 <i class="fa-solid fa-warehouse"></i>
-                <p>No center booking data available today.</p>
+
+                <p>
+                    No center booking data available today.
+                </p>
+
             </div>
         `;
 
@@ -521,7 +544,10 @@ function renderCenterStatus(centers) {
                                 <div
                                     class="progress-fill"
                                     style="width: ${Math.min(
-                                        utilization,
+                                        Math.max(
+                                            utilization,
+                                            0
+                                        ),
                                         100
                                     )}%"
                                 ></div>
@@ -541,21 +567,28 @@ function renderCenterStatus(centers) {
                         <div class="center-stats">
 
                             <span>
+
                                 <strong>
                                     ${formatNumber(
                                         center.activeTokens
                                     )}
                                 </strong>
+
                                 active
+
                             </span>
 
+
                             <span>
+
                                 <strong>
                                     ${formatNumber(
                                         center.completedTokens
                                     )}
                                 </strong>
+
                                 completed
+
                             </span>
 
                         </div>
@@ -585,7 +618,10 @@ function renderRecentTransactions(transactions) {
     }
 
 
-    if (transactions.length === 0) {
+    if (
+        !Array.isArray(transactions) ||
+        transactions.length === 0
+    ) {
 
         tbody.innerHTML = `
             <tr>
@@ -616,12 +652,24 @@ function renderRecentTransactions(transactions) {
                     );
 
 
+                const payoutAmount =
+                    Number(
+                        transaction.payoutAmount || 0
+                    );
+
+
                 const payment =
-                    transaction.payoutAmount > 0
+                    payoutAmount > 0
                         ? formatCurrency(
-                            transaction.payoutAmount
+                            payoutAmount
                         )
                         : 'Pending';
+
+
+                const quantity =
+                    transaction.actualQuantityQuintals ??
+                    transaction.bookedQuantityQuintals ??
+                    0;
 
 
                 return `
@@ -682,8 +730,7 @@ function renderRecentTransactions(transactions) {
 
                                 <strong>
                                     ${formatNumber(
-                                        transaction.actualQuantityQuintals ??
-                                        transaction.bookedQuantityQuintals
+                                        quantity
                                     )}
                                 </strong>
 
@@ -766,7 +813,8 @@ function getStatusClass(status) {
     if (
         normalized.includes('queue') ||
         normalized.includes('scheduled') ||
-        normalized.includes('weighbridge')
+        normalized.includes('weighbridge') ||
+        normalized.includes('serving')
     ) {
 
         return 'status-active';
@@ -834,10 +882,8 @@ function updateSystemStatus(
 function showDashboardError(message) {
 
     const containers = [
-
         'crop-breakdown',
         'center-status'
-
     ];
 
 
@@ -1006,6 +1052,58 @@ async function logoutAdmin() {
 
 
 // ================================================================
+// ADMIN USER DISPLAY
+// ================================================================
+
+function renderAdminUser() {
+
+    const storedUser =
+        sessionStorage.getItem(
+            'kisanSetuAdminUser'
+        );
+
+
+    if (!storedUser) {
+        return;
+    }
+
+
+    const element =
+        getElement(
+            'admin-user-name'
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    try {
+
+        const user =
+            JSON.parse(
+                storedUser
+            );
+
+
+        element.textContent =
+            user.username ||
+            user.name ||
+            'Administrator';
+
+    } catch (error) {
+
+        element.textContent =
+            storedUser ||
+            'Administrator';
+
+    }
+
+}
+
+
+// ================================================================
 // EVENT LISTENERS
 // ================================================================
 
@@ -1030,37 +1128,7 @@ document.addEventListener(
         // ADMIN USER
         // --------------------------------------------------------
 
-        const storedUser =
-            sessionStorage.getItem(
-                'kisanSetuAdminUser'
-            );
-
-
-        if (storedUser) {
-
-            try {
-
-                const user =
-                    JSON.parse(
-                        storedUser
-                    );
-
-
-                setText(
-                    'admin-user-name',
-                    user.username ||
-                    'Administrator'
-                );
-
-            } catch (error) {
-
-                console.warn(
-                    'Unable to parse admin user session.'
-                );
-
-            }
-
-        }
+        renderAdminUser();
 
 
         // --------------------------------------------------------
@@ -1073,7 +1141,12 @@ document.addEventListener(
             );
 
 
-        if (logoutButton) {
+        if (
+            logoutButton &&
+            !logoutButton.dataset.bound
+        ) {
+
+            logoutButton.dataset.bound = 'true';
 
             logoutButton.addEventListener(
                 'click',
@@ -1093,15 +1166,16 @@ document.addEventListener(
             );
 
 
-        if (refreshButton) {
+        if (
+            refreshButton &&
+            !refreshButton.dataset.bound
+        ) {
+
+            refreshButton.dataset.bound = 'true';
 
             refreshButton.addEventListener(
                 'click',
-                () => {
-
-                    fetchDashboardData();
-
-                }
+                fetchDashboardData
             );
 
         }
