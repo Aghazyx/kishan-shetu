@@ -118,5 +118,37 @@
     "totalPayoutAmount": 473800,
     "status": "Quality Approved",
     "timestamp": "2026-09-11T15:10:43.818Z"
+  },
+  {
+    "receiptId": "RCP-1789154823897-501",
+    "tokenId": "TKN-5597",
+    "kccNumber": "KCC-PB-2024-8841",
+    "farmerName": "Sardar Ramesh Singh",
+    "cropType": "wheat",
+    "grossWeight": 400,
+    "tareWeight": 300,
+    "netWeightQuintals": 100,
+    "moisturePercentage": 12,
+    "qualityGrade": "GRADE_A",
+    "mspPricePerQuintal": 2275,
+    "totalPayoutAmount": 227500,
+    "status": "Quality Approved",
+    "timestamp": "2026-09-11T19:27:03.897Z"
+  },
+  {
+    "receiptId": "RCP-1789158058355-593",
+    "tokenId": "TKN-9167",
+    "kccNumber": "KCC-PB-2024-8841",
+    "farmerName": "Sardar Ramesh Singh",
+    "cropType": "wheat",
+    "grossWeight": 4000,
+    "tareWeight": 3000,
+    "netWeightQuintals": 1000,
+    "moisturePercentage": 13,
+    "qualityGrade": "GRADE_B",
+    "mspPricePerQuintal": 2275,
+    "totalPayoutAmount": 2275000,
+    "status": "Quality Approved",
+    "timestamp": "2026-09-11T20:20:58.355Z"
   }
 ]
