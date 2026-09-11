@@ -73,5 +73,50 @@
     "totalPayoutAmount": 841750,
     "status": "Quality Approved",
     "timestamp": "2026-09-11T12:38:11.586Z"
+  },
+  {
+    "receiptId": "RCP-1789132900009-610",
+    "tokenId": "TKN-4145",
+    "kccNumber": "KCC-PB-2024-8841",
+    "cropType": "wheat",
+    "grossWeight": 400,
+    "tareWeight": 300,
+    "netWeightQuintals": 100,
+    "moisturePercentage": 12,
+    "qualityGrade": "GRADE_A",
+    "mspPricePerQuintal": 2275,
+    "totalPayoutAmount": 227500,
+    "status": "Quality Approved",
+    "timestamp": "2026-09-11T13:21:40.009Z"
+  },
+  {
+    "receiptId": "RCP-1789139114273-246",
+    "tokenId": "TKN-6492",
+    "kccNumber": "KCC-PB-2024-8841",
+    "cropType": "wheat",
+    "grossWeight": 4000,
+    "tareWeight": 2000,
+    "netWeightQuintals": 2000,
+    "moisturePercentage": 13,
+    "qualityGrade": "GRADE_B",
+    "mspPricePerQuintal": 2275,
+    "totalPayoutAmount": 4550000,
+    "status": "Quality Approved",
+    "timestamp": "2026-09-11T15:05:14.273Z"
+  },
+  {
+    "receiptId": "RCP-1789139443818-86",
+    "tokenId": "TKN-4420",
+    "kccNumber": "KCC-PB-2024-8841",
+    "cropType": "paddy",
+    "grossWeight": 300,
+    "tareWeight": 100,
+    "netWeightQuintals": 200,
+    "moisturePercentage": 13,
+    "qualityGrade": "GRADE_B",
+    "mspPricePerQuintal": 2369,
+    "totalPayoutAmount": 473800,
+    "status": "Quality Approved",
+    "timestamp": "2026-09-11T15:10:43.818Z"
   }
 ]
