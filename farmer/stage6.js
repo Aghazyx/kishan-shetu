@@ -1588,3 +1588,44 @@ window.evaluateQuality =
 
 window.submitQualityLog =
     submitQualityLog;
+    async function processWeighmentBackend(metrics) {
+  const tokenId = sessionStorage.getItem('tokenId');
+  const bookingData = JSON.parse(sessionStorage.getItem('bookingData') || '{}');
+
+  try {
+    const response = await fetch('/api/procurement/quality-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tokenId: tokenId,
+        grossWeightKg: metrics.grossKg,     // e.g. 40000
+        tareWeightKg: metrics.tareKg,       // e.g. 30000
+        moisturePercentage: metrics.moisture, // e.g. 10
+        foreignMatterPercentage: metrics.foreignMatter, // e.g. 0.6
+        cropType: bookingData.cropType || 'wheat'
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      const receipt = data.receipt;
+      sessionStorage.setItem('receiptData', JSON.stringify(receipt));
+
+      // Overwrite frontend elements with authoritative backend calculations
+      document.getElementById('ui-net-weight').textContent = `${receipt.netWeightKg} kg`;
+      document.getElementById('ui-actual-qty').textContent = `${receipt.actualQuantityQuintals} qtl`;
+      document.getElementById('ui-quality-grade').textContent = receipt.qualityGrade;
+      document.getElementById('ui-msp-rate').textContent = `₹${receipt.mspPricePerQuintal}`;
+      document.getElementById('ui-total-payout').textContent = `₹${receipt.totalPayoutAmount}`;
+      
+      return true;
+    } else {
+      console.error('Procurement failed:', data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('API Error:', error);
+    return false;
+  }
+}

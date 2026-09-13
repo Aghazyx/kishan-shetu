@@ -1730,3 +1730,57 @@ window.verifyLedgerBlock =
 
 window.populateStage7 =
     populateStage7;
+    async function fetchPaymentStatusBackend() {
+  const tokenId = sessionStorage.getItem('tokenId');
+  if (!tokenId) return;
+
+  try {
+    const response = await fetch(`/api/payments/status/${tokenId}`);
+    const data = await response.json();
+    
+    if (data.success) {
+      updatePaymentUI(data.pipeline);
+    }
+  } catch (error) {
+    console.error('API Error:', error);
+  }
+}
+
+async function dispatchDbtPayment() {
+  const tokenId = sessionStorage.getItem('tokenId');
+  
+  try {
+    const response = await fetch('/api/payments/dispatch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenId })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      await fetchPaymentStatusBackend(); 
+    } else {
+      console.error('Dispatch Failed:', data.message);
+    }
+  } catch (error) {
+    console.error('API Error:', error);
+  }
+}
+
+function updatePaymentUI(pipeline) {
+  // Replace these IDs with your actual HTML element IDs
+  document.getElementById('ui-receipt-number').textContent = pipeline.receiptId || 'Pending';
+  document.getElementById('ui-payment-amount').textContent = `₹${pipeline.amountToCredit}`;
+  document.getElementById('ui-payment-status').textContent = pipeline.paymentStatus;
+  
+  if (pipeline.dbtPayoutDispatched) {
+    document.getElementById('ui-pfms-ref').textContent = pipeline.pfmsReference || 'Processing';
+    document.getElementById('ui-utr-number').textContent = pipeline.utr || 'Processing';
+  } else {
+    document.getElementById('ui-pfms-ref').textContent = 'N/A';
+    document.getElementById('ui-utr-number').textContent = 'N/A';
+  }
+}
+
+// Bind dispatchDbtPayment() to your existing "Dispatch Payment" UI button
