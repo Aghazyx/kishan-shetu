@@ -1,9 +1,3 @@
-// ================================================================
-// KISAN SETU BACKEND
-// Farmer Procurement + Administration Portal
-// A1 → A7 Integrated Prototype Backend
-// ================================================================
-
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -11,455 +5,396 @@ const path = require('path');
 const crypto = require('crypto');
 
 const app = express();
-
 const PORT = process.env.PORT || 5050;
 
-
-// ================================================================
-// ADMIN AUTHENTICATION - PROTOTYPE
-// ================================================================
-
-const ADMIN_USERNAME =
-  process.env.ADMIN_USERNAME || 'admin';
-
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD || 'kisan@2026';
-
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'kisan@2026';
 const adminSessions = new Map();
 
-
-// ================================================================
-// MIDDLEWARE
-// ================================================================
-
 app.use(cors());
+app.use(express.json());
 
-app.use(
-  express.json()
-);
-
-
-// ================================================================
-// DATA DIRECTORY
-// ================================================================
-
-const DATA_DIR =
-  path.join(
-    __dirname,
-    'data'
-  );
-
+const DATA_DIR = path.join(__dirname, 'data');
 
 if (!fs.existsSync(DATA_DIR)) {
-
-  fs.mkdirSync(
-    DATA_DIR,
-    {
-      recursive: true
-    }
-  );
-
+  fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
+const now = () => new Date().toISOString();
 
-// ================================================================
-// DATA PERSISTENCE HELPERS
-// ================================================================
+const today = () => now().split('T')[0];
 
-const readData = (
-  fileName,
-  fallback = []
-) => {
+const num = (value, fallback = 0) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+};
 
+const round2 = value => Number(num(value).toFixed(2));
+
+const crop = value =>
+  String(value || 'wheat')
+    .trim()
+    .toLowerCase();
+
+const readData = (file, fallback = []) => {
   try {
-
-    const filePath =
-      path.join(
-        DATA_DIR,
-        fileName
-      );
+    const filePath = path.join(DATA_DIR, file);
 
     if (!fs.existsSync(filePath)) {
-
       return fallback;
-
     }
 
-    const rawData =
-      fs.readFileSync(
-        filePath,
-        'utf8'
-      );
-
     return JSON.parse(
-      rawData
+      fs.readFileSync(filePath, 'utf8')
     );
-
   } catch (error) {
-
-    console.error(
-      `[DB Read Error] ${fileName}:`,
-      error
-    );
-
+    console.error(`[DB Read Error] ${file}:`, error);
     return fallback;
-
   }
-
 };
 
-
-const writeData = (
-  fileName,
-  data
-) => {
-
+const writeData = (file, data) => {
   try {
-
-    const filePath =
-      path.join(
-        DATA_DIR,
-        fileName
-      );
+    const filePath = path.join(DATA_DIR, file);
+    const tempPath = `${filePath}.tmp`;
 
     fs.writeFileSync(
-      filePath,
-      JSON.stringify(
-        data,
-        null,
-        2
-      )
+      tempPath,
+      JSON.stringify(data, null, 2)
     );
+
+    fs.renameSync(tempPath, filePath);
 
     return true;
-
   } catch (error) {
-
-    console.error(
-      `[DB Write Error] ${fileName}:`,
-      error
-    );
-
+    console.error(`[DB Write Error] ${file}:`, error);
     return false;
-
   }
-
 };
 
+const generateId = prefix =>
+  `${prefix}-${Date.now()}-${crypto
+    .randomBytes(3)
+    .toString('hex')
+    .toUpperCase()}`;
 
-// ================================================================
-// UTILITY FUNCTIONS
-// ================================================================
+const generateUniqueToken = bookings => {
+  let tokenId;
 
-const getTodayDate = () => {
-
-  return new Date()
-    .toISOString()
-    .split('T')[0];
-
-};
-
-
-const generateId = (
-  prefix
-) => {
-
-  return `${prefix}-${Date.now()}-${Math.floor(
-    Math.random() * 1000
-  )}`;
-
-};
-
-
-const generateToken = () => {
-
-  return `TKN-${Math.floor(
-    1000 + Math.random() * 9000
-  )}`;
-
-};
-
-
-const normalizePaymentStatus = (
-  receipt
-) => {
-
-  const status =
-    String(
-      receipt?.paymentStatus ||
-      'Pending'
+  do {
+    tokenId =
+      `TKN-${Date.now()
+        .toString()
+        .slice(-8)}-${crypto
+        .randomBytes(2)
+        .toString('hex')
+        .toUpperCase()}`;
+  } while (
+    bookings.some(
+      booking => booking.tokenId === tokenId
     )
-      .trim()
-      .toLowerCase();
-
-
-  if (
-    status === 'pfms batched' ||
-    status === 'pfms-batched'
-  ) {
-
-    return 'pfms-batched';
-
-  }
-
-
-  if (
-    status === 'dbt dispatched' ||
-    status === 'dbt-dispatched'
-  ) {
-
-    return 'dbt-dispatched';
-
-  }
-
-
-  if (
-    status === 'failed'
-  ) {
-
-    return 'failed';
-
-  }
-
-
-  return 'pending';
-
-};
-
-
-const getPaymentStatusLabel = (
-  status
-) => {
-
-  if (
-    status === 'pfms-batched'
-  ) {
-
-    return 'PFMS Batched';
-
-  }
-
-
-  if (
-    status === 'dbt-dispatched'
-  ) {
-
-    return 'DBT Dispatched';
-
-  }
-
-
-  if (
-    status === 'failed'
-  ) {
-
-    return 'Failed';
-
-  }
-
-
-  return 'Pending';
-
-};
-
-
-// ================================================================
-// DEMO MSP RATES
-// ================================================================
-
-const MSP_RATES = {
-
-  wheat: 2275,
-
-  paddy: 2369
-
-};
-
-
-// ================================================================
-// A4 • MANDI CONFIGURATION
-// ================================================================
-
-const MANDI_CENTERS = [
-
-  {
-    centerId:
-      'Mandi-Center-01',
-
-    center:
-      'Mandi-Center-01 (Main Gate)',
-
-    capacityQuintals:
-      500,
-
-    type:
-      'Primary Procurement Center'
-
-  },
-
-  {
-    centerId:
-      'Mandi-Center-02',
-
-    center:
-      'Mandi-Center-02 (Nearby Overflow Facility)',
-
-    capacityQuintals:
-      500,
-
-    type:
-      'Overflow Procurement Center'
-
-  }
-
-];
-
-
-const MANDI_SLOTS = [
-
-  {
-    slotId:
-      'SLOT-01',
-
-    timeSlot:
-      '08:00 AM - 10:00 AM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-02',
-
-    timeSlot:
-      '10:00 AM - 12:00 PM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-03',
-
-    timeSlot:
-      '12:00 PM - 02:00 PM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-04',
-
-    timeSlot:
-      '02:00 PM - 04:00 PM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-05',
-
-    timeSlot:
-      '04:00 PM - 06:00 PM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-06',
-
-    timeSlot:
-      '06:00 PM - 08:00 PM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-07',
-
-    timeSlot:
-      '08:00 PM - 10:00 PM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-08',
-
-    timeSlot:
-      '10:00 PM - 12:00 AM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-09',
-
-    timeSlot:
-      '12:00 AM - 02:00 AM',
-
-    capacityQuintals:
-      50
-
-  },
-
-  {
-    slotId:
-      'SLOT-10',
-
-    timeSlot:
-      '02:00 AM - 04:00 AM',
-
-    capacityQuintals:
-      50
-
-  }
-
-];
-
-
-// ================================================================
-// SEED FARMER DATA
-// ================================================================
-
-const farmersFile =
-  path.join(
-    DATA_DIR,
-    'farmers.json'
   );
 
+  return tokenId;
+};
 
-if (!fs.existsSync(farmersFile)) {
+const MSP_RATES = {
+  wheat: 2585,
+  paddy: 2441
+};
 
+const MANDI_CENTERS = [
+  {
+    centerId: 'Mandi-Center-01',
+    center: 'Mandi-Center-01 (Main Gate)',
+    capacityQuintals: 500,
+    type: 'Primary Procurement Center',
+
+    latitude: num(
+      process.env.MANDI_CENTER_01_LAT,
+      30.702877
+    ),
+
+    longitude: num(
+      process.env.MANDI_CENTER_01_LNG,
+      76.220222
+    ),
+
+    geofenceRadiusMeters: num(
+      process.env.MANDI_CENTER_01_RADIUS,
+      500
+    )
+  },
+
+  {
+    centerId: 'Mandi-Center-02',
+    center:
+      'Mandi-Center-02 (Nearby Overflow Facility)',
+    capacityQuintals: 500,
+    type: 'Overflow Procurement Center',
+
+    latitude: num(
+      process.env.MANDI_CENTER_02_LAT,
+      30.702877
+    ),
+
+    longitude: num(
+      process.env.MANDI_CENTER_02_LNG,
+      76.220222
+    ),
+
+    geofenceRadiusMeters: num(
+      process.env.MANDI_CENTER_02_RADIUS,
+      500
+    )
+  }
+];
+
+const MANDI_SLOTS = [
+  '08:00 AM - 10:00 AM',
+  '10:00 AM - 12:00 PM',
+  '12:00 PM - 02:00 PM',
+  '02:00 PM - 04:00 PM',
+  '04:00 PM - 06:00 PM',
+  '06:00 PM - 08:00 PM',
+  '08:00 PM - 10:00 PM',
+  '10:00 PM - 12:00 AM',
+  '12:00 AM - 02:00 AM',
+  '02:00 AM - 04:00 AM'
+].map((timeSlot, index) => ({
+  slotId:
+    `SLOT-${String(index + 1).padStart(2, '0')}`,
+
+  timeSlot,
+
+  capacityQuintals: 50
+}));
+
+const getCenter = centerId =>
+  MANDI_CENTERS.find(
+    center =>
+      center.centerId === centerId
+  ) || MANDI_CENTERS[0];
+
+const getSlot = timeSlot =>
+  MANDI_SLOTS.find(
+    slot =>
+      slot.timeSlot === timeSlot
+  ) || MANDI_SLOTS[1];
+
+const getBookingQuantity = booking =>
+  num(
+    booking?.estimatedQuantityQuintals ??
+      booking?.quantityQuintals ??
+      booking?.quantity,
+    0
+  );
+
+const getReceiptQuantity = receipt =>
+  num(
+    receipt?.actualQuantityQuintals ??
+      receipt?.netWeightQuintals ??
+      receipt?.quantityQuintals,
+    0
+  );
+
+const getPaymentStatus = payment => {
+  const status = String(
+    payment?.status ??
+      payment?.paymentStatus ??
+      'pending'
+  )
+    .trim()
+    .toLowerCase();
+
+  if (
+    [
+      'pfms batched',
+      'pfms-batched',
+      'pfms_batched'
+    ].includes(status)
+  ) {
+    return 'pfms-batched';
+  }
+
+  if (
+    [
+      'dbt dispatched',
+      'dbt-dispatched',
+      'dbt_dispatched'
+    ].includes(status)
+  ) {
+    return 'dbt-dispatched';
+  }
+
+  if (status === 'failed') {
+    return 'failed';
+  }
+
+  return 'pending';
+};
+
+const getPaymentStatusLabel = status => {
+  if (status === 'pfms-batched') {
+    return 'PFMS Batched';
+  }
+
+  if (status === 'dbt-dispatched') {
+    return 'DBT Dispatched';
+  }
+
+  if (status === 'failed') {
+    return 'Failed';
+  }
+
+  return 'Pending';
+};
+
+const findFarmer = (
+  farmers,
+  kccNumber,
+  farmerId
+) =>
+  farmers.find(
+    farmer =>
+      (
+        farmerId &&
+        (
+          farmer.farmerId === farmerId ||
+          farmer.id === farmerId
+        )
+      ) ||
+      (
+        kccNumber &&
+        farmer.kccNumber === kccNumber
+      )
+  );
+
+const appendAuditEvent = (
+  eventType,
+  entityType,
+  entityId,
+  payload = {}
+) => {
+  const audit = readData(
+    'audit.json',
+    []
+  );
+
+  const previousHash =
+    audit.length > 0
+      ? audit[audit.length - 1].hash
+      : 'GENESIS';
+
+  const event = {
+    auditId: generateId('AUD'),
+    eventType,
+    entityType,
+    entityId,
+    timestamp: now(),
+    payload,
+    previousHash
+  };
+
+  event.hash = crypto
+    .createHash('sha256')
+    .update(JSON.stringify(event))
+    .digest('hex');
+
+  audit.push(event);
+
+  writeData(
+    'audit.json',
+    audit
+  );
+
+  return event;
+};
+
+const haversineDistanceMeters = (
+  latitude1,
+  longitude1,
+  latitude2,
+  longitude2
+) => {
+  const earthRadiusMeters = 6371000;
+
+  const radians = degrees =>
+    degrees * Math.PI / 180;
+
+  const deltaLatitude =
+    radians(latitude2 - latitude1);
+
+  const deltaLongitude =
+    radians(longitude2 - longitude1);
+
+  const a =
+    Math.sin(deltaLatitude / 2) ** 2 +
+    Math.cos(radians(latitude1)) *
+      Math.cos(radians(latitude2)) *
+      Math.sin(deltaLongitude / 2) ** 2;
+
+  return (
+    earthRadiusMeters *
+    2 *
+    Math.atan2(
+      Math.sqrt(a),
+      Math.sqrt(1 - a)
+    )
+  );
+};
+
+const getAdminSession = req =>
+  adminSessions.get(
+    req.headers['x-admin-session']
+  ) || null;
+
+const requireAdmin = (
+  req,
+  res,
+  next
+) => {
+  const session =
+    getAdminSession(req);
+
+  if (!session) {
+    return res.status(401).json({
+      success: false,
+      authenticated: false,
+      message:
+        'Valid administrator session required.'
+    });
+  }
+
+  req.adminSession = session;
+
+  next();
+};
+
+const ACTIVE_STATUSES = [
+  'Scheduled',
+  'Active Gate Queue',
+  'Weighbridge',
+  'Serving'
+];
+
+const COMPLETED_STATUS =
+  'Quality Approved';
+
+if (
+  !fs.existsSync(
+    path.join(
+      DATA_DIR,
+      'farmers.json'
+    )
+  )
+) {
   writeData(
     'farmers.json',
     [
-
       {
-        id:
-          'FRM-DEMO-001',
+        id: 'FRM-DEMO-001',
+        farmerId: 'FRM-DEMO-001',
 
         kccNumber:
           'KCC-PB-2024-8841',
@@ -470,8 +405,7 @@ if (!fs.existsSync(farmersFile)) {
         phone:
           '+91 98765-43210',
 
-        landHoldingAcres:
-          4.5,
+        landHoldingAcres: 4.5,
 
         state:
           'Punjab State',
@@ -482,149 +416,68 @@ if (!fs.existsSync(farmersFile)) {
         mandi:
           'Khanna, Ludhiana',
 
-        crops:
-          [
-            'Wheat',
-            'Paddy'
-          ],
+        crops: [
+          'Wheat',
+          'Paddy'
+        ],
 
         verifiedBank:
           'State Bank of India (A/C ****3312)',
 
+        verificationStatus:
+          'VERIFIED',
+
         createdAt:
-          new Date().toISOString()
-
+          now()
       }
-
     ]
   );
-
 }
 
 
-// ================================================================
-// ADMIN SESSION HELPERS
-// ================================================================
-
-const getAdminSession =
-  (req) => {
-
-    const sessionId =
-      req.headers[
-        'x-admin-session'
-      ];
-
-    if (!sessionId) {
-
-      return null;
-
-    }
-
-    return (
-      adminSessions.get(
-        sessionId
-      ) ||
-      null
-    );
-
-  };
-
-
-const requireAdmin =
-  (req, res, next) => {
-
-    const session =
-      getAdminSession(req);
-
-    if (!session) {
-
-      return res.status(401).json({
-
-        success:
-          false,
-
-        authenticated:
-          false,
-
-        message:
-          'Valid administrator session required.'
-
-      });
-
-    }
-
-    req.adminSession =
-      session;
-
-    next();
-
-  };
-
-
-// ================================================================
-// A1 • ADMIN LOGIN
-// ================================================================
+/* ============================================================
+   ADMIN AUTHENTICATION
+   ============================================================ */
 
 app.post(
   '/api/admin/login',
   (req, res) => {
-
     try {
-
       const {
         username,
         password
       } = req.body;
 
-
       if (
         !username ||
         !password
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Username and password are required.'
-
         });
-
       }
-
 
       if (
-        username !==
-          ADMIN_USERNAME ||
-        password !==
-          ADMIN_PASSWORD
+        username !== ADMIN_USERNAME ||
+        password !== ADMIN_PASSWORD
       ) {
-
         return res.status(401).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Invalid administrator credentials.'
-
         });
-
       }
-
 
       const sessionId =
         crypto
           .randomBytes(32)
           .toString('hex');
 
-
       adminSessions.set(
         sessionId,
         {
-
           username:
             ADMIN_USERNAME,
 
@@ -632,16 +485,12 @@ app.post(
             'Administrator',
 
           createdAt:
-            new Date().toISOString()
-
+            now()
         }
       );
 
-
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         message:
           'Administrator authenticated successfully.',
@@ -649,122 +498,80 @@ app.post(
         sessionId,
 
         admin: {
-
           username:
             ADMIN_USERNAME,
 
           role:
             'Administrator'
-
         }
-
       });
-
     } catch (error) {
-
       console.error(
         '[Admin Login Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Administrator authentication failed.'
-
       });
-
     }
-
   }
 );
-
-
-// ================================================================
-// ADMIN SESSION
-// ================================================================
 
 app.get(
   '/api/admin/session',
   requireAdmin,
   (req, res) => {
-
     return res.json({
-
-      success:
-        true,
-
-      authenticated:
-        true,
+      success: true,
+      authenticated: true,
 
       admin: {
-
         username:
           req.adminSession.username,
 
         role:
           req.adminSession.role
-
       },
 
       sessionCreatedAt:
         req.adminSession.createdAt
-
     });
-
   }
 );
-
-
-// ================================================================
-// ADMIN LOGOUT
-// ================================================================
 
 app.post(
   '/api/admin/logout',
   (req, res) => {
-
     const sessionId =
-      req.headers[
-        'x-admin-session'
-      ];
+      req.headers['x-admin-session'];
 
     if (sessionId) {
-
       adminSessions.delete(
         sessionId
       );
-
     }
 
     return res.json({
-
-      success:
-        true,
-
+      success: true,
       message:
         'Administrator session ended.'
-
     });
-
   }
 );
 
 
-// ================================================================
-// A2 • ADMIN DASHBOARD
-// ================================================================
+/* ============================================================
+   ADMIN DASHBOARD
+   ============================================================ */
 
 app.get(
   '/api/admin/dashboard',
   requireAdmin,
   (req, res) => {
-
     try {
-
       const farmers =
         readData(
           'farmers.json',
@@ -783,240 +590,144 @@ app.get(
           []
         );
 
-
-      const today =
-        getTodayDate();
-
+      const currentDate =
+        today();
 
       const todayBookings =
         bookings.filter(
           booking =>
             booking.date ===
-            today
+            currentDate
         );
-
 
       const todayReceipts =
         receipts.filter(
           receipt =>
             receipt.timestamp &&
             receipt.timestamp.startsWith(
-              today
+              currentDate
             )
         );
-
-
-      const todayProcurementQuintals =
-        todayReceipts.reduce(
-          (
-            total,
-            receipt
-          ) =>
-            total +
-            Number(
-              receipt.netWeightQuintals ||
-              0
-            ),
-          0
-        );
-
-
-      const todayPayments =
-        todayReceipts.reduce(
-          (
-            total,
-            receipt
-          ) =>
-            total +
-            Number(
-              receipt.totalPayoutAmount ||
-              0
-            ),
-          0
-        );
-
-
-      const activeQueueBookings =
-        todayBookings.filter(
-          booking =>
-            booking.status ===
-              'Scheduled' ||
-            booking.status ===
-              'Active Gate Queue' ||
-            booking.status ===
-              'Weighbridge'
-        );
-
 
       const cropBreakdown = {};
 
-
       todayReceipts.forEach(
         receipt => {
-
-          const crop =
-            String(
-              receipt.cropType ||
-              'Other'
-            )
-              .toLowerCase();
-
-
-          if (
-            !cropBreakdown[crop]
-          ) {
-
-            cropBreakdown[crop] = {
-
-              quantityQuintals:
-                0,
-
-              transactions:
-                0,
-
-              amount:
-                0
-
-            };
-
-          }
-
-
-          cropBreakdown[crop]
-            .quantityQuintals +=
-              Number(
-                receipt.netWeightQuintals ||
-                0
-              );
-
-
-          cropBreakdown[crop]
-            .transactions +=
-              1;
-
-
-          cropBreakdown[crop]
-            .amount +=
-              Number(
-                receipt.totalPayoutAmount ||
-                0
-              );
-
-        }
-      );
-
-
-      const centerBreakdown = {};
-
-
-      todayBookings.forEach(
-        booking => {
-
-          const centerId =
-            booking.centerId ||
-            'Mandi-Center-01';
-
-
-          const centerName =
-            booking.center ||
-            'Mandi-Center-01 (Main Gate)';
-
-
-          if (
-            !centerBreakdown[centerId]
-          ) {
-
-            centerBreakdown[centerId] = {
-
-              centerId,
-
-              center:
-                centerName,
-
-              capacityQuintals:
-                500,
-
-              bookedQuintals:
-                0,
-
-              activeTokens:
-                0,
-
-              completedTokens:
-                0
-
-            };
-
-          }
-
-
-          centerBreakdown[centerId]
-            .bookedQuintals +=
-              Number(
-                booking.quantityQuintals ||
-                0
-              );
-
-
-          if (
-            booking.status ===
-              'Scheduled' ||
-            booking.status ===
-              'Active Gate Queue'
-          ) {
-
-            centerBreakdown[centerId]
-              .activeTokens +=
-              1;
-
-          }
-
-
-          if (
-            booking.status ===
-            'Quality Approved'
-          ) {
-
-            centerBreakdown[centerId]
-              .completedTokens +=
-              1;
-
-          }
-
-        }
-      );
-
-
-      Object.values(
-        centerBreakdown
-      ).forEach(
-        center => {
-
-          center.remainingQuintals =
-            Math.max(
-              0,
-              center.capacityQuintals -
-              center.bookedQuintals
+          const cropType =
+            crop(
+              receipt.cropType
             );
 
+          if (
+            !cropBreakdown[cropType]
+          ) {
+            cropBreakdown[cropType] = {
+              quantityQuintals: 0,
+              transactions: 0,
+              amount: 0
+            };
+          }
 
-          center.utilizationPercentage =
-            center.capacityQuintals > 0
-              ? Math.min(
-                  100,
-                  Math.round(
-                    (
-                      center.bookedQuintals /
-                      center.capacityQuintals
-                    ) *
-                    100
-                  )
-                )
-              : 0;
+          cropBreakdown[
+            cropType
+          ].quantityQuintals +=
+            getReceiptQuantity(
+              receipt
+            );
 
+          cropBreakdown[
+            cropType
+          ].transactions += 1;
+
+          cropBreakdown[
+            cropType
+          ].amount +=
+            num(
+              receipt.totalPayoutAmount
+            );
         }
       );
 
+      const centers =
+        MANDI_CENTERS.map(
+          configuredCenter => {
+            const centerBookings =
+              todayBookings.filter(
+                booking =>
+                  (
+                    booking.centerId ||
+                    MANDI_CENTERS[0]
+                      .centerId
+                  ) ===
+                  configuredCenter.centerId
+              );
+
+            const booked =
+              centerBookings.reduce(
+                (
+                  total,
+                  booking
+                ) =>
+                  total +
+                  getBookingQuantity(
+                    booking
+                  ),
+                0
+              );
+
+            return {
+              centerId:
+                configuredCenter.centerId,
+
+              center:
+                configuredCenter.center,
+
+              capacityQuintals:
+                configuredCenter.capacityQuintals,
+
+              bookedQuintals:
+                round2(booked),
+
+              remainingQuintals:
+                round2(
+                  Math.max(
+                    0,
+                    configuredCenter.capacityQuintals -
+                      booked
+                  )
+                ),
+
+              activeTokens:
+                centerBookings.filter(
+                  booking =>
+                    ACTIVE_STATUSES.includes(
+                      booking.status
+                    )
+                ).length,
+
+              completedTokens:
+                centerBookings.filter(
+                  booking =>
+                    booking.status ===
+                    COMPLETED_STATUS
+                ).length,
+
+              utilizationPercentage:
+                configuredCenter.capacityQuintals
+                  ? Math.min(
+                      100,
+                      Math.round(
+                        (
+                          booked /
+                          configuredCenter.capacityQuintals
+                        ) *
+                        100
+                      )
+                    )
+                  : 0
+            };
+          }
+        );
 
       const recentTransactions =
         bookings
@@ -1036,30 +747,31 @@ app.get(
           )
           .map(
             booking => {
-
               const farmer =
-                farmers.find(
-                  farmer =>
-                    farmer.kccNumber ===
-                    booking.kccNumber
+                findFarmer(
+                  farmers,
+                  booking.kccNumber,
+                  booking.farmerId
                 );
-
 
               const receipt =
                 receipts.find(
-                  receipt =>
-                    receipt.tokenId ===
+                  item =>
+                    item.tokenId ===
                     booking.tokenId
                 );
 
-
               return {
-
                 tokenId:
                   booking.tokenId,
 
                 bookingId:
                   booking.bookingId,
+
+                farmerId:
+                  booking.farmerId ||
+                  farmer?.farmerId ||
+                  null,
 
                 farmerName:
                   booking.farmerName ||
@@ -1073,16 +785,14 @@ app.get(
                   booking.cropType,
 
                 bookedQuantityQuintals:
-                  Number(
-                    booking.quantityQuintals ||
-                    0
+                  getBookingQuantity(
+                    booking
                   ),
 
                 actualQuantityQuintals:
                   receipt
-                    ? Number(
-                        receipt.netWeightQuintals ||
-                        0
+                    ? getReceiptQuantity(
+                        receipt
                       )
                     : null,
 
@@ -1101,9 +811,8 @@ app.get(
 
                 payoutAmount:
                   receipt
-                    ? Number(
-                        receipt.totalPayoutAmount ||
-                        0
+                    ? num(
+                        receipt.totalPayoutAmount
                       )
                     : 0,
 
@@ -1111,66 +820,26 @@ app.get(
                   receipt?.receiptId ||
                   null,
 
+                paymentStatus:
+                  receipt?.paymentStatus ||
+                  null,
+
                 createdAt:
                   booking.createdAt
-
               };
-
             }
           );
 
-
-      const qualitySummary = {
-
-        gradeA:
-          todayReceipts.filter(
-            receipt =>
-              String(
-                receipt.qualityGrade ||
-                ''
-              )
-                .toLowerCase() ===
-              'grade a'
-          ).length,
-
-        gradeB:
-          todayReceipts.filter(
-            receipt =>
-              String(
-                receipt.qualityGrade ||
-                ''
-              )
-                .toLowerCase() ===
-              'grade b'
-          ).length,
-
-        failed:
-          todayReceipts.filter(
-            receipt =>
-              String(
-                receipt.qualityGrade ||
-                ''
-              )
-                .toLowerCase() ===
-              'failed'
-          ).length
-
-      };
-
-
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         generatedAt:
-          new Date().toISOString(),
+          now(),
 
         date:
-          today,
+          currentDate,
 
         metrics: {
-
           registeredFarmers:
             farmers.length,
 
@@ -1178,70 +847,110 @@ app.get(
             todayBookings.length,
 
           todayProcurementQuintals:
-            Number(
-              todayProcurementQuintals.toFixed(2)
+            round2(
+              todayReceipts.reduce(
+                (
+                  total,
+                  receipt
+                ) =>
+                  total +
+                  getReceiptQuantity(
+                    receipt
+                  ),
+                0
+              )
             ),
 
           activeQueue:
-            activeQueueBookings.length,
+            todayBookings.filter(
+              booking =>
+                ACTIVE_STATUSES.includes(
+                  booking.status
+                )
+            ).length,
 
           todayPayments:
-            Number(
-              todayPayments.toFixed(2)
+            round2(
+              todayReceipts.reduce(
+                (
+                  total,
+                  receipt
+                ) =>
+                  total +
+                  num(
+                    receipt.totalPayoutAmount
+                  ),
+                0
+              )
             ),
 
           completedTransactions:
             todayReceipts.length
-
         },
 
         cropBreakdown,
 
-        centers:
-          Object.values(
-            centerBreakdown
-          ),
+        centers,
 
-        qualitySummary,
+        qualitySummary: {
+          gradeA:
+            todayReceipts.filter(
+              receipt =>
+                String(
+                  receipt.qualityGrade ||
+                  ''
+                ).toLowerCase() ===
+                'grade a'
+            ).length,
+
+          gradeB:
+            todayReceipts.filter(
+              receipt =>
+                String(
+                  receipt.qualityGrade ||
+                  ''
+                ).toLowerCase() ===
+                'grade b'
+            ).length,
+
+          failed:
+            todayReceipts.filter(
+              receipt =>
+                String(
+                  receipt.qualityGrade ||
+                  ''
+                ).toLowerCase() ===
+                'failed'
+            ).length
+        },
 
         recentTransactions
-
       });
-
     } catch (error) {
-
       console.error(
         '[Admin Dashboard Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Unable to load administration dashboard.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A3 • ADMIN FARMER MANAGEMENT
-// ================================================================
+/* ============================================================
+   ADMIN FARMER MANAGEMENT
+   ============================================================ */
 
 app.get(
   '/api/admin/farmers',
   requireAdmin,
   (req, res) => {
-
     try {
-
       const farmers =
         readData(
           'farmers.json',
@@ -1260,71 +969,26 @@ app.get(
           []
         );
 
-
       const farmerRecords =
         farmers.map(
           farmer => {
-
             const farmerBookings =
               bookings.filter(
                 booking =>
+                  booking.farmerId ===
+                    farmer.farmerId ||
                   booking.kccNumber ===
-                  farmer.kccNumber
+                    farmer.kccNumber
               );
-
 
             const farmerReceipts =
               receipts.filter(
                 receipt =>
+                  receipt.farmerId ===
+                    farmer.farmerId ||
                   receipt.kccNumber ===
-                  farmer.kccNumber
+                    farmer.kccNumber
               );
-
-
-            const totalBookedQuintals =
-              farmerBookings.reduce(
-                (
-                  total,
-                  booking
-                ) =>
-                  total +
-                  Number(
-                    booking.quantityQuintals ||
-                    0
-                  ),
-                0
-              );
-
-
-            const totalProcuredQuintals =
-              farmerReceipts.reduce(
-                (
-                  total,
-                  receipt
-                ) =>
-                  total +
-                  Number(
-                    receipt.netWeightQuintals ||
-                    0
-                  ),
-                0
-              );
-
-
-            const totalPayout =
-              farmerReceipts.reduce(
-                (
-                  total,
-                  receipt
-                ) =>
-                  total +
-                  Number(
-                    receipt.totalPayoutAmount ||
-                    0
-                  ),
-                0
-              );
-
 
             const latestBooking =
               farmerBookings
@@ -1337,9 +1001,7 @@ app.get(
                     new Date(
                       a.createdAt || 0
                     )
-                )[0] ||
-              null;
-
+                )[0] || null;
 
             const latestReceipt =
               farmerReceipts
@@ -1352,13 +1014,14 @@ app.get(
                     new Date(
                       a.timestamp || 0
                     )
-                )[0] ||
-              null;
-
+                )[0] || null;
 
             return {
-
               id:
+                farmer.id,
+
+              farmerId:
+                farmer.farmerId ||
                 farmer.id,
 
               kccNumber:
@@ -1377,17 +1040,15 @@ app.get(
                 farmer.district,
 
               landHoldingAcres:
-                Number(
-                  farmer.landHoldingAcres ||
-                  0
+                num(
+                  farmer.landHoldingAcres
                 ),
 
               mandi:
                 farmer.mandi,
 
               crops:
-                farmer.crops ||
-                [],
+                farmer.crops || [],
 
               verifiedBank:
                 farmer.verifiedBank,
@@ -1401,35 +1062,64 @@ app.get(
               activeBookings:
                 farmerBookings.filter(
                   booking =>
-                    booking.status ===
-                      'Scheduled' ||
-                    booking.status ===
-                      'Active Gate Queue' ||
-                    booking.status ===
-                      'Weighbridge'
+                    ACTIVE_STATUSES.includes(
+                      booking.status
+                    )
                 ).length,
 
               completedTransactions:
                 farmerReceipts.length,
 
               totalBookedQuintals:
-                Number(
-                  totalBookedQuintals.toFixed(2)
+                round2(
+                  farmerBookings.reduce(
+                    (
+                      total,
+                      booking
+                    ) =>
+                      total +
+                      getBookingQuantity(
+                        booking
+                      ),
+                    0
+                  )
                 ),
 
               totalProcuredQuintals:
-                Number(
-                  totalProcuredQuintals.toFixed(2)
+                round2(
+                  farmerReceipts.reduce(
+                    (
+                      total,
+                      receipt
+                    ) =>
+                      total +
+                      getReceiptQuantity(
+                        receipt
+                      ),
+                    0
+                  )
                 ),
 
               totalPayout:
-                Number(
-                  totalPayout.toFixed(2)
+                round2(
+                  farmerReceipts.reduce(
+                    (
+                      total,
+                      receipt
+                    ) =>
+                      total +
+                      num(
+                        receipt.totalPayoutAmount
+                      ),
+                    0
+                  )
                 ),
 
               latestBooking:
                 latestBooking
                   ? {
+                      bookingId:
+                        latestBooking.bookingId,
 
                       tokenId:
                         latestBooking.tokenId,
@@ -1444,9 +1134,8 @@ app.get(
                         latestBooking.cropType,
 
                       quantityQuintals:
-                        Number(
-                          latestBooking.quantityQuintals ||
-                          0
+                        getBookingQuantity(
+                          latestBooking
                         ),
 
                       center:
@@ -1454,14 +1143,12 @@ app.get(
 
                       status:
                         latestBooking.status
-
                     }
                   : null,
 
               latestReceipt:
                 latestReceipt
                   ? {
-
                       receiptId:
                         latestReceipt.receiptId,
 
@@ -1472,87 +1159,58 @@ app.get(
                         latestReceipt.cropType,
 
                       netWeightQuintals:
-                        Number(
-                          latestReceipt.netWeightQuintals ||
-                          0
+                        getReceiptQuantity(
+                          latestReceipt
                         ),
 
                       qualityGrade:
                         latestReceipt.qualityGrade,
 
                       totalPayoutAmount:
-                        Number(
-                          latestReceipt.totalPayoutAmount ||
-                          0
+                        num(
+                          latestReceipt.totalPayoutAmount
                         ),
 
                       timestamp:
                         latestReceipt.timestamp
-
                     }
                   : null
-
             };
-
           }
         );
 
-
       const search =
         String(
-          req.query.search ||
-          ''
+          req.query.search || ''
         )
           .trim()
           .toLowerCase();
-
 
       const filteredFarmers =
         search
           ? farmerRecords.filter(
               farmer =>
-                String(
-                  farmer.name ||
-                  ''
+                [
+                  farmer.name,
+                  farmer.kccNumber,
+                  farmer.phone,
+                  farmer.district,
+                  farmer.mandi
+                ].some(
+                  value =>
+                    String(
+                      value || ''
+                    )
+                      .toLowerCase()
+                      .includes(
+                        search
+                      )
                 )
-                  .toLowerCase()
-                  .includes(search) ||
-
-                String(
-                  farmer.kccNumber ||
-                  ''
-                )
-                  .toLowerCase()
-                  .includes(search) ||
-
-                String(
-                  farmer.phone ||
-                  ''
-                )
-                  .toLowerCase()
-                  .includes(search) ||
-
-                String(
-                  farmer.district ||
-                  ''
-                )
-                  .toLowerCase()
-                  .includes(search) ||
-
-                String(
-                  farmer.mandi ||
-                  ''
-                )
-                  .toLowerCase()
-                  .includes(search)
             )
           : farmerRecords;
 
-
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         totalFarmers:
           filteredFarmers.length,
@@ -1562,43 +1220,32 @@ app.get(
 
         farmers:
           filteredFarmers
-
       });
-
     } catch (error) {
-
       console.error(
         '[Admin Farmer Management Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Unable to load farmer management data.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A4 • MANDI & SLOT MANAGEMENT
-// ================================================================
+/* ============================================================
+   ADMIN MANDI MANAGEMENT
+   ============================================================ */
 
 app.get(
   '/api/admin/mandi',
   requireAdmin,
   (req, res) => {
-
     try {
-
       const bookings =
         readData(
           'bookings.json',
@@ -1617,17 +1264,15 @@ app.get(
           []
         );
 
-
-      const today =
-        getTodayDate();
-
+      const currentDate =
+        today();
 
       const todayBookings =
         bookings
           .filter(
             booking =>
               booking.date ===
-              today
+              currentDate
           )
           .sort(
             (a, b) =>
@@ -1639,34 +1284,34 @@ app.get(
               )
           );
 
-
       const bookingRecords =
         todayBookings.map(
           booking => {
-
             const farmer =
-              farmers.find(
-                farmer =>
-                  farmer.kccNumber ===
-                  booking.kccNumber
+              findFarmer(
+                farmers,
+                booking.kccNumber,
+                booking.farmerId
               );
-
 
             const receipt =
               receipts.find(
-                receipt =>
-                  receipt.tokenId ===
+                item =>
+                  item.tokenId ===
                   booking.tokenId
               );
 
-
             return {
-
               tokenId:
                 booking.tokenId,
 
               bookingId:
                 booking.bookingId,
+
+              farmerId:
+                booking.farmerId ||
+                farmer?.farmerId ||
+                null,
 
               farmerName:
                 booking.farmerName ||
@@ -1684,16 +1329,14 @@ app.get(
                 booking.cropType,
 
               bookedQuantityQuintals:
-                Number(
-                  booking.quantityQuintals ||
-                  0
+                getBookingQuantity(
+                  booking
                 ),
 
               actualQuantityQuintals:
                 receipt
-                  ? Number(
-                      receipt.netWeightQuintals ||
-                      0
+                  ? getReceiptQuantity(
+                      receipt
                     )
                   : null,
 
@@ -1701,16 +1344,15 @@ app.get(
                 booking.date,
 
               timeSlot:
-                booking.timeSlot ||
-                '10:00 AM - 12:00 PM',
+                booking.timeSlot,
 
               centerId:
                 booking.centerId ||
-                'Mandi-Center-01',
+                MANDI_CENTERS[0].centerId,
 
               center:
                 booking.center ||
-                'Mandi-Center-01 (Main Gate)',
+                MANDI_CENTERS[0].center,
 
               vehicleNumber:
                 booking.vehicleNumber ||
@@ -1731,98 +1373,45 @@ app.get(
 
               payoutAmount:
                 receipt
-                  ? Number(
-                      receipt.totalPayoutAmount ||
-                      0
+                  ? num(
+                      receipt.totalPayoutAmount
                     )
                   : 0,
 
               createdAt:
                 booking.createdAt ||
                 null
-
             };
-
           }
         );
-
 
       const centers =
         MANDI_CENTERS.map(
           configuredCenter => {
-
             const centerBookings =
               todayBookings.filter(
                 booking =>
                   (
                     booking.centerId ||
-                    'Mandi-Center-01'
+                    MANDI_CENTERS[0].centerId
                   ) ===
                   configuredCenter.centerId
               );
 
-
-            const bookedQuintals =
+            const booked =
               centerBookings.reduce(
                 (
                   total,
                   booking
                 ) =>
                   total +
-                  Number(
-                    booking.quantityQuintals ||
-                    0
+                  getBookingQuantity(
+                    booking
                   ),
                 0
               );
 
-
-            const activeQueue =
-              centerBookings.filter(
-                booking =>
-                  booking.status ===
-                    'Scheduled' ||
-                  booking.status ===
-                    'Active Gate Queue' ||
-                  booking.status ===
-                    'Weighbridge'
-              ).length;
-
-
-            const completed =
-              centerBookings.filter(
-                booking =>
-                  booking.status ===
-                  'Quality Approved'
-              ).length;
-
-
-            const remaining =
-              Math.max(
-                0,
-                configuredCenter.capacityQuintals -
-                bookedQuintals
-              );
-
-
-            const utilization =
-              configuredCenter.capacityQuintals >
-              0
-                ? Math.min(
-                    100,
-                    Math.round(
-                      (
-                        bookedQuintals /
-                        configuredCenter.capacityQuintals
-                      ) *
-                      100
-                    )
-                  )
-                : 0;
-
-
             return {
-
               centerId:
                 configuredCenter.centerId,
 
@@ -1836,102 +1425,55 @@ app.get(
                 configuredCenter.capacityQuintals,
 
               bookedQuintals:
-                Number(
-                  bookedQuintals.toFixed(2)
-                ),
+                round2(booked),
 
               remainingQuintals:
-                Number(
-                  remaining.toFixed(2)
+                round2(
+                  Math.max(
+                    0,
+                    configuredCenter.capacityQuintals -
+                      booked
+                  )
                 ),
 
               utilizationPercentage:
-                utilization,
+                configuredCenter.capacityQuintals
+                  ? Math.min(
+                      100,
+                      Math.round(
+                        (
+                          booked /
+                          configuredCenter.capacityQuintals
+                        ) *
+                        100
+                      )
+                    )
+                  : 0,
 
-              activeQueue,
+              activeQueue:
+                centerBookings.filter(
+                  booking =>
+                    ACTIVE_STATUSES.includes(
+                      booking.status
+                    )
+                ).length,
 
-              completed,
+              completed:
+                centerBookings.filter(
+                  booking =>
+                    booking.status ===
+                    COMPLETED_STATUS
+                ).length,
 
               totalBookings:
                 centerBookings.length
-
             };
-
           }
         );
-
-
-      const activeCenterIds =
-        new Set(
-          todayBookings.map(
-            booking =>
-              booking.centerId ||
-              'Mandi-Center-01'
-          )
-        );
-
-
-      const activeCenters =
-        centers.filter(
-          center =>
-            activeCenterIds.has(
-              center.centerId
-            )
-        );
-
-
-      const centersForTotals =
-        activeCenters.length > 0
-          ? activeCenters
-          : centers.filter(
-              center =>
-                center.centerId ===
-                'Mandi-Center-01'
-            );
-
-
-      const totalCapacity =
-        centersForTotals.reduce(
-          (
-            total,
-            center
-          ) =>
-            total +
-            Number(
-              center.capacityQuintals ||
-              0
-            ),
-          0
-        );
-
-
-      const totalBooked =
-        centersForTotals.reduce(
-          (
-            total,
-            center
-          ) =>
-            total +
-            Number(
-              center.bookedQuintals ||
-              0
-            ),
-          0
-        );
-
-
-      const totalRemaining =
-        Math.max(
-          0,
-          totalCapacity -
-          totalBooked
-        );
-
 
       const slots =
         MANDI_SLOTS.map(
           configuredSlot => {
-
             const slotBookings =
               todayBookings.filter(
                 booking =>
@@ -1942,44 +1484,20 @@ app.get(
                   configuredSlot.timeSlot
               );
 
-
-            const bookedQuintals =
+            const booked =
               slotBookings.reduce(
                 (
                   total,
                   booking
                 ) =>
                   total +
-                  Number(
-                    booking.quantityQuintals ||
-                    0
+                  getBookingQuantity(
+                    booking
                   ),
                 0
               );
 
-
-            const activeQueue =
-              slotBookings.filter(
-                booking =>
-                  booking.status ===
-                    'Scheduled' ||
-                  booking.status ===
-                    'Active Gate Queue' ||
-                  booking.status ===
-                    'Weighbridge'
-              ).length;
-
-
-            const remaining =
-              Math.max(
-                0,
-                configuredSlot.capacityQuintals -
-                bookedQuintals
-              );
-
-
             return {
-
               slotId:
                 configuredSlot.slotId,
 
@@ -1990,100 +1508,134 @@ app.get(
                 configuredSlot.capacityQuintals,
 
               bookedQuintals:
-                Number(
-                  bookedQuintals.toFixed(2)
-                ),
+                round2(booked),
 
               remainingQuintals:
-                Number(
-                  remaining.toFixed(2)
+                round2(
+                  Math.max(
+                    0,
+                    configuredSlot.capacityQuintals -
+                      booked
+                  )
                 ),
 
               bookingCount:
                 slotBookings.length,
 
-              activeQueue,
+              activeQueue:
+                slotBookings.filter(
+                  booking =>
+                    ACTIVE_STATUSES.includes(
+                      booking.status
+                    )
+                ).length,
 
               available:
-                remaining > 0
-
+                booked <
+                configuredSlot.capacityQuintals
             };
-
           }
         );
 
-
-      const totalSlots =
-        slots.length;
-
-
-      const bookedSlots =
-        slots.filter(
-          slot =>
-            slot.bookingCount >
-            0
-        ).length;
-
-
-      const availableSlots =
-        Math.max(
-          totalSlots -
-          bookedSlots,
-          0
+      const activeCenters =
+        centers.filter(
+          center =>
+            todayBookings.some(
+              booking =>
+                (
+                  booking.centerId ||
+                  MANDI_CENTERS[0].centerId
+                ) ===
+                center.centerId
+            )
         );
 
+      const centersForTotals =
+        activeCenters.length > 0
+          ? activeCenters
+          : [
+              centers[0]
+            ];
 
-      const activeSlotQueue =
-        slots.reduce(
+      const totalCapacity =
+        centersForTotals.reduce(
           (
             total,
-            slot
+            center
           ) =>
             total +
-            slot.activeQueue,
+            center.capacityQuintals,
           0
         );
 
+      const totalBooked =
+        centersForTotals.reduce(
+          (
+            total,
+            center
+          ) =>
+            total +
+            center.bookedQuintals,
+          0
+        );
 
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         generatedAt:
-          new Date().toISOString(),
+          now(),
 
         date:
-          today,
+          currentDate,
 
         summary: {
-
           totalCapacityQuintals:
-            Number(
-              totalCapacity.toFixed(2)
+            round2(
+              totalCapacity
             ),
 
           bookedQuantityQuintals:
-            Number(
-              totalBooked.toFixed(2)
+            round2(
+              totalBooked
             ),
 
           remainingCapacityQuintals:
-            Number(
-              totalRemaining.toFixed(2)
+            round2(
+              Math.max(
+                0,
+                totalCapacity -
+                  totalBooked
+              )
             ),
 
           todayBookings:
             todayBookings.length,
 
-          totalSlots,
+          totalSlots:
+            slots.length,
 
-          bookedSlots,
+          bookedSlots:
+            slots.filter(
+              slot =>
+                slot.bookingCount > 0
+            ).length,
 
-          availableSlots,
+          availableSlots:
+            slots.filter(
+              slot =>
+                slot.bookingCount === 0
+            ).length,
 
-          activeSlotQueue
-
+          activeSlotQueue:
+            slots.reduce(
+              (
+                total,
+                slot
+              ) =>
+                total +
+                slot.activeQueue,
+              0
+            )
         },
 
         centers,
@@ -2092,43 +1644,32 @@ app.get(
 
         bookings:
           bookingRecords
-
       });
-
     } catch (error) {
-
       console.error(
         '[Admin Mandi Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Unable to load mandi and slot management data.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A5 • LIVE PROCUREMENT QUEUE
-// ================================================================
+/* ============================================================
+   ADMIN LIVE QUEUE
+   ============================================================ */
 
 app.get(
   '/api/admin/queue',
   requireAdmin,
   (req, res) => {
-
     try {
-
       const farmers =
         readData(
           'farmers.json',
@@ -2147,123 +1688,61 @@ app.get(
           []
         );
 
-
-      const today =
-        getTodayDate();
-
+      const currentDate =
+        today();
 
       const todayBookings =
         bookings
           .filter(
             booking =>
               booking.date ===
-              today
+              currentDate
           )
           .sort(
             (a, b) =>
               new Date(
-                a.createdAt || 0
+                a.checkInAt ||
+                  a.createdAt ||
+                  0
               ) -
               new Date(
-                b.createdAt || 0
+                b.checkInAt ||
+                  b.createdAt ||
+                  0
               )
           );
 
-
-      const isWaiting =
+      const waiting =
         booking =>
           booking.status ===
           'Scheduled';
 
-
-      const isCheckedIn =
+      const checkedIn =
         booking =>
           booking.status ===
           'Active Gate Queue';
 
-
-      const isServing =
+      const serving =
         booking =>
-          booking.status ===
-            'Weighbridge' ||
-          booking.status ===
-            'Serving';
-
-
-      const isCompleted =
-        booking =>
-          booking.status ===
-          'Quality Approved';
-
-
-      const isActive =
-        booking =>
-          isWaiting(booking) ||
-          isCheckedIn(booking) ||
-          isServing(booking);
-
-
-      const activeBookings =
-        todayBookings
-          .filter(
-            booking =>
-              isActive(booking)
-          )
-          .sort(
-            (a, b) => {
-
-              const aTime =
-                new Date(
-                  a.checkInAt ||
-                  a.createdAt ||
-                  0
-                ).getTime();
-
-
-              const bTime =
-                new Date(
-                  b.checkInAt ||
-                  b.createdAt ||
-                  0
-                ).getTime();
-
-
-              return (
-                aTime -
-                bTime
-              );
-
-            }
+          [
+            'Weighbridge',
+            'Serving'
+          ].includes(
+            booking.status
           );
 
+      const activeBookings =
+        todayBookings.filter(
+          booking =>
+            ACTIVE_STATUSES.includes(
+              booking.status
+            )
+        );
 
       const servingBookings =
         activeBookings.filter(
-          booking =>
-            isServing(booking)
+          serving
         );
-
-
-      const waitingBookings =
-        activeBookings.filter(
-          booking =>
-            isWaiting(booking)
-        );
-
-
-      const checkedInBookings =
-        activeBookings.filter(
-          booking =>
-            isCheckedIn(booking)
-        );
-
-
-      const completedBookings =
-        todayBookings.filter(
-          booking =>
-            isCompleted(booking)
-        );
-
 
       const queueRecords =
         todayBookings
@@ -2274,79 +1753,57 @@ app.get(
           )
           .map(
             booking => {
-
               const farmer =
-                farmers.find(
-                  farmer =>
-                    farmer.kccNumber ===
-                    booking.kccNumber
+                findFarmer(
+                  farmers,
+                  booking.kccNumber,
+                  booking.farmerId
                 );
-
 
               const receipt =
                 receipts.find(
-                  receipt =>
-                    receipt.tokenId ===
+                  item =>
+                    item.tokenId ===
                     booking.tokenId
                 );
-
 
               const activeIndex =
                 activeBookings.findIndex(
-                  activeBooking =>
-                    activeBooking.tokenId ===
+                  item =>
+                    item.tokenId ===
                     booking.tokenId
                 );
-
-
-              const queuePosition =
-                activeIndex >= 0
-                  ? activeIndex + 1
-                  : null;
-
 
               let displayStatus =
                 'Waiting';
 
-
               if (
-                isCheckedIn(booking)
+                checkedIn(
+                  booking
+                )
               ) {
-
                 displayStatus =
                   'Checked In';
-
               }
 
-
               if (
-                isServing(booking)
+                serving(
+                  booking
+                )
               ) {
-
                 displayStatus =
                   'Serving';
-
               }
-
 
               if (
-                isCompleted(booking)
+                booking.status ===
+                COMPLETED_STATUS
               ) {
-
                 displayStatus =
                   'Completed';
-
               }
 
-
-              const queueTimestamp =
-                booking.checkInAt ||
-                booking.createdAt ||
-                null;
-
-
               return {
-
                 tokenId:
                   booking.tokenId ||
                   null,
@@ -2355,7 +1812,15 @@ app.get(
                   booking.bookingId ||
                   null,
 
-                queuePosition,
+                farmerId:
+                  booking.farmerId ||
+                  farmer?.farmerId ||
+                  null,
+
+                queuePosition:
+                  activeIndex >= 0
+                    ? activeIndex + 1
+                    : null,
 
                 farmerName:
                   booking.farmerName ||
@@ -2375,16 +1840,14 @@ app.get(
                   null,
 
                 bookedQuantityQuintals:
-                  Number(
-                    booking.quantityQuintals ||
-                    0
+                  getBookingQuantity(
+                    booking
                   ),
 
                 actualQuantityQuintals:
                   receipt
-                    ? Number(
-                        receipt.netWeightQuintals ||
-                        0
+                    ? getReceiptQuantity(
+                        receipt
                       )
                     : null,
 
@@ -2392,16 +1855,13 @@ app.get(
                   booking.date,
 
                 timeSlot:
-                  booking.timeSlot ||
-                  '10:00 AM - 12:00 PM',
+                  booking.timeSlot,
 
                 centerId:
-                  booking.centerId ||
-                  'Mandi-Center-01',
+                  booking.centerId,
 
                 center:
-                  booking.center ||
-                  'Mandi-Center-01 (Main Gate)',
+                  booking.center,
 
                 vehicleNumber:
                   booking.vehicleNumber ||
@@ -2422,7 +1882,10 @@ app.get(
                   null,
 
                 updatedAt:
-                  queueTimestamp,
+                  booking.updatedAt ||
+                  booking.checkInAt ||
+                  booking.createdAt ||
+                  null,
 
                 qualityGrade:
                   receipt?.qualityGrade ||
@@ -2430,145 +1893,127 @@ app.get(
 
                 payoutAmount:
                   receipt
-                    ? Number(
-                        receipt.totalPayoutAmount ||
-                        0
+                    ? num(
+                        receipt.totalPayoutAmount
                       )
                     : 0
-
               };
-
             }
           );
 
+      const centerBreakdown = {};
+
+      activeBookings.forEach(
+        booking => {
+          const centerId =
+            booking.centerId ||
+            MANDI_CENTERS[0].centerId;
+
+          const centerName =
+            booking.center ||
+            MANDI_CENTERS[0].center;
+
+          if (
+            !centerBreakdown[
+              centerId
+            ]
+          ) {
+            centerBreakdown[
+              centerId
+            ] = {
+              centerId,
+
+              center:
+                centerName,
+
+              waiting: 0,
+              checkedIn: 0,
+              serving: 0,
+              totalActive: 0
+            };
+          }
+
+          centerBreakdown[
+            centerId
+          ].totalActive += 1;
+
+          if (
+            waiting(
+              booking
+            )
+          ) {
+            centerBreakdown[
+              centerId
+            ].waiting += 1;
+          }
+
+          if (
+            checkedIn(
+              booking
+            )
+          ) {
+            centerBreakdown[
+              centerId
+            ].checkedIn += 1;
+          }
+
+          if (
+            serving(
+              booking
+            )
+          ) {
+            centerBreakdown[
+              centerId
+            ].serving += 1;
+          }
+        }
+      );
 
       const currentlyServing =
         servingBookings.length > 0
           ? queueRecords.find(
               record =>
                 record.tokenId ===
-                servingBookings[0].tokenId
-            ) ||
-            null
+                servingBookings[0]
+                  .tokenId
+            ) || null
           : null;
 
-
-      const centerBreakdown = {};
-
-
-      activeBookings.forEach(
-        booking => {
-
-          const centerId =
-            booking.centerId ||
-            'Mandi-Center-01';
-
-
-          const centerName =
-            booking.center ||
-            'Mandi-Center-01 (Main Gate)';
-
-
-          if (
-            !centerBreakdown[centerId]
-          ) {
-
-            centerBreakdown[centerId] = {
-
-              centerId,
-
-              center:
-                centerName,
-
-              waiting:
-                0,
-
-              checkedIn:
-                0,
-
-              serving:
-                0,
-
-              totalActive:
-                0
-
-            };
-
-          }
-
-
-          centerBreakdown[centerId]
-            .totalActive +=
-            1;
-
-
-          if (
-            isWaiting(booking)
-          ) {
-
-            centerBreakdown[centerId]
-              .waiting +=
-              1;
-
-          }
-
-
-          if (
-            isCheckedIn(booking)
-          ) {
-
-            centerBreakdown[centerId]
-              .checkedIn +=
-              1;
-
-          }
-
-
-          if (
-            isServing(booking)
-          ) {
-
-            centerBreakdown[centerId]
-              .serving +=
-              1;
-
-          }
-
-        }
-      );
-
-
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         generatedAt:
-          new Date().toISOString(),
+          now(),
 
         date:
-          today,
+          currentDate,
 
         summary: {
-
           currentlyServing:
             servingBookings.length,
 
           waiting:
-            waitingBookings.length,
+            activeBookings.filter(
+              waiting
+            ).length,
 
           checkedIn:
-            checkedInBookings.length,
+            activeBookings.filter(
+              checkedIn
+            ).length,
 
           completed:
-            completedBookings.length,
+            todayBookings.filter(
+              booking =>
+                booking.status ===
+                COMPLETED_STATUS
+            ).length,
 
           totalActive:
             activeBookings.length,
 
           totalToday:
             todayBookings.length
-
         },
 
         currentlyServing,
@@ -2580,43 +2025,32 @@ app.get(
           Object.values(
             centerBreakdown
           )
-
       });
-
     } catch (error) {
-
       console.error(
         '[Admin Queue Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Unable to load live procurement queue.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A6 • PAYMENT MONITORING
-// ================================================================
+/* ============================================================
+   ADMIN PAYMENT MONITORING
+   ============================================================ */
 
 app.get(
   '/api/admin/payments',
   requireAdmin,
   (req, res) => {
-
     try {
-
       const farmers =
         readData(
           'farmers.json',
@@ -2635,16 +2069,16 @@ app.get(
           []
         );
 
-
-      const today =
-        getTodayDate();
-
+      const payments =
+        readData(
+          'payments.json',
+          []
+        );
 
       const paymentRecords =
         receipts
           .map(
             receipt => {
-
               const booking =
                 bookings.find(
                   item =>
@@ -2652,40 +2086,46 @@ app.get(
                     receipt.tokenId
                 );
 
-
               const farmer =
-                farmers.find(
+                findFarmer(
+                  farmers,
+                  receipt.kccNumber,
+                  receipt.farmerId ||
+                    booking?.farmerId
+                );
+
+              const payment =
+                payments.find(
                   item =>
-                    item.kccNumber ===
-                    receipt.kccNumber
+                    item.tokenId ===
+                    receipt.tokenId
                 );
 
-
-              const paymentStatus =
-                normalizePaymentStatus(
-                  receipt
+              const status =
+                getPaymentStatus(
+                  payment || receipt
                 );
-
-
-              const transactionId =
-                receipt.transactionId ||
-                receipt.receiptId ||
-                `TXN-${receipt.tokenId || 'UNKNOWN'}`;
-
-
-              const updatedAt =
-                receipt.paymentUpdatedAt ||
-                receipt.timestamp ||
-                booking?.createdAt ||
-                null;
-
 
               return {
+                transactionId:
+                  receipt.transactionId ||
+                  payment?.transactionId ||
+                  receipt.receiptId ||
+                  `TXN-${receipt.tokenId || 'UNKNOWN'}`,
 
-                transactionId,
+                paymentId:
+                  payment?.paymentId ||
+                  null,
 
                 receiptId:
                   receipt.receiptId ||
+                  null,
+
+                farmerId:
+                  receipt.farmerId ||
+                  payment?.farmerId ||
+                  booking?.farmerId ||
+                  farmer?.farmerId ||
                   null,
 
                 farmerName:
@@ -2704,9 +2144,7 @@ app.get(
                   null,
 
                 tokenId:
-                  receipt.tokenId ||
-                  booking?.tokenId ||
-                  null,
+                  receipt.tokenId,
 
                 cropType:
                   receipt.cropType ||
@@ -2715,75 +2153,77 @@ app.get(
 
                 centerId:
                   booking?.centerId ||
-                  'Mandi-Center-01',
+                  MANDI_CENTERS[0].centerId,
 
                 center:
                   booking?.center ||
-                  'Mandi-Center-01 (Main Gate)',
+                  MANDI_CENTERS[0].center,
 
                 quantityQuintals:
-                  Number(
-                    receipt.netWeightQuintals ||
-                    0
+                  getReceiptQuantity(
+                    receipt
                   ),
 
                 bookedQuantityQuintals:
-                  Number(
-                    booking?.quantityQuintals ||
-                    0
-                  ),
+                  booking
+                    ? getBookingQuantity(
+                        booking
+                      )
+                    : 0,
 
                 mspPricePerQuintal:
-                  Number(
-                    receipt.mspPricePerQuintal ||
-                    0
+                  num(
+                    receipt.mspPricePerQuintal
                   ),
 
                 payableAmount:
-                  Number(
-                    receipt.totalPayoutAmount ||
-                    0
+                  num(
+                    receipt.totalPayoutAmount
                   ),
 
                 qualityGrade:
                   receipt.qualityGrade ||
                   null,
 
-                paymentStatus,
+                paymentStatus:
+                  status,
 
                 paymentStatusLabel:
                   getPaymentStatusLabel(
-                    paymentStatus
+                    status
                   ),
 
                 pfmsReference:
+                  payment?.pfmsReference ||
                   receipt.pfmsReference ||
                   null,
 
                 utr:
+                  payment?.utr ||
                   receipt.utr ||
                   null,
 
                 date:
                   booking?.date ||
-                  (
-                    receipt.timestamp
-                      ? receipt.timestamp.split('T')[0]
-                      : null
-                  ),
+                  receipt.timestamp?.split(
+                    'T'
+                  )[0] ||
+                  null,
 
                 receiptTimestamp:
                   receipt.timestamp ||
                   null,
 
-                updatedAt,
+                updatedAt:
+                  payment?.updatedAt ||
+                  receipt.paymentUpdatedAt ||
+                  receipt.timestamp ||
+                  null,
 
                 bookingStatus:
                   booking?.status ||
                   null
-
               };
-
             }
           )
           .sort(
@@ -2796,155 +2236,115 @@ app.get(
               )
           );
 
+      const currentDate =
+        today();
 
-      const totalPaymentValue =
-        paymentRecords.reduce(
-          (
-            total,
-            payment
-          ) =>
-            total +
-            Number(
-              payment.payableAmount ||
-              0
-            ),
-          0
-        );
-
-
-      const pending =
-        paymentRecords.filter(
-          payment =>
-            payment.paymentStatus ===
-            'pending'
-        ).length;
-
-
-      const pfmsBatched =
-        paymentRecords.filter(
-          payment =>
-            payment.paymentStatus ===
-            'pfms-batched'
-        ).length;
-
-
-      const dbtDispatched =
-        paymentRecords.filter(
-          payment =>
-            payment.paymentStatus ===
-            'dbt-dispatched'
-        ).length;
-
-
-      const failed =
-        paymentRecords.filter(
-          payment =>
-            payment.paymentStatus ===
-            'failed'
-        ).length;
-
-
-      const todayPaymentRecords =
+      const todayPayments =
         paymentRecords.filter(
           payment =>
             payment.date ===
-            today
+            currentDate
         );
-
-
-      const todayPaymentValue =
-        todayPaymentRecords.reduce(
-          (
-            total,
-            payment
-          ) =>
-            total +
-            Number(
-              payment.payableAmount ||
-              0
-            ),
-          0
-        );
-
 
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         generatedAt:
-          new Date().toISOString(),
+          now(),
 
         date:
-          today,
+          currentDate,
 
         summary: {
-
           totalPaymentValue:
-            Number(
-              totalPaymentValue.toFixed(2)
+            round2(
+              paymentRecords.reduce(
+                (
+                  total,
+                  payment
+                ) =>
+                  total +
+                  payment.payableAmount,
+                0
+              )
             ),
 
-          pending,
+          pending:
+            paymentRecords.filter(
+              payment =>
+                payment.paymentStatus ===
+                'pending'
+            ).length,
 
-          pfmsBatched,
+          pfmsBatched:
+            paymentRecords.filter(
+              payment =>
+                payment.paymentStatus ===
+                'pfms-batched'
+            ).length,
 
-          dbtDispatched,
+          dbtDispatched:
+            paymentRecords.filter(
+              payment =>
+                payment.paymentStatus ===
+                'dbt-dispatched'
+            ).length,
 
-          failed,
+          failed:
+            paymentRecords.filter(
+              payment =>
+                payment.paymentStatus ===
+                'failed'
+            ).length,
 
           totalTransactions:
             paymentRecords.length,
 
           todayPaymentValue:
-            Number(
-              todayPaymentValue.toFixed(2)
+            round2(
+              todayPayments.reduce(
+                (
+                  total,
+                  payment
+                ) =>
+                  total +
+                  payment.payableAmount,
+                0
+              )
             ),
 
           todayTransactions:
-            todayPaymentRecords.length
-
+            todayPayments.length
         },
 
         payments:
           paymentRecords
-
       });
-
     } catch (error) {
-
       console.error(
         '[Admin Payment Monitoring Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Unable to load payment monitoring data.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A7 • REPORTS & ANALYTICS
-// ================================================================
+/* ============================================================
+   ADMIN REPORTS
+   ============================================================ */
 
 app.get(
   '/api/admin/reports',
   requireAdmin,
   (req, res) => {
-
     try {
-
       const farmers =
         readData(
           'farmers.json',
@@ -2963,14 +2363,14 @@ app.get(
           []
         );
 
+      const payments =
+        readData(
+          'payments.json',
+          []
+        );
 
-      const today =
-        getTodayDate();
-
-
-      // ------------------------------------------------------------
-      // FILTERS
-      // ------------------------------------------------------------
+      const currentDate =
+        today();
 
       const requestedDate =
         String(
@@ -2980,84 +2380,53 @@ app.get(
           .trim()
           .toLowerCase();
 
-
       const requestedCenter =
         String(
           req.query.center ||
           'all'
-        )
-          .trim();
-
+        ).trim();
 
       let reportBookings =
         bookings.slice();
 
-
       let reportReceipts =
         receipts.slice();
-
-
-      // ------------------------------------------------------------
-      // DATE FILTER
-      // ------------------------------------------------------------
 
       if (
         requestedDate ===
         'today'
       ) {
-
         reportBookings =
           reportBookings.filter(
             booking =>
               booking.date ===
-              today
+              currentDate
           );
-
 
         reportReceipts =
           reportReceipts.filter(
-            receipt => {
-
-              if (
-                !receipt.timestamp
-              ) {
-
-                return false;
-
-              }
-
-
-              return receipt.timestamp
-                .startsWith(
-                  today
-                );
-
-            }
+            receipt =>
+              receipt.timestamp &&
+              receipt.timestamp.startsWith(
+                currentDate
+              )
           );
-
       }
-
-
-      // ------------------------------------------------------------
-      // CENTER FILTER
-      // ------------------------------------------------------------
 
       if (
         requestedCenter &&
         requestedCenter !==
-        'all'
+          'all'
       ) {
-
         reportBookings =
           reportBookings.filter(
             booking =>
               (
                 booking.centerId ||
-                'Mandi-Center-01'
+                MANDI_CENTERS[0].centerId
               ) ===
               requestedCenter
           );
-
 
         const reportTokens =
           new Set(
@@ -3067,7 +2436,6 @@ app.get(
             )
           );
 
-
         reportReceipts =
           reportReceipts.filter(
             receipt =>
@@ -3075,24 +2443,7 @@ app.get(
                 receipt.tokenId
               )
           );
-
       }
-
-
-      // ------------------------------------------------------------
-      // LOOKUPS
-      // ------------------------------------------------------------
-
-      const farmerByKcc =
-        new Map(
-          farmers.map(
-            farmer => [
-              farmer.kccNumber,
-              farmer
-            ]
-          )
-        );
-
 
       const bookingByToken =
         new Map(
@@ -3104,183 +2455,131 @@ app.get(
           )
         );
 
-
-      // ------------------------------------------------------------
-      // OVERALL SUMMARY
-      // ------------------------------------------------------------
+      const farmerByKcc =
+        new Map(
+          farmers.map(
+            farmer => [
+              farmer.kccNumber,
+              farmer
+            ]
+          )
+        );
 
       const uniqueFarmers =
         new Set(
           reportBookings
             .map(
               booking =>
+                booking.farmerId ||
                 booking.kccNumber
             )
             .filter(Boolean)
         );
 
-
-      const totalBookedQuintals =
+      const totalBooked =
         reportBookings.reduce(
           (
             total,
             booking
           ) =>
             total +
-            Number(
-              booking.quantityQuintals ||
-              0
+            getBookingQuantity(
+              booking
             ),
           0
         );
 
-
-      const totalProcuredQuintals =
+      const totalProcured =
         reportReceipts.reduce(
           (
             total,
             receipt
           ) =>
             total +
-            Number(
-              receipt.netWeightQuintals ||
-              0
+            getReceiptQuantity(
+              receipt
             ),
           0
         );
 
-
-      const totalPaymentValue =
+      const totalPayments =
         reportReceipts.reduce(
           (
             total,
             receipt
           ) =>
             total +
-            Number(
-              receipt.totalPayoutAmount ||
-              0
+            num(
+              receipt.totalPayoutAmount
             ),
           0
         );
-
-
-      const completedTransactions =
-        reportReceipts.length;
-
-
-      const averageProcurementPerTransaction =
-        completedTransactions > 0
-          ? (
-              totalProcuredQuintals /
-              completedTransactions
-            )
-          : 0;
-
-
-      // ------------------------------------------------------------
-      // CROP ANALYTICS
-      // ------------------------------------------------------------
 
       const cropMap = {};
 
-
       reportReceipts.forEach(
         receipt => {
-
-          const crop =
-            String(
-              receipt.cropType ||
-              'Other'
-            )
-              .trim()
-              .toLowerCase();
-
+          const cropType =
+            crop(
+              receipt.cropType
+            );
 
           if (
-            !cropMap[crop]
+            !cropMap[cropType]
           ) {
-
-            cropMap[crop] = {
-
-              cropType:
-                crop,
-
-              quantityQuintals:
-                0,
-
-              transactions:
-                0,
-
-              paymentValue:
-                0
-
+            cropMap[cropType] = {
+              cropType,
+              quantityQuintals: 0,
+              transactions: 0,
+              paymentValue: 0
             };
-
           }
 
+          cropMap[
+            cropType
+          ].quantityQuintals +=
+            getReceiptQuantity(
+              receipt
+            );
 
-          cropMap[crop]
-            .quantityQuintals +=
-              Number(
-                receipt.netWeightQuintals ||
-                0
-              );
+          cropMap[
+            cropType
+          ].transactions += 1;
 
-
-          cropMap[crop]
-            .transactions +=
-              1;
-
-
-          cropMap[crop]
-            .paymentValue +=
-              Number(
-                receipt.totalPayoutAmount ||
-                0
-              );
-
+          cropMap[
+            cropType
+          ].paymentValue +=
+            num(
+              receipt.totalPayoutAmount
+            );
         }
       );
-
 
       const cropAnalytics =
         Object.values(
           cropMap
         )
           .map(
-            crop => {
-
-              const name =
-                crop.cropType
+            item => ({
+              cropType:
+                item.cropType
                   .charAt(0)
                   .toUpperCase() +
-                crop.cropType.slice(1);
+                item.cropType.slice(1),
 
+              quantityQuintals:
+                round2(
+                  item.quantityQuintals
+                ),
 
-              return {
+              transactions:
+                item.transactions,
 
-                cropType:
-                  name,
-
-                quantityQuintals:
-                  Number(
-                    crop.quantityQuintals
-                      .toFixed(2)
-                  ),
-
-                transactions:
-                  crop.transactions,
-
-                paymentValue:
-                  Number(
-                    crop.paymentValue
-                      .toFixed(2)
-                  )
-
-              };
-
-            }
+              paymentValue:
+                round2(
+                  item.paymentValue
+                )
+            })
           )
           .sort(
             (a, b) =>
@@ -3288,75 +2587,60 @@ app.get(
               a.quantityQuintals
           );
 
-
-      // ------------------------------------------------------------
-      // CENTER ANALYTICS
-      // ------------------------------------------------------------
-
       const centerAnalytics =
         MANDI_CENTERS.map(
           configuredCenter => {
-
             const centerBookings =
               reportBookings.filter(
                 booking =>
                   (
                     booking.centerId ||
-                    'Mandi-Center-01'
+                    MANDI_CENTERS[0].centerId
                   ) ===
                   configuredCenter.centerId
               );
 
-
             const centerReceipts =
               reportReceipts.filter(
                 receipt => {
-
                   const booking =
                     bookingByToken.get(
                       receipt.tokenId
                     );
 
-
                   return (
                     booking?.centerId ||
-                    'Mandi-Center-01'
+                    MANDI_CENTERS[0].centerId
                   ) ===
                   configuredCenter.centerId;
-
                 }
               );
 
-
-            const bookedQuintals =
+            const booked =
               centerBookings.reduce(
                 (
                   total,
                   booking
                 ) =>
                   total +
-                  Number(
-                    booking.quantityQuintals ||
-                    0
+                  getBookingQuantity(
+                    booking
                   ),
                 0
               );
 
-
-            const procuredQuintals =
+            const procured =
               centerReceipts.reduce(
                 (
                   total,
                   receipt
                 ) =>
                   total +
-                  Number(
-                    receipt.netWeightQuintals ||
-                    0
+                  getReceiptQuantity(
+                    receipt
                   ),
                 0
               );
-
 
             const paymentValue =
               centerReceipts.reduce(
@@ -3365,32 +2649,13 @@ app.get(
                   receipt
                 ) =>
                   total +
-                  Number(
-                    receipt.totalPayoutAmount ||
-                    0
+                  num(
+                    receipt.totalPayoutAmount
                   ),
                 0
               );
 
-
-            const utilizationPercentage =
-              configuredCenter.capacityQuintals >
-              0
-                ? Math.min(
-                    100,
-                    Math.round(
-                      (
-                        bookedQuintals /
-                        configuredCenter.capacityQuintals
-                      ) *
-                      100
-                    )
-                  )
-                : 0;
-
-
             return {
-
               centerId:
                 configuredCenter.centerId,
 
@@ -3407,31 +2672,30 @@ app.get(
                 centerReceipts.length,
 
               bookedQuintals:
-                Number(
-                  bookedQuintals.toFixed(2)
-                ),
+                round2(booked),
 
               procuredQuintals:
-                Number(
-                  procuredQuintals.toFixed(2)
-                ),
+                round2(procured),
 
               paymentValue:
-                Number(
-                  paymentValue.toFixed(2)
-                ),
+                round2(paymentValue),
 
-              utilizationPercentage
-
+              utilizationPercentage:
+                configuredCenter.capacityQuintals
+                  ? Math.min(
+                      100,
+                      Math.round(
+                        (
+                          booked /
+                          configuredCenter.capacityQuintals
+                        ) *
+                        100
+                      )
+                    )
+                  : 0
             };
-
           }
         );
-
-
-      // ------------------------------------------------------------
-      // QUALITY ANALYTICS
-      // ------------------------------------------------------------
 
       const gradeA =
         reportReceipts.filter(
@@ -3445,7 +2709,6 @@ app.get(
             'grade a'
         ).length;
 
-
       const gradeB =
         reportReceipts.filter(
           receipt =>
@@ -3457,7 +2720,6 @@ app.get(
               .toLowerCase() ===
             'grade b'
         ).length;
-
 
       const failed =
         reportReceipts.filter(
@@ -3471,18 +2733,22 @@ app.get(
             'failed'
         ).length;
 
-
-      // ------------------------------------------------------------
-      // PAYMENT STATUS ANALYTICS
-      // ------------------------------------------------------------
+      const getReportPayment =
+        receipt =>
+          payments.find(
+            payment =>
+              payment.tokenId ===
+              receipt.tokenId
+          ) || receipt;
 
       const paymentStatusSummary = {
-
         pending:
           reportReceipts.filter(
             receipt =>
-              normalizePaymentStatus(
-                receipt
+              getPaymentStatus(
+                getReportPayment(
+                  receipt
+                )
               ) ===
               'pending'
           ).length,
@@ -3490,8 +2756,10 @@ app.get(
         pfmsBatched:
           reportReceipts.filter(
             receipt =>
-              normalizePaymentStatus(
-                receipt
+              getPaymentStatus(
+                getReportPayment(
+                  receipt
+                )
               ) ===
               'pfms-batched'
           ).length,
@@ -3499,8 +2767,10 @@ app.get(
         dbtDispatched:
           reportReceipts.filter(
             receipt =>
-              normalizePaymentStatus(
-                receipt
+              getPaymentStatus(
+                getReportPayment(
+                  receipt
+                )
               ) ===
               'dbt-dispatched'
           ).length,
@@ -3508,84 +2778,60 @@ app.get(
         failed:
           reportReceipts.filter(
             receipt =>
-              normalizePaymentStatus(
-                receipt
+              getPaymentStatus(
+                getReportPayment(
+                  receipt
+                )
               ) ===
               'failed'
           ).length
-
       };
-
-
-      // ------------------------------------------------------------
-      // DAILY PERFORMANCE
-      // ------------------------------------------------------------
 
       const dailyMap = {};
 
-
       reportReceipts.forEach(
         receipt => {
-
           if (
             !receipt.timestamp
           ) {
-
             return;
-
           }
 
-
           const date =
-            receipt.timestamp
-              .split('T')[0];
-
+            receipt.timestamp.split(
+              'T'
+            )[0];
 
           if (
             !dailyMap[date]
           ) {
-
             dailyMap[date] = {
-
               date,
-
-              transactions:
-                0,
-
-              quantityQuintals:
-                0,
-
-              paymentValue:
-                0
-
+              transactions: 0,
+              quantityQuintals: 0,
+              paymentValue: 0
             };
-
           }
 
+          dailyMap[
+            date
+          ].transactions += 1;
 
-          dailyMap[date]
-            .transactions +=
-            1;
+          dailyMap[
+            date
+          ].quantityQuintals +=
+            getReceiptQuantity(
+              receipt
+            );
 
-
-          dailyMap[date]
-            .quantityQuintals +=
-              Number(
-                receipt.netWeightQuintals ||
-                0
-              );
-
-
-          dailyMap[date]
-            .paymentValue +=
-              Number(
-                receipt.totalPayoutAmount ||
-                0
-              );
-
+          dailyMap[
+            date
+          ].paymentValue +=
+            num(
+              receipt.totalPayoutAmount
+            );
         }
       );
-
 
       const dailyPerformance =
         Object.values(
@@ -3593,7 +2839,6 @@ app.get(
         )
           .map(
             item => ({
-
               date:
                 item.date,
 
@@ -3601,17 +2846,14 @@ app.get(
                 item.transactions,
 
               quantityQuintals:
-                Number(
+                round2(
                   item.quantityQuintals
-                    .toFixed(2)
                 ),
 
               paymentValue:
-                Number(
+                round2(
                   item.paymentValue
-                    .toFixed(2)
                 )
-
             })
           )
           .sort(
@@ -3624,21 +2866,14 @@ app.get(
             14
           );
 
-
-      // ------------------------------------------------------------
-      // RECENT ACTIVITY
-      // ------------------------------------------------------------
-
       const recentActivity =
         reportReceipts
           .map(
             receipt => {
-
               const booking =
                 bookingByToken.get(
                   receipt.tokenId
                 );
-
 
               const farmer =
                 farmerByKcc.get(
@@ -3646,19 +2881,28 @@ app.get(
                   booking?.kccNumber
                 );
 
+              const payment =
+                payments.find(
+                  item =>
+                    item.tokenId ===
+                    receipt.tokenId
+                );
 
-              const paymentStatus =
-                normalizePaymentStatus(
+              const status =
+                getPaymentStatus(
+                  payment ||
                   receipt
                 );
 
-
               return {
-
                 transactionId:
                   receipt.transactionId ||
                   receipt.receiptId ||
                   `TXN-${receipt.tokenId || 'UNKNOWN'}`,
+
+                paymentId:
+                  payment?.paymentId ||
+                  null,
 
                 receiptId:
                   receipt.receiptId ||
@@ -3666,6 +2910,12 @@ app.get(
 
                 tokenId:
                   receipt.tokenId ||
+                  null,
+
+                farmerId:
+                  receipt.farmerId ||
+                  booking?.farmerId ||
+                  farmer?.farmerId ||
                   null,
 
                 farmerName:
@@ -3685,47 +2935,46 @@ app.get(
                   null,
 
                 quantityQuintals:
-                  Number(
-                    receipt.netWeightQuintals ||
-                    0
+                  getReceiptQuantity(
+                    receipt
                   ),
 
                 payoutAmount:
-                  Number(
-                    receipt.totalPayoutAmount ||
-                    0
+                  num(
+                    receipt.totalPayoutAmount
                   ),
 
                 qualityGrade:
                   receipt.qualityGrade ||
                   null,
 
-                paymentStatus,
+                paymentStatus:
+                  status,
 
                 paymentStatusLabel:
                   getPaymentStatusLabel(
-                    paymentStatus
+                    status
                   ),
 
                 centerId:
                   booking?.centerId ||
-                  'Mandi-Center-01',
+                  MANDI_CENTERS[0].centerId,
 
                 center:
                   booking?.center ||
-                  'Mandi-Center-01 (Main Gate)',
+                  MANDI_CENTERS[0].center,
 
                 date:
                   booking?.date ||
-                  receipt.timestamp?.split('T')[0] ||
+                  receipt.timestamp?.split(
+                    'T'
+                  )[0] ||
                   null,
 
                 timestamp:
                   receipt.timestamp ||
                   null
-
               };
-
             }
           )
           .sort(
@@ -3742,34 +2991,24 @@ app.get(
             20
           );
 
-
-      // ------------------------------------------------------------
-      // RESPONSE
-      // ------------------------------------------------------------
-
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         generatedAt:
-          new Date().toISOString(),
+          now(),
 
         date:
-          today,
+          currentDate,
 
         filters: {
-
           date:
             requestedDate,
 
           center:
             requestedCenter
-
         },
 
         summary: {
-
           totalFarmers:
             uniqueFarmers.size,
 
@@ -3777,31 +3016,30 @@ app.get(
             reportBookings.length,
 
           totalBookedQuintals:
-            Number(
-              totalBookedQuintals
-                .toFixed(2)
+            round2(
+              totalBooked
             ),
 
           totalProcuredQuintals:
-            Number(
-              totalProcuredQuintals
-                .toFixed(2)
+            round2(
+              totalProcured
             ),
 
           totalPaymentValue:
-            Number(
-              totalPaymentValue
-                .toFixed(2)
+            round2(
+              totalPayments
             ),
 
-          completedTransactions,
+          completedTransactions:
+            reportReceipts.length,
 
           averageProcurementPerTransaction:
-            Number(
-              averageProcurementPerTransaction
-                .toFixed(2)
-            )
-
+            reportReceipts.length
+              ? round2(
+                  totalProcured /
+                  reportReceipts.length
+                )
+              : 0
         },
 
         cropAnalytics,
@@ -3810,16 +3048,11 @@ app.get(
           centerAnalytics,
 
         qualitySummary: {
-
           gradeA,
-
           gradeB,
-
           failed,
-
           total:
             reportReceipts.length
-
         },
 
         paymentStatusSummary,
@@ -3827,65 +3060,49 @@ app.get(
         dailyPerformance,
 
         recentActivity
-
       });
-
     } catch (error) {
-
       console.error(
         '[Admin Reports & Analytics Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Unable to load reports and analytics data.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A1 • FARMER REGISTRATION & VERIFICATION
-// ================================================================
+/* ============================================================
+   FARMER REGISTRATION
+   ============================================================ */
 
 app.post(
   '/api/auth/register-farmer',
   (req, res) => {
-
     try {
-
       const {
         kccNumber,
         name,
         phone,
         state,
-        district
+        district,
+        aadhaarNumber,
+        landHoldingAcres,
+        mandi
       } = req.body;
 
-
       if (!kccNumber) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'KCC Number is required.'
-
         });
-
       }
-
 
       const farmers =
         readData(
@@ -3893,56 +3110,56 @@ app.post(
           []
         );
 
+      const normalizedKcc =
+        String(
+          kccNumber
+        ).trim();
 
       const existing =
         farmers.find(
           farmer =>
             farmer.kccNumber ===
-            kccNumber
+            normalizedKcc
         );
 
-
       if (existing) {
-
         return res.json({
-
-          success:
-            true,
-
+          success: true,
           message:
             'Farmer details retrieved from registry.',
-
           farmer:
             existing
-
         });
-
       }
-
 
       if (!name) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Name is required for a new farmer registration.'
-
         });
-
       }
 
+      const farmerId =
+        generateId('FRM');
 
       const newFarmer = {
-
         id:
-          generateId('FRM'),
+          farmerId,
 
-        kccNumber,
+        farmerId,
 
-        name,
+        kccNumber:
+          normalizedKcc,
+
+        aadhaarNumber:
+          aadhaarNumber ||
+          null,
+
+        name:
+          String(
+            name
+          ).trim(),
 
         phone:
           phone ||
@@ -3957,101 +3174,94 @@ app.post(
           'Ludhiana',
 
         landHoldingAcres:
-          5.0,
+          num(
+            landHoldingAcres,
+            5
+          ),
 
         mandi:
+          mandi ||
           'Khanna, Ludhiana',
 
-        crops:
-          [
-            'Wheat',
-            'Paddy'
-          ],
+        crops: [
+          'Wheat',
+          'Paddy'
+        ],
 
         verifiedBank:
           'State Bank of India (A/C ****3312)',
 
+        verificationStatus:
+          'VERIFIED',
+
         createdAt:
-          new Date().toISOString()
-
+          now()
       };
-
 
       farmers.push(
         newFarmer
       );
 
-
-      const saved =
-        writeData(
+      if (
+        !writeData(
           'farmers.json',
           farmers
-        );
-
-
-      if (!saved) {
-
+        )
+      ) {
         return res.status(500).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Farmer could not be saved.'
-
         });
-
       }
 
+      appendAuditEvent(
+        'FARMER_REGISTERED',
+        'FARMER',
+        farmerId,
+        {
+          farmerId,
+          kccNumber:
+            newFarmer.kccNumber
+        }
+      );
 
       return res.status(201).json({
-
-        success:
-          true,
+        success: true,
 
         message:
           'Farmer registered in the prototype registry. Land and bank records are simulated.',
 
         farmer:
           newFarmer
-
       });
-
     } catch (error) {
-
       console.error(
         '[Farmer Registration Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Registration failed.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A1 • SLOT BOOKING
-// ================================================================
+/* ============================================================
+   SLOT BOOKING
+   ============================================================ */
 
 app.post(
   '/api/slots/book',
   (req, res) => {
-
     try {
-
       const {
         kccNumber,
+        farmerId,
         cropType,
         quantityQuintals,
         preferredDate,
@@ -4060,59 +3270,60 @@ app.post(
         vehicleNumber
       } = req.body;
 
-
       if (
         !kccNumber ||
         !cropType ||
         quantityQuintals == null
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'KCC Number, crop type and quantity are required.'
-
         });
-
       }
-
 
       const quantity =
-        Number(
-          quantityQuintals
+        num(
+          quantityQuintals,
+          NaN
         );
 
-
       if (
-        !Number.isFinite(quantity) ||
+        !Number.isFinite(
+          quantity
+        ) ||
         quantity <= 0
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Quantity must be a valid positive number.'
-
         });
-
       }
 
+      if (
+        quantity > 500
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            'A single booking cannot exceed 500 quintals.'
+        });
+      }
 
       const bookingDate =
         preferredDate ||
-        getTodayDate();
+        today();
 
+      const requestedCenter =
+        getCenter(
+          centerId
+        );
 
-      const requestedCenterId =
-        centerId ||
-        'Mandi-Center-01';
-
+      const requestedSlot =
+        getSlot(
+          timeSlot
+        );
 
       const bookings =
         readData(
@@ -4120,158 +3331,239 @@ app.post(
           []
         );
 
-
       const farmers =
         readData(
           'farmers.json',
           []
         );
 
-
       const farmer =
-        farmers.find(
-          item =>
-            item.kccNumber ===
-            kccNumber
+        findFarmer(
+          farmers,
+          kccNumber,
+          farmerId
         );
 
+      if (!farmer) {
+        return res.status(404).json({
+          success: false,
+          message:
+            'Farmer is not registered. Complete verification before booking.'
+        });
+      }
 
       const duplicateBooking =
         bookings.find(
           booking =>
-            booking.kccNumber ===
-              kccNumber &&
-
+            (
+              booking.farmerId ===
+                farmer.farmerId ||
+              booking.kccNumber ===
+                farmer.kccNumber
+            ) &&
             booking.date ===
               bookingDate &&
-
-            (
-              booking.status ===
-                'Scheduled' ||
-
-              booking.status ===
-                'Active Gate Queue'
+            ![
+              'Cancelled',
+              COMPLETED_STATUS
+            ].includes(
+              booking.status
             )
         );
 
-
-      if (duplicateBooking) {
-
+      if (
+        duplicateBooking
+      ) {
         return res.status(409).json({
-
-          success:
-            false,
+          success: false,
 
           message:
             'This farmer already has an active booking for this date.',
 
           booking:
             duplicateBooking
-
         });
-
       }
 
-
-      const CENTER_CAPACITY =
-        500;
-
-
-      const centerBookings =
+      const activeBookings =
         bookings.filter(
           booking =>
-            booking.centerId ===
-              requestedCenterId &&
-
             booking.date ===
               bookingDate &&
-
-            booking.status !==
-              'Cancelled'
+            ![
+              'Cancelled',
+              COMPLETED_STATUS
+            ].includes(
+              booking.status
+            )
         );
 
-
-      const totalBookedQty =
-        centerBookings.reduce(
-          (
-            sum,
-            booking
-          ) =>
-            sum +
-            Number(
-              booking.quantityQuintals ||
+      const getBookedAtCenter =
+        targetCenterId =>
+          activeBookings
+            .filter(
+              booking =>
+                (
+                  booking.centerId ||
+                  MANDI_CENTERS[0]
+                    .centerId
+                ) ===
+                targetCenterId
+            )
+            .reduce(
+              (
+                total,
+                booking
+              ) =>
+                total +
+                getBookingQuantity(
+                  booking
+                ),
               0
-            ),
-          0
-        );
+            );
 
-
-      let assignedCenterId =
-        requestedCenterId;
-
+      const getBookedAtSlot =
+        (
+          targetCenterId,
+          targetTimeSlot
+        ) =>
+          activeBookings
+            .filter(
+              booking =>
+                (
+                  booking.centerId ||
+                  MANDI_CENTERS[0]
+                    .centerId
+                ) ===
+                  targetCenterId &&
+                (
+                  booking.timeSlot ||
+                  ''
+                ) ===
+                  targetTimeSlot
+            )
+            .reduce(
+              (
+                total,
+                booking
+              ) =>
+                total +
+                getBookingQuantity(
+                  booking
+                ),
+              0
+            );
 
       let assignedCenter =
-        'Mandi-Center-01 (Main Gate)';
-
+        requestedCenter;
 
       let overflowRerouted =
         false;
 
-
       if (
-        totalBookedQty +
-        quantity >
-        CENTER_CAPACITY
+        getBookedAtCenter(
+          assignedCenter.centerId
+        ) +
+          quantity >
+        assignedCenter.capacityQuintals
       ) {
+        const overflowCenter =
+          MANDI_CENTERS.find(
+            center =>
+              center.centerId !==
+                assignedCenter.centerId &&
+              getBookedAtCenter(
+                center.centerId
+              ) +
+                quantity <=
+                center.capacityQuintals
+          );
 
-        assignedCenterId =
-          'Mandi-Center-02';
-
+        if (!overflowCenter) {
+          return res.status(409).json({
+            success: false,
+            message:
+              'No mandi center has enough remaining capacity for this booking.'
+          });
+        }
 
         assignedCenter =
-          'Mandi-Center-02 (Nearby Overflow Facility)';
-
+          overflowCenter;
 
         overflowRerouted =
           true;
-
       }
 
+      if (
+        getBookedAtSlot(
+          assignedCenter.centerId,
+          requestedSlot.timeSlot
+        ) +
+          quantity >
+        requestedSlot.capacityQuintals
+      ) {
+        return res.status(409).json({
+          success: false,
+
+          message:
+            `The selected time slot is full at ${assignedCenter.center}. Please choose another slot.`
+        });
+      }
+
+      const bookingId =
+        generateId(
+          'BOOK'
+        );
+
+      const tokenId =
+        generateUniqueToken(
+          bookings
+        );
 
       const newBooking = {
+        bookingId,
 
-        bookingId:
-          generateId('SLT'),
+        tokenId,
 
-        tokenId:
-          generateToken(),
+        farmerId:
+          farmer.farmerId ||
+          farmer.id,
 
-        kccNumber,
+        kccNumber:
+          farmer.kccNumber,
 
         farmerName:
-          farmer?.name ||
-          'Kisan Setu Farmer',
+          farmer.name,
 
         cropType:
-          String(
+          crop(
             cropType
-          ).toLowerCase(),
+          ),
+
+        estimatedQuantityQuintals:
+          round2(
+            quantity
+          ),
 
         quantityQuintals:
-          quantity,
+          round2(
+            quantity
+          ),
 
         date:
           bookingDate,
 
         centerId:
-          assignedCenterId,
+          assignedCenter.centerId,
 
         center:
-          assignedCenter,
+          assignedCenter.center,
 
         timeSlot:
-          timeSlot ||
-          '10:00 AM - 12:00 PM',
+          requestedSlot.timeSlot,
+
+        slotId:
+          requestedSlot.slotId,
 
         vehicleNumber:
           vehicleNumber ||
@@ -4283,96 +3575,127 @@ app.post(
         overflowRerouted,
 
         createdAt:
-          new Date().toISOString()
+          now(),
 
+        updatedAt:
+          now()
       };
-
 
       bookings.push(
         newBooking
       );
 
-
-      const saved =
-        writeData(
+      if (
+        !writeData(
           'bookings.json',
           bookings
-        );
-
-
-      if (!saved) {
-
+        )
+      ) {
         return res.status(500).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Booking could not be saved.'
-
         });
-
       }
 
+      appendAuditEvent(
+        'BOOKING_CREATED',
+        'BOOKING',
+        bookingId,
+        {
+          farmerId:
+            newBooking.farmerId,
+
+          tokenId,
+
+          quantityQuintals:
+            newBooking
+              .estimatedQuantityQuintals,
+
+          centerId:
+            newBooking.centerId,
+
+          date:
+            bookingDate,
+
+          timeSlot:
+            newBooking.timeSlot
+        }
+      );
 
       return res.status(201).json({
-
-        success:
-          true,
+        success: true,
 
         message:
           overflowRerouted
-            ? 'Main center is at capacity. Booking rerouted to nearby overflow facility.'
+            ? 'Requested center is full. Booking rerouted to the overflow facility.'
             : 'Arrival slot booked successfully!',
 
         booking:
           newBooking
-
       });
-
     } catch (error) {
-
       console.error(
         '[Slot Booking Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Slot allocation failed.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A1 • LIVE QUEUE / TOKEN TRACKER
-// ================================================================
+/* ============================================================
+   TOKEN QUEUE
+   ============================================================ */
+
+const getQueueForBooking =
+  (
+    booking,
+    bookings
+  ) =>
+    bookings
+      .filter(
+        item =>
+          item.date ===
+            booking.date &&
+          item.centerId ===
+            booking.centerId &&
+          ACTIVE_STATUSES.includes(
+            item.status
+          )
+      )
+      .sort(
+        (a, b) =>
+          new Date(
+            a.checkInAt ||
+              a.createdAt ||
+              0
+          ) -
+          new Date(
+            b.checkInAt ||
+              b.createdAt ||
+              0
+          )
+      );
 
 app.get(
   '/api/queue/token/:tokenId',
   (req, res) => {
-
     try {
-
       const tokenId =
         req.params.tokenId;
-
 
       const bookings =
         readData(
           'bookings.json',
           []
         );
-
 
       const booking =
         bookings.find(
@@ -4381,50 +3704,19 @@ app.get(
             tokenId
         );
 
-
       if (!booking) {
-
         return res.status(404).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Token ID not found.'
-
         });
-
       }
 
-
       const activeQueue =
-        bookings
-          .filter(
-            item =>
-              item.date ===
-                booking.date &&
-
-              item.centerId ===
-                booking.centerId &&
-
-              (
-                item.status ===
-                  'Active Gate Queue' ||
-
-                item.status ===
-                  'Scheduled'
-              )
-          )
-          .sort(
-            (a, b) =>
-              new Date(
-                a.createdAt
-              ) -
-              new Date(
-                b.createdAt
-              )
-          );
-
+        getQueueForBooking(
+          booking,
+          bookings
+        );
 
       const queueIndex =
         activeQueue.findIndex(
@@ -4433,20 +3725,23 @@ app.get(
             tokenId
         );
 
-
       const queuePosition =
         queueIndex >= 0
           ? queueIndex + 1
-          : 1;
-
+          : null;
 
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         token:
           booking.tokenId,
+
+        bookingId:
+          booking.bookingId,
+
+        farmerId:
+          booking.farmerId ||
+          null,
 
         status:
           booking.status,
@@ -4459,10 +3754,15 @@ app.get(
           booking.cropType,
 
         quantityQuintals:
-          booking.quantityQuintals,
+          getBookingQuantity(
+            booking
+          ),
 
         center:
           booking.center,
+
+        centerId:
+          booking.centerId,
 
         date:
           booking.date,
@@ -4473,74 +3773,82 @@ app.get(
         queuePosition,
 
         estimatedWaitTime:
-          `${queuePosition * 15} mins`,
+          queuePosition !== null
+            ? `${queuePosition * 15} mins`
+            : 'Not in active queue',
 
         gateEntryTime:
-          '10:30 AM'
-
+          null
       });
-
     } catch (error) {
-
       console.error(
         '[Queue Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Queue tracking failed.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A1 • GEOFENCED CHECK-IN
-// ================================================================
+/* ============================================================
+   GEOFENCE CHECK-IN
+   ============================================================ */
 
-app.post(
-  '/api/checkin/geofence',
+const handleGeofenceCheckIn =
   (req, res) => {
-
     try {
-
       const {
         tokenId,
         latitude,
         longitude
       } = req.body;
 
-
       if (!tokenId) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Token ID is required.'
-
         });
-
       }
 
+      const lat =
+        num(
+          latitude,
+          NaN
+        );
+
+      const lng =
+        num(
+          longitude,
+          NaN
+        );
+
+      if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng) ||
+        lat < -90 ||
+        lat > 90 ||
+        lng < -180 ||
+        lng > 180
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            'Valid latitude and longitude are required for geofence check-in.'
+        });
+      }
 
       const bookings =
         readData(
           'bookings.json',
           []
         );
-
 
       const bookingIndex =
         bookings.findIndex(
@@ -4549,257 +3857,326 @@ app.post(
             tokenId
         );
 
-
-      if (bookingIndex === -1) {
-
+      if (
+        bookingIndex === -1
+      ) {
         return res.status(404).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Token not found.'
-
         });
-
       }
-
 
       const booking =
         bookings[
           bookingIndex
         ];
 
-
       if (
         booking.status !==
         'Scheduled'
       ) {
-
         return res.status(409).json({
-
-          success:
-            false,
+          success: false,
 
           message:
             `Token cannot be checked in from its current state: ${booking.status}`
-
         });
-
       }
 
+      const mandiCenter =
+        getCenter(
+          booking.centerId
+        );
+
+      const distanceMeters =
+        haversineDistanceMeters(
+          lat,
+          lng,
+          mandiCenter.latitude,
+          mandiCenter.longitude
+        );
+
+      const insideGeofence =
+        distanceMeters <=
+        mandiCenter.geofenceRadiusMeters;
+
+      if (!insideGeofence) {
+        return res.status(403).json({
+          success: false,
+
+          insideGeofence:
+            false,
+
+          distanceMeters:
+            round2(
+              distanceMeters
+            ),
+
+          allowedRadiusMeters:
+            mandiCenter.geofenceRadiusMeters,
+
+          center:
+            mandiCenter.center,
+
+          message:
+            'Farmer is outside the permitted mandi geofence. Check-in denied.'
+        });
+      }
+
+      const checkInTime =
+        now();
 
       booking.status =
         'Active Gate Queue';
 
-
       booking.checkInAt =
-        new Date().toISOString();
+        checkInTime;
 
+      booking.updatedAt =
+        checkInTime;
 
       booking.location = {
-
         latitude:
-          latitude ??
-          null,
+          lat,
 
         longitude:
-          longitude ??
-          null
-
+          lng
       };
 
+      booking.geofence = {
+        insideGeofence:
+          true,
 
-      const saved =
-        writeData(
+        distanceMeters:
+          round2(
+            distanceMeters
+          ),
+
+        allowedRadiusMeters:
+          mandiCenter
+            .geofenceRadiusMeters,
+
+        verifiedAt:
+          checkInTime
+      };
+
+      if (
+        !writeData(
           'bookings.json',
           bookings
-        );
-
-
-      if (!saved) {
-
+        )
+      ) {
         return res.status(500).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Check-in could not be saved.'
-
         });
-
       }
 
+      appendAuditEvent(
+        'GEOFENCE_CHECK_IN',
+        'BOOKING',
+        booking.bookingId,
+        {
+          tokenId,
+
+          farmerId:
+            booking.farmerId,
+
+          centerId:
+            booking.centerId,
+
+          distanceMeters:
+            round2(
+              distanceMeters
+            ),
+
+          allowedRadiusMeters:
+            mandiCenter
+              .geofenceRadiusMeters
+        }
+      );
 
       return res.json({
+        success: true,
 
-        success:
+        insideGeofence:
           true,
+
+        distanceMeters:
+          round2(
+            distanceMeters
+          ),
+
+        allowedRadiusMeters:
+          mandiCenter
+            .geofenceRadiusMeters,
 
         message:
           'Geofence check-in verified. Token moved to Active Gate Queue.',
 
         tokenId,
 
+        bookingId:
+          booking.bookingId,
+
         status:
-          booking.status
+          booking.status,
 
+        checkInAt:
+          checkInTime
       });
-
     } catch (error) {
-
       console.error(
         '[Geofence Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Geofenced check-in failed.'
-
       });
-
     }
+  };
 
-  }
+app.post(
+  '/api/checkin/geofence',
+  handleGeofenceCheckIn
+);
+
+app.post(
+  '/api/geofence/check',
+  handleGeofenceCheckIn
 );
 
 
-// ================================================================
-// A1 • PROCUREMENT & QUALITY LOGGING
-// ================================================================
+/* ============================================================
+   PROCUREMENT + QUALITY
+   ============================================================ */
 
 app.post(
   '/api/procurement/quality-log',
   (req, res) => {
-
     try {
-
       const {
         tokenId,
+
+        grossWeightKg,
+        tareWeightKg,
+
         grossWeightQuintals,
         tareWeightQuintals,
+
         moisturePercentage,
+
+        foreignMatterPercentage,
+        foreignMatter,
+
         qualityGrade,
         cropType
       } = req.body;
 
-
       if (
         !tokenId ||
-        grossWeightQuintals == null ||
-        tareWeightQuintals == null ||
-        moisturePercentage == null
+        moisturePercentage == null ||
+        (
+          grossWeightKg == null &&
+          grossWeightQuintals == null
+        ) ||
+        (
+          tareWeightKg == null &&
+          tareWeightQuintals == null
+        )
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Token, gross weight, tare weight and moisture are required.'
-
         });
-
       }
 
+      const grossKg =
+        grossWeightKg != null
+          ? num(
+              grossWeightKg,
+              NaN
+            )
+          : num(
+              grossWeightQuintals,
+              NaN
+            ) * 100;
 
-      const grossWeight =
-        Number(
-          grossWeightQuintals
-        );
-
-
-      const tareWeight =
-        Number(
-          tareWeightQuintals
-        );
-
+      const tareKg =
+        tareWeightKg != null
+          ? num(
+              tareWeightKg,
+              NaN
+            )
+          : num(
+              tareWeightQuintals,
+              NaN
+            ) * 100;
 
       const moisture =
-        Number(
-          moisturePercentage
+        num(
+          moisturePercentage,
+          NaN
         );
 
+      const foreignMatterValue =
+        num(
+          foreignMatterPercentage ??
+            foreignMatter,
+          0
+        );
 
       if (
-        !Number.isFinite(grossWeight) ||
-        !Number.isFinite(tareWeight) ||
-        !Number.isFinite(moisture)
+        !Number.isFinite(
+          grossKg
+        ) ||
+        !Number.isFinite(
+          tareKg
+        ) ||
+        !Number.isFinite(
+          moisture
+        ) ||
+        !Number.isFinite(
+          foreignMatterValue
+        )
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
-            'Weight and moisture values must be valid numbers.'
-
+            'Weight and quality values must be valid numbers.'
         });
-
       }
-
 
       if (
-        grossWeight <= 0 ||
-        tareWeight < 0
+        grossKg <= 0 ||
+        tareKg < 0 ||
+        grossKg <= tareKg
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
-            'Weight values are invalid.'
-
+            'Gross weight must be greater than tare weight and both values must be valid.'
         });
-
       }
-
-
-      if (
-        grossWeight <=
-        tareWeight
-      ) {
-
-        return res.status(400).json({
-
-          success:
-            false,
-
-          message:
-            'Gross weight must be greater than tare weight.'
-
-        });
-
-      }
-
 
       if (
         moisture < 0 ||
-        moisture > 100
+        moisture > 100 ||
+        foreignMatterValue < 0 ||
+        foreignMatterValue > 100
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
-
+          success: false,
           message:
-            'Moisture percentage must be between 0 and 100.'
-
+            'Moisture and foreign matter values must be between 0 and 100.'
         });
-
       }
-
 
       const bookings =
         readData(
@@ -4807,36 +4184,50 @@ app.post(
           []
         );
 
-
-      const booking =
-        bookings.find(
-          item =>
-            item.tokenId ===
+      const bookingIndex =
+        bookings.findIndex(
+          booking =>
+            booking.tokenId ===
             tokenId
         );
 
-
-      if (!booking) {
-
+      if (
+        bookingIndex === -1
+      ) {
         return res.status(404).json({
-
-          success:
-            false,
-
+          success: false,
           message:
             'Token not found.'
-
         });
-
       }
 
+      const booking =
+        bookings[
+          bookingIndex
+        ];
+
+      if (
+        ![
+          'Active Gate Queue',
+          'Weighbridge',
+          'Serving'
+        ].includes(
+          booking.status
+        )
+      ) {
+        return res.status(409).json({
+          success: false,
+
+          message:
+            `Weighment is not allowed from the current booking state: ${booking.status}`
+        });
+      }
 
       const receipts =
         readData(
           'receipts.json',
           []
         );
-
 
       const existingReceipt =
         receipts.find(
@@ -4845,72 +4236,194 @@ app.post(
             tokenId
         );
 
-
-      if (existingReceipt) {
-
+      if (
+        existingReceipt
+      ) {
         return res.status(409).json({
-
-          success:
-            false,
+          success: false,
 
           message:
             'A receipt already exists for this token.',
 
           receipt:
             existingReceipt
-
         });
-
       }
 
-
-      const netWeight =
-        grossWeight -
-        tareWeight;
-
-
       const normalizedCrop =
-        String(
+        crop(
           cropType ||
           booking.cropType ||
           'wheat'
-        ).toLowerCase();
-
+        );
 
       const mspPricePerQuintal =
         MSP_RATES[
           normalizedCrop
         ];
 
-
       if (
         !mspPricePerQuintal
       ) {
-
         return res.status(400).json({
-
-          success:
-            false,
+          success: false,
 
           message:
             `MSP rate not configured for crop: ${normalizedCrop}`
-
         });
-
       }
 
+      const netWeightKg =
+        grossKg -
+        tareKg;
 
-      const totalPayoutAmount =
-        netWeight *
-        mspPricePerQuintal;
+      const actualQuantityQuintals =
+        netWeightKg /
+        100;
 
+      let finalQualityGrade =
+        'Grade A';
 
-      const newReceipt = {
+      if (
+        moisture > 12 ||
+        foreignMatterValue > 0.5
+      ) {
+        finalQualityGrade =
+          'Grade B';
+      }
 
-        receiptId:
-          generateId('RCP'),
+      if (
+        moisture > 14 ||
+        foreignMatterValue > 0.75
+      ) {
+        finalQualityGrade =
+          'Failed';
+      }
+
+      const procurementId =
+        generateId(
+          'PROC'
+        );
+
+      const qualityId =
+        generateId(
+          'QUALITY'
+        );
+
+      const receiptId =
+        generateId(
+          'RCP'
+        );
+
+      const transactionId =
+        generateId(
+          'TXN'
+        );
+
+      const paymentId =
+        generateId(
+          'PAY'
+        );
+
+      const timestamp =
+        now();
+
+      const procurement = {
+        procurementId,
+
+        bookingId:
+          booking.bookingId,
 
         tokenId,
+
+        farmerId:
+          booking.farmerId,
+
+        kccNumber:
+          booking.kccNumber,
+
+        grossWeightKg:
+          round2(
+            grossKg
+          ),
+
+        tareWeightKg:
+          round2(
+            tareKg
+          ),
+
+        netWeightKg:
+          round2(
+            netWeightKg
+          ),
+
+        actualQuantityQuintals:
+          round2(
+            actualQuantityQuintals
+          ),
+
+        cropType:
+          normalizedCrop,
+
+        status:
+          'QUALITY_COMPLETED',
+
+        createdAt:
+          timestamp
+      };
+
+      const quality = {
+        qualityId,
+
+        procurementId,
+
+        bookingId:
+          booking.bookingId,
+
+        tokenId,
+
+        farmerId:
+          booking.farmerId,
+
+        moisturePercentage:
+          round2(
+            moisture
+          ),
+
+        foreignMatterPercentage:
+          round2(
+            foreignMatterValue
+          ),
+
+        qualityGrade:
+          finalQualityGrade,
+
+        createdAt:
+          timestamp
+      };
+
+      const totalPayoutAmount =
+        round2(
+          actualQuantityQuintals *
+            mspPricePerQuintal
+        );
+
+      const receipt = {
+        receiptId,
+
+        transactionId,
+
+        procurementId,
+
+        qualityId,
+
+        bookingId:
+          booking.bookingId,
+
+        tokenId,
+
+        farmerId:
+          booking.farmerId,
 
         kccNumber:
           booking.kccNumber,
@@ -4922,123 +4435,299 @@ app.post(
         cropType:
           normalizedCrop,
 
-        grossWeight,
+        grossWeightKg:
+          round2(
+            grossKg
+          ),
 
-        tareWeight,
+        tareWeightKg:
+          round2(
+            tareKg
+          ),
+
+        grossWeight:
+          round2(
+            grossKg
+          ),
+
+        tareWeight:
+          round2(
+            tareKg
+          ),
+
+        netWeightKg:
+          round2(
+            netWeightKg
+          ),
 
         netWeightQuintals:
-          netWeight,
+          round2(
+            actualQuantityQuintals
+          ),
+
+        actualQuantityQuintals:
+          round2(
+            actualQuantityQuintals
+          ),
 
         moisturePercentage:
-          moisture,
+          round2(
+            moisture
+          ),
+
+        foreignMatterPercentage:
+          round2(
+            foreignMatterValue
+          ),
 
         qualityGrade:
-          qualityGrade ||
-          'Grade A',
+          finalQualityGrade,
 
-        mspPricePerQuintal,
+        mspPricePerQuintal:
+          mspPricePerQuintal,
 
-        totalPayoutAmount,
+        totalPayoutAmount:
+          totalPayoutAmount,
 
         status:
           'Quality Approved',
 
-        timestamp:
-          new Date().toISOString()
+        paymentStatus:
+          'Pending',
 
+        timestamp:
+          timestamp
       };
 
+      const payment = {
+        paymentId,
 
-      receipts.push(
-        newReceipt
+        transactionId,
+
+        receiptId,
+
+        procurementId,
+
+        tokenId,
+
+        farmerId:
+          booking.farmerId,
+
+        amount:
+          totalPayoutAmount,
+
+        quantityQuintals:
+          round2(
+            actualQuantityQuintals
+          ),
+
+        mspPricePerQuintal:
+          mspPricePerQuintal,
+
+        status:
+          'PENDING',
+
+        pfmsReference:
+          null,
+
+        utr:
+          null,
+
+        createdAt:
+          timestamp,
+
+        updatedAt:
+          timestamp
+      };
+
+      const procurements =
+        readData(
+          'procurements.json',
+          []
+        );
+
+      const qualityRecords =
+        readData(
+          'quality.json',
+          []
+        );
+
+      const payments =
+        readData(
+          'payments.json',
+          []
+        );
+
+      procurements.push(
+        procurement
       );
 
+      qualityRecords.push(
+        quality
+      );
 
-      const savedReceipt =
+      receipts.push(
+        receipt
+      );
+
+      payments.push(
+        payment
+      );
+
+      const saved =
+        writeData(
+          'procurements.json',
+          procurements
+        ) &&
+        writeData(
+          'quality.json',
+          qualityRecords
+        ) &&
         writeData(
           'receipts.json',
           receipts
+        ) &&
+        writeData(
+          'payments.json',
+          payments
         );
 
-
-      if (!savedReceipt) {
-
+      if (!saved) {
         return res.status(500).json({
-
-          success:
-            false,
-
+          success: false,
           message:
-            'Receipt could not be saved.'
-
+            'Procurement transaction could not be saved.'
         });
-
       }
-
 
       booking.status =
         'Quality Approved';
 
-
       booking.qualityLoggedAt =
-        new Date().toISOString();
+        timestamp;
 
+      booking.updatedAt =
+        timestamp;
 
-      writeData(
-        'bookings.json',
-        bookings
+      if (
+        !writeData(
+          'bookings.json',
+          bookings
+        )
+      ) {
+        return res.status(500).json({
+          success: false,
+          message:
+            'Booking state could not be updated.'
+        });
+      }
+
+      appendAuditEvent(
+        'WEIGHMENT_COMPLETED',
+        'PROCUREMENT',
+        procurementId,
+        {
+          tokenId,
+
+          grossWeightKg:
+            procurement.grossWeightKg,
+
+          tareWeightKg:
+            procurement.tareWeightKg,
+
+          netWeightKg:
+            procurement.netWeightKg,
+
+          actualQuantityQuintals:
+            procurement.actualQuantityQuintals
+        }
       );
 
+      appendAuditEvent(
+        'QUALITY_COMPLETED',
+        'QUALITY',
+        qualityId,
+        {
+          tokenId,
+
+          procurementId,
+
+          qualityGrade:
+            finalQualityGrade,
+
+          moisturePercentage:
+            moisture,
+
+          foreignMatterPercentage:
+            foreignMatterValue
+        }
+      );
+
+      appendAuditEvent(
+        'RECEIPT_GENERATED',
+        'RECEIPT',
+        receiptId,
+        {
+          tokenId,
+
+          procurementId,
+
+          qualityId,
+
+          amount:
+            receipt.totalPayoutAmount
+        }
+      );
 
       return res.status(201).json({
-
-        success:
-          true,
+        success: true,
 
         message:
-          'Quality parameters logged and digital receipt generated.',
+          'Weighment and quality parameters logged. Digital receipt generated.',
 
-        receipt:
-          newReceipt
+        procurement,
 
+        quality,
+
+        receipt,
+
+        payment
       });
-
     } catch (error) {
-
       console.error(
         '[Quality Log Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Quality logging failed.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// A1 • PAYMENT / DBT STATUS
-// ================================================================
+/* ============================================================
+   PROTOTYPE DBT DISPATCH
+   ============================================================ */
 
-app.get(
-  '/api/payments/status/:tokenId',
+app.post(
+  '/api/payments/dispatch',
   (req, res) => {
-
     try {
+      const {
+        tokenId
+      } = req.body;
 
-      const tokenId =
-        req.params.tokenId;
-
+      if (!tokenId) {
+        return res.status(400).json({
+          success: false,
+          message:
+            'Token ID is required.'
+        });
+      }
 
       const receipts =
         readData(
@@ -5046,6 +4735,267 @@ app.get(
           []
         );
 
+      const bookings =
+        readData(
+          'bookings.json',
+          []
+        );
+
+      const payments =
+        readData(
+          'payments.json',
+          []
+        );
+
+      const receiptIndex =
+        receipts.findIndex(
+          receipt =>
+            receipt.tokenId ===
+            tokenId
+        );
+
+      if (
+        receiptIndex < 0
+      ) {
+        return res.status(404).json({
+          success: false,
+          message:
+            'Receipt not found. Complete weighment and quality logging first.'
+        });
+      }
+
+      const receipt =
+        receipts[
+          receiptIndex
+        ];
+
+      const booking =
+        bookings.find(
+          item =>
+            item.tokenId ===
+            tokenId
+        );
+
+      let payment =
+        payments.find(
+          item =>
+            item.tokenId ===
+            tokenId
+        );
+
+      if (!payment) {
+        payment = {
+          paymentId:
+            generateId(
+              'PAY'
+            ),
+
+          transactionId:
+            receipt.transactionId ||
+            generateId(
+              'TXN'
+            ),
+
+          receiptId:
+            receipt.receiptId,
+
+          procurementId:
+            receipt.procurementId ||
+            null,
+
+          tokenId,
+
+          farmerId:
+            receipt.farmerId ||
+            booking?.farmerId ||
+            null,
+
+          amount:
+            num(
+              receipt.totalPayoutAmount
+            ),
+
+          quantityQuintals:
+            getReceiptQuantity(
+              receipt
+            ),
+
+          mspPricePerQuintal:
+            num(
+              receipt.mspPricePerQuintal
+            ),
+
+          status:
+            'PENDING',
+
+          pfmsReference:
+            null,
+
+          utr:
+            null,
+
+          createdAt:
+            now(),
+
+          updatedAt:
+            now()
+        };
+
+        payments.push(
+          payment
+        );
+      }
+
+      const currentStatus =
+        getPaymentStatus(
+          payment
+        );
+
+      if (
+        currentStatus ===
+        'dbt-dispatched'
+      ) {
+        return res.json({
+          success: true,
+
+          message:
+            'DBT payout has already been dispatched.',
+
+          payment
+        });
+      }
+
+      payment.status =
+        'DBT_DISPATCHED';
+
+      payment.pfmsReference =
+        payment.pfmsReference ||
+        `PFMS-${new Date()
+          .getFullYear()}-${crypto
+          .randomBytes(3)
+          .toString('hex')
+          .toUpperCase()}`;
+
+      payment.utr =
+        payment.utr ||
+        `UTR-${new Date()
+          .getFullYear()}-${crypto
+          .randomBytes(4)
+          .toString('hex')
+          .toUpperCase()}`;
+
+      payment.updatedAt =
+        now();
+
+      if (
+        !writeData(
+          'payments.json',
+          payments
+        )
+      ) {
+        return res.status(500).json({
+          success: false,
+          message:
+            'Payment dispatch could not be saved.'
+        });
+      }
+
+      receipt.paymentStatus =
+        'DBT Dispatched';
+
+      receipt.pfmsReference =
+        payment.pfmsReference;
+
+      receipt.utr =
+        payment.utr;
+
+      receipt.paymentUpdatedAt =
+        payment.updatedAt;
+
+      receipts[
+        receiptIndex
+      ] = receipt;
+
+      if (
+        !writeData(
+          'receipts.json',
+          receipts
+        )
+      ) {
+        return res.status(500).json({
+          success: false,
+          message:
+            'Receipt payment status could not be updated.'
+        });
+      }
+
+      appendAuditEvent(
+        'DBT_DISPATCHED',
+        'PAYMENT',
+        payment.paymentId,
+        {
+          tokenId,
+
+          receiptId:
+            payment.receiptId,
+
+          amount:
+            payment.amount,
+
+          pfmsReference:
+            payment.pfmsReference,
+
+          utr:
+            payment.utr
+        }
+      );
+
+      return res.json({
+        success: true,
+
+        message:
+          'Prototype DBT payout dispatched successfully.',
+
+        payment
+      });
+    } catch (error) {
+      console.error(
+        '[Payment Dispatch Error]',
+        error
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          'Payment dispatch failed.'
+      });
+    }
+  }
+);
+
+
+/* ============================================================
+   PAYMENT STATUS
+   ============================================================ */
+
+app.get(
+  '/api/payments/status/:tokenId',
+  (req, res) => {
+    try {
+      const tokenId =
+        req.params.tokenId;
+
+      const receipts =
+        readData(
+          'receipts.json',
+          []
+        );
+
+      const payments =
+        readData(
+          'payments.json',
+          []
+        );
 
       const receipt =
         receipts.find(
@@ -5054,20 +5004,25 @@ app.get(
             tokenId
         );
 
+      const payment =
+        payments.find(
+          item =>
+            item.tokenId ===
+            tokenId
+        );
 
       if (!receipt) {
-
         return res.json({
-
-          success:
-            true,
+          success: true,
 
           pipeline: {
-
             stage:
               'Awaiting Weighbridge',
 
             receiptId:
+              null,
+
+            paymentId:
               null,
 
             amountToCredit:
@@ -5081,112 +5036,145 @@ app.get(
 
             payoutStatus:
               'Pending On-Site Weighbridge Logging'
-
           }
-
         });
-
       }
 
+      const status =
+        getPaymentStatus(
+          payment ||
+          receipt
+        );
 
-      const paymentStatus =
-        receipt.paymentStatus ||
-        'Pending';
-
-
-      const normalizedStatus =
-        String(
-          paymentStatus
-        )
-          .trim()
-          .toLowerCase();
-
-
-      const dbtPayoutDispatched =
-        normalizedStatus ===
-          'dbt dispatched' ||
-        normalizedStatus ===
-          'dbt-dispatched';
-
+      const dispatched =
+        status ===
+        'dbt-dispatched';
 
       return res.json({
-
-        success:
-          true,
+        success: true,
 
         pipeline: {
-
           stage:
-            'DBT Processing',
+            dispatched
+              ? 'DBT Dispatched'
+              : 'DBT Processing',
 
           receiptId:
             receipt.receiptId,
 
+          paymentId:
+            payment?.paymentId ||
+            null,
+
           amountToCredit:
-            receipt.totalPayoutAmount,
+            num(
+              receipt.totalPayoutAmount
+            ),
+
+          quantityQuintals:
+            getReceiptQuantity(
+              receipt
+            ),
 
           invoiceGenerated:
             true,
 
-          dbtPayoutDispatched,
+          dbtPayoutDispatched:
+            dispatched,
 
           payoutStatus:
-            dbtPayoutDispatched
+            dispatched
               ? 'DBT payment dispatched.'
               : 'Payment instruction generated. Awaiting DBT confirmation.',
 
-          paymentStatus,
+          paymentStatus:
+            payment?.status ||
+            receipt.paymentStatus ||
+            'Pending',
 
           pfmsReference:
+            payment?.pfmsReference ||
             receipt.pfmsReference ||
             null,
 
           utr:
+            payment?.utr ||
             receipt.utr ||
             null,
 
           bankSyncStatus:
             'Bank account verified'
-
         }
-
       });
-
     } catch (error) {
-
       console.error(
         '[Payment Status Error]',
         error
       );
 
       return res.status(500).json({
-
-        success:
-          false,
-
+        success: false,
         message:
           'Disbursement tracking failed.'
-
       });
-
     }
-
   }
 );
 
 
-// ================================================================
-// HEALTH CHECK
-// ================================================================
+/* ============================================================
+   ADMIN AUDIT TRAIL
+   ============================================================ */
+
+app.get(
+  '/api/admin/audit',
+  requireAdmin,
+  (req, res) => {
+    try {
+      const events =
+        readData(
+          'audit.json',
+          []
+        );
+
+      return res.json({
+        success: true,
+
+        count:
+          events.length,
+
+        events:
+          events
+            .slice(
+              -100
+            )
+            .reverse()
+      });
+    } catch (error) {
+      console.error(
+        '[Admin Audit Error]',
+        error
+      );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          'Unable to load audit trail.'
+      });
+    }
+  }
+);
+
+
+/* ============================================================
+   HEALTH CHECK
+   ============================================================ */
 
 app.get(
   '/api/health',
   (req, res) => {
-
     return res.json({
-
-      success:
-        true,
+      success: true,
 
       service:
         'Kisan Setu Procurement Backend',
@@ -5195,29 +5183,25 @@ app.get(
         'Operational',
 
       timestamp:
-        new Date().toISOString()
-
+        now()
     });
-
   }
 );
 
 
-// ================================================================
-// START SERVER
-// ================================================================
+/* ============================================================
+   START SERVER
+   ============================================================ */
 
 app.listen(
   PORT,
   () => {
-
     console.log(
-      `🌾 Kisan Setu Procurement Backend active on http://localhost:${PORT}`
+      `Kisan Setu Procurement Backend active on http://localhost:${PORT}`
     );
 
     console.log(
-      `📡 Health check: http://localhost:${PORT}/api/health`
+      `Health check: http://localhost:${PORT}/api/health`
     );
-
   }
 );
