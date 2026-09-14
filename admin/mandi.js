@@ -14,6 +14,11 @@ let mandiData = null;
 let allBookings = [];
 let mandiRefreshTimer = null;
 
+// Prevent overlapping refreshes from applying stale data.
+let mandiRequestController = null;
+let mandiRequestSequence = 0;
+let mandiPageInitialized = false;
+
 
 // ================================================================
 // ADMIN SESSION
@@ -70,6 +75,7 @@ async function adminFetch(
 
 
     if (!sessionId) {
+        clearAdminSession();
         redirectToLogin();
         return null;
     }
@@ -77,6 +83,7 @@ async function adminFetch(
 
     const headers = {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...(options.headers || {}),
         'x-admin-session': sessionId
     };
@@ -108,7 +115,7 @@ async function adminFetch(
         }
 
 
-        let data = {};
+        let data;
 
         try {
 
@@ -117,7 +124,9 @@ async function adminFetch(
 
         } catch {
 
-            data = {};
+            throw new Error(
+                'Backend returned an invalid response.'
+            );
 
         }
 
@@ -125,7 +134,7 @@ async function adminFetch(
         if (!response.ok) {
 
             throw new Error(
-                data.message ||
+                data?.message ||
                 'Request failed.'
             );
 
@@ -135,6 +144,11 @@ async function adminFetch(
         return data;
 
     } catch (error) {
+
+        if (error?.name === 'AbortError') {
+            return null;
+        }
+
 
         console.error(
             '[A4 Mandi API Error]',
@@ -588,6 +602,7 @@ async function loadMandiData() {
 
     if (!isAdminAuthenticated()) {
 
+        clearAdminSession();
         redirectToLogin();
 
         return;
@@ -600,16 +615,55 @@ async function loadMandiData() {
     );
 
 
+    // Cancel an older refresh so it cannot overwrite newer data.
+    if (mandiRequestController) {
+        mandiRequestController.abort();
+    }
+
+
+    mandiRequestController =
+        new AbortController();
+
+    const requestSequence =
+        ++mandiRequestSequence;
+
+
     const data =
         await adminFetch(
-            '/api/admin/mandi'
+            '/api/admin/mandi',
+            {
+                signal:
+                    mandiRequestController.signal
+            }
         );
+
+
+    // Ignore responses/errors from an older request.
+    if (
+        requestSequence !==
+        mandiRequestSequence
+    ) {
+        return;
+    }
 
 
     if (
         !data ||
         !data.success
     ) {
+
+        if (data && data.message) {
+            showConnectionError(
+                data.message
+            );
+        }
+
+        if (
+            requestSequence ===
+            mandiRequestSequence
+        ) {
+            mandiRequestController = null;
+        }
 
         return;
 
@@ -630,6 +684,8 @@ async function loadMandiData() {
 
     /*
        Newest booking first.
+       This only orders backend records; it does not
+       create or replace any transaction identifiers.
     */
 
     allBookings.sort(
@@ -678,6 +734,14 @@ async function loadMandiData() {
 
 
     showConnectionSuccess();
+
+
+    if (
+        requestSequence ===
+        mandiRequestSequence
+    ) {
+        mandiRequestController = null;
+    }
 
 }
 
@@ -1058,15 +1122,21 @@ function populateCenterFilter() {
     allBookings.forEach(
         booking => {
 
+            const bookingCenter =
+                booking.center ||
+                booking.centerName ||
+                booking.centerId;
+
+
             if (
-                booking.center &&
+                bookingCenter &&
                 !centerNames.includes(
-                    booking.center
+                    bookingCenter
                 )
             ) {
 
                 centerNames.push(
-                    booking.center
+                    bookingCenter
                 );
 
             }
@@ -1416,6 +1486,13 @@ function getBookingQuantity(
     booking
 ) {
 
+    /*
+       Mandi capacity is based on the booking quantity.
+       Actual procurement quantity must be taken from the
+       procurement/receipt records in the payment and report
+       flows, not substituted here.
+    */
+
     return Number(
         booking.bookedQuantityQuintals ??
         booking.quantityQuintals ??
@@ -1524,6 +1601,7 @@ function renderBookings() {
             const center =
                 booking.center ||
                 booking.centerName ||
+                booking.centerId ||
                 '-';
 
 
@@ -1569,6 +1647,7 @@ function renderBookings() {
             row.dataset.search =
                 [
                     booking.tokenId,
+                    booking.bookingId,
                     farmerName,
                     booking.kccNumber,
                     booking.farmerId,
@@ -1904,6 +1983,14 @@ async function refreshMandiData() {
         );
 
 
+    if (
+        refreshButton?.disabled &&
+        mandiRequestController
+    ) {
+        return;
+    }
+
+
     if (refreshButton) {
 
         refreshButton.disabled =
@@ -1916,13 +2003,21 @@ async function refreshMandiData() {
     }
 
 
+    const requestSequence =
+        mandiRequestSequence + 1;
+
+
     try {
 
         await loadMandiData();
 
     } finally {
 
-        if (refreshButton) {
+        if (
+            refreshButton &&
+            requestSequence >=
+                mandiRequestSequence
+        ) {
 
             refreshButton.disabled =
                 false;
@@ -1943,6 +2038,11 @@ async function refreshMandiData() {
 // ================================================================
 
 function setupLogout() {
+
+    if (mandiPageInitialized) {
+        return;
+    }
+
 
     const logoutButton =
         getElement(
@@ -2027,6 +2127,11 @@ function loadAdminUser() {
 // ================================================================
 
 function setupMandiEvents() {
+
+    if (mandiPageInitialized) {
+        return;
+    }
+
 
     const searchInput =
         getElement(
@@ -2133,7 +2238,9 @@ function startAutoRefresh() {
                     isAdminAuthenticated()
                 ) {
 
-                    loadMandiData();
+                    if (!mandiRequestController) {
+                        loadMandiData();
+                    }
 
                 } else {
 
@@ -2166,6 +2273,11 @@ window.addEventListener(
 
         }
 
+
+        if (mandiRequestController) {
+            mandiRequestController.abort();
+        }
+
     }
 );
 
@@ -2194,6 +2306,8 @@ document.addEventListener(
         setupLogout();
 
         setupMandiEvents();
+
+        mandiPageInitialized = true;
 
         await loadMandiData();
 

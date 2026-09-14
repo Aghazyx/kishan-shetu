@@ -117,6 +117,9 @@ const adminFetch = async (
         'Content-Type':
             'application/json',
 
+        'Accept':
+            'application/json',
+
         ...(options.headers || {}),
 
         'x-admin-session':
@@ -149,7 +152,7 @@ const adminFetch = async (
     }
 
 
-    let data = {};
+    let data;
 
 
     try {
@@ -159,7 +162,9 @@ const adminFetch = async (
 
     } catch {
 
-        data = {};
+        throw new Error(
+            'Backend returned an invalid response.'
+        );
 
     }
 
@@ -167,7 +172,7 @@ const adminFetch = async (
     if (!response.ok) {
 
         throw new Error(
-            data.message ||
+            data?.message ||
             `Request failed with status ${response.status}.`
         );
 
@@ -558,6 +563,9 @@ const logoutAdmin = async () => {
                         'Content-Type':
                             'application/json',
 
+                        'Accept':
+                            'application/json',
+
                         'x-admin-session':
                             sessionId
                     }
@@ -597,6 +605,16 @@ let autoRefreshTimer = null;
 
 const AUTO_REFRESH_INTERVAL =
     30000;
+
+
+// Prevent overlapping or stale API requests.
+let paymentRequestController = null;
+
+let paymentRequestSequence = 0;
+
+
+// Prevent duplicate page-wide event listeners.
+let paymentPageInitialized = false;
 
 
 // ================================================================
@@ -822,22 +840,150 @@ const getPaymentDate = (
 // ================================================================
 // PAYMENT QUANTITY
 // ================================================================
+// Payment quantity must represent ACTUAL PROCUREMENT quantity.
+// Booking/estimated quantity must never be preferred for payout.
+//
+// The backend may expose actual procurement using one of the
+// explicit actual/procured quantity fields below.
 
 const getPaymentQuantity = (
     payment
 ) => {
 
     const quantity =
+        payment?.actualProcuredQuantityQuintals ??
+        payment?.actualProcurementQuantityQuintals ??
+        payment?.procuredQuantityQuintals ??
+        payment?.actualQuantityQuintals ??
+        payment?.actualProcuredQuantity ??
+        payment?.procuredQuantity ??
         payment?.quantityQuintals ??
-        payment?.bookedQuantityQuintals ??
         payment?.quantity ??
-        payment?.estimatedQuantityQuintals ??
         0;
 
 
     return Number(
         quantity
     ) || 0;
+
+};
+
+
+// ================================================================
+// PAYMENT BOOKING ID
+// ================================================================
+
+const getPaymentBookingId = (
+    payment
+) => {
+
+    return (
+        payment?.bookingId ||
+        payment?.booking?.bookingId ||
+        ''
+    );
+
+};
+
+
+// ================================================================
+// PAYMENT FARMER ID
+// ================================================================
+
+const getPaymentFarmerId = (
+    payment
+) => {
+
+    return (
+        payment?.farmerId ||
+        payment?.farmer?.farmerId ||
+        payment?.farmer?.id ||
+        ''
+    );
+
+};
+
+
+// ================================================================
+// PAYMENT MSP
+// ================================================================
+
+const getPaymentMSP = (
+    payment
+) => {
+
+    const msp =
+        payment?.mspPerQuintal ??
+        payment?.mspRate ??
+        payment?.msp ??
+        payment?.minimumSupportPrice ??
+        null;
+
+
+    if (
+        msp === null ||
+        msp === undefined ||
+        msp === ''
+    ) {
+
+        return null;
+
+    }
+
+
+    const value =
+        Number(
+            msp
+        );
+
+
+    return Number.isFinite(
+        value
+    )
+        ? value
+        : null;
+
+};
+
+
+// ================================================================
+// PAYMENT PAYOUT
+// ================================================================
+
+const getPaymentPayout = (
+    payment
+) => {
+
+    const payout =
+        payment?.payoutAmount ??
+        payment?.payableAmount ??
+        payment?.paymentAmount ??
+        payment?.amount ??
+        null;
+
+
+    if (
+        payout === null ||
+        payout === undefined ||
+        payout === ''
+    ) {
+
+        return null;
+
+    }
+
+
+    const value =
+        Number(
+            payout
+        );
+
+
+    return Number.isFinite(
+        value
+    )
+        ? value
+        : null;
 
 };
 
@@ -854,6 +1000,44 @@ const getPaymentCenter = (
         payment?.center ||
         payment?.centerId ||
         '—'
+    );
+
+};
+
+
+// ================================================================
+// PFMS REFERENCE
+// ================================================================
+
+const getPFMSReference = (
+    payment
+) => {
+
+    return (
+        payment?.pfmsReference ||
+        payment?.pfmsRef ||
+        payment?.pfmsReferenceNumber ||
+        payment?.pfmsId ||
+        ''
+    );
+
+};
+
+
+// ================================================================
+// UTR
+// ================================================================
+
+const getUTR = (
+    payment
+) => {
+
+    return (
+        payment?.utr ||
+        payment?.utrNumber ||
+        payment?.utrReference ||
+        payment?.bankUtr ||
+        ''
     );
 
 };
@@ -895,17 +1079,13 @@ const calculateSummary = (
         payment => {
 
             const amount =
-                Number(
-                    payment?.payableAmount ||
-                    payment?.amount ||
-                    0
+                getPaymentPayout(
+                    payment
                 );
 
 
             if (
-                Number.isFinite(
-                    amount
-                )
+                amount !== null
             ) {
 
                 totalPaymentValue +=
@@ -996,9 +1176,11 @@ const renderSummary = (
        The payment endpoint is the source of truth for
        transaction-level rendering.
 
-       The calculated values ensure the summary cards
-       remain synchronized with the rows currently
-       represented by the backend response.
+       Calculated values keep summary cards synchronized
+       with the payment records returned by the backend.
+
+       Actual payout values are used rather than booking
+       estimates.
     */
 
 
@@ -1209,31 +1391,52 @@ const renderPaymentTable = (
                 '—';
 
 
+            const bookingId =
+                getPaymentBookingId(
+                    payment
+                );
+
+
+            const farmerId =
+                getPaymentFarmerId(
+                    payment
+                );
+
+
             const center =
                 getPaymentCenter(
                     payment
                 );
 
 
+            // IMPORTANT:
+            // This quantity is actual procurement quantity.
+            // Estimated/booked quantity is not used as a fallback.
+            const actualQuantity =
+                getPaymentQuantity(
+                    payment
+                );
+
+
             const quantity =
                 `${formatNumber(
-                    getPaymentQuantity(
-                        payment
-                    ),
+                    actualQuantity,
                     2
                 )} qtl`;
 
 
-            const payableAmount =
-                payment?.payableAmount ??
-                payment?.amount ??
-                0;
+            const payout =
+                getPaymentPayout(
+                    payment
+                );
 
 
             const amount =
-                formatCurrency(
-                    payableAmount
-                );
+                payout !== null
+                    ? formatCurrency(
+                        payout
+                    )
+                    : '—';
 
 
             const statusClass =
@@ -1266,6 +1469,102 @@ const renderPaymentTable = (
                 String(
                     transactionId
                 );
+
+
+            // Preserve transaction traceability
+            // without changing the existing DOM structure.
+            if (tokenId !== '—') {
+
+                row.dataset.tokenId =
+                    String(
+                        tokenId
+                    );
+
+            }
+
+
+            if (bookingId) {
+
+                row.dataset.bookingId =
+                    String(
+                        bookingId
+                    );
+
+            }
+
+
+            if (farmerId) {
+
+                row.dataset.farmerId =
+                    String(
+                        farmerId
+                    );
+
+            }
+
+
+            row.dataset.actualQuantity =
+                String(
+                    actualQuantity
+                );
+
+
+            const msp =
+                getPaymentMSP(
+                    payment
+                );
+
+
+            if (msp !== null) {
+
+                row.dataset.msp =
+                    String(
+                        msp
+                    );
+
+            }
+
+
+            if (payout !== null) {
+
+                row.dataset.payout =
+                    String(
+                        payout
+                    );
+
+            }
+
+
+            const pfmsReference =
+                getPFMSReference(
+                    payment
+                );
+
+
+            if (pfmsReference) {
+
+                row.dataset.pfmsReference =
+                    String(
+                        pfmsReference
+                    );
+
+            }
+
+
+            const utr =
+                getUTR(
+                    payment
+                );
+
+
+            if (utr) {
+
+                row.dataset.utr =
+                    String(
+                        utr
+                    );
+
+            }
 
 
             row.innerHTML = `
@@ -1613,9 +1912,15 @@ const getFilteredPayments = () => {
 
                     payment?.farmerName,
 
+                    payment?.farmerId,
+
+                    payment?.farmer?.farmerId,
+
                     payment?.kccNumber,
 
                     payment?.tokenId,
+
+                    payment?.bookingId,
 
                     payment?.phone,
 
@@ -1625,7 +1930,19 @@ const getFilteredPayments = () => {
 
                     payment?.center,
 
-                    payment?.centerId
+                    payment?.centerId,
+
+                    payment?.pfmsReference,
+
+                    payment?.pfmsRef,
+
+                    payment?.pfmsReferenceNumber,
+
+                    payment?.utr,
+
+                    payment?.utrNumber,
+
+                    payment?.utrReference
 
                 ]
                     .filter(
@@ -1793,6 +2110,31 @@ const loadPaymentData = async () => {
     }
 
 
+    // --------------------------------------------------------------
+    // CANCEL PREVIOUS REQUEST
+    // --------------------------------------------------------------
+
+    if (
+        paymentRequestController
+    ) {
+
+        paymentRequestController.abort();
+
+    }
+
+
+    const controller =
+        new AbortController();
+
+
+    paymentRequestController =
+        controller;
+
+
+    const requestSequence =
+        ++paymentRequestSequence;
+
+
     const refreshButton =
         getElement(
             'refresh-payment-button'
@@ -1821,8 +2163,24 @@ const loadPaymentData = async () => {
 
         const data =
             await adminFetch(
-                '/api/admin/payments'
+                '/api/admin/payments',
+                {
+                    signal:
+                        controller.signal
+                }
             );
+
+
+        // Ignore an older response if a newer request
+        // has already been started.
+        if (
+            requestSequence !==
+            paymentRequestSequence
+        ) {
+
+            return;
+
+        }
 
 
         if (
@@ -1895,6 +2253,30 @@ const loadPaymentData = async () => {
 
     } catch (error) {
 
+        // Aborted requests are expected when a newer
+        // request supersedes an older request.
+        if (
+            error?.name ===
+            'AbortError'
+        ) {
+
+            return;
+
+        }
+
+
+        // Never allow an older request to overwrite
+        // the state produced by a newer request.
+        if (
+            requestSequence !==
+            paymentRequestSequence
+        ) {
+
+            return;
+
+        }
+
+
         console.error(
             '[A6] Payment monitoring error:',
             error
@@ -1961,14 +2343,34 @@ const loadPaymentData = async () => {
 
     } finally {
 
-        if (refreshButton) {
+        // Only the current request can restore the
+        // refresh button and controller state.
+        if (
+            requestSequence ===
+            paymentRequestSequence
+        ) {
 
-            refreshButton.disabled =
-                false;
+            if (
+                paymentRequestController ===
+                controller
+            ) {
 
-            refreshButton.classList.remove(
-                'loading'
-            );
+                paymentRequestController =
+                    null;
+
+            }
+
+
+            if (refreshButton) {
+
+                refreshButton.disabled =
+                    false;
+
+                refreshButton.classList.remove(
+                    'loading'
+                );
+
+            }
 
         }
 
@@ -1982,6 +2384,17 @@ const loadPaymentData = async () => {
 // ================================================================
 
 const setupEventListeners = () => {
+
+    // Prevent duplicate listeners if initialization
+    // is triggered more than once.
+    if (
+        paymentPageInitialized
+    ) {
+
+        return;
+
+    }
+
 
     // --------------------------------------------------------------
     // REFRESH
@@ -1997,7 +2410,22 @@ const setupEventListeners = () => {
 
         refreshButton.addEventListener(
             'click',
-            loadPaymentData
+            () => {
+
+                // Do not create another overlapping
+                // request from a manual refresh.
+                if (
+                    paymentRequestController
+                ) {
+
+                    return;
+
+                }
+
+
+                loadPaymentData();
+
+            }
         );
 
     }
@@ -2102,6 +2530,10 @@ const setupEventListeners = () => {
 
     }
 
+
+    paymentPageInitialized =
+        true;
+
 };
 
 
@@ -2127,18 +2559,33 @@ const startAutoRefresh = () => {
             () => {
 
                 if (
-                    isAdminAuthenticated()
+                    !isAdminAuthenticated()
                 ) {
-
-                    loadPaymentData();
-
-                } else {
 
                     clearInterval(
                         autoRefreshTimer
                     );
 
+                    autoRefreshTimer =
+                        null;
+
+                    return;
+
                 }
+
+
+                // Never start another request while
+                // the current request is still active.
+                if (
+                    paymentRequestController
+                ) {
+
+                    return;
+
+                }
+
+
+                loadPaymentData();
 
             },
             AUTO_REFRESH_INTERVAL
@@ -2163,6 +2610,21 @@ window.addEventListener(
                 autoRefreshTimer
             );
 
+            autoRefreshTimer =
+                null;
+
+        }
+
+
+        if (
+            paymentRequestController
+        ) {
+
+            paymentRequestController.abort();
+
+            paymentRequestController =
+                null;
+
         }
 
     }
@@ -2174,6 +2636,15 @@ window.addEventListener(
 // ================================================================
 
 const initPaymentPage = async () => {
+
+    if (
+        paymentPageInitialized
+    ) {
+
+        return;
+
+    }
+
 
     if (
         !isAdminAuthenticated()

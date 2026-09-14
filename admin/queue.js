@@ -90,6 +90,9 @@ const adminFetch = async (
         'Content-Type':
             'application/json',
 
+        'Accept':
+            'application/json',
+
         ...(options.headers || {}),
 
         'x-admin-session':
@@ -140,7 +143,7 @@ const adminFetch = async (
     if (!response.ok) {
 
         throw new Error(
-            data.message ||
+            data?.message ||
             `Request failed with status ${response.status}.`
         );
 
@@ -538,6 +541,14 @@ let queueData = {
 let lastQueueData = null;
 
 let autoRefreshTimer = null;
+
+// Prevent overlapping requests and stale responses.
+let queueRequestController = null;
+
+let queueRequestSequence = 0;
+
+// Prevent duplicate page-wide event listeners.
+let queuePageInitialized = false;
 
 
 // ================================================================
@@ -1114,6 +1125,8 @@ const filterQueue = (
 
                         record.bookingId,
 
+                        record.farmerId,
+
                         record.farmerName,
 
                         record.kccNumber,
@@ -1553,6 +1566,7 @@ const applyFilters = () => {
        authoritative totalActive value.
     */
 
+
     const search =
         String(
             getElement(
@@ -1688,6 +1702,25 @@ const loadQueueData = async () => {
     }
 
 
+    // Cancel any previous refresh so an older response
+    // cannot overwrite newer queue state.
+    if (queueRequestController) {
+
+        queueRequestController.abort();
+
+    }
+
+
+    const controller =
+        new AbortController();
+
+    queueRequestController =
+        controller;
+
+    const requestSequence =
+        ++queueRequestSequence;
+
+
     try {
 
         setConnectionStatus(
@@ -1698,8 +1731,23 @@ const loadQueueData = async () => {
 
         const data =
             await adminFetch(
-                '/api/admin/queue'
+                '/api/admin/queue',
+                {
+                    signal:
+                        controller.signal
+                }
             );
+
+
+        // Ignore a response from an older request.
+        if (
+            requestSequence !==
+            queueRequestSequence
+        ) {
+
+            return;
+
+        }
 
 
         if (
@@ -1740,6 +1788,28 @@ const loadQueueData = async () => {
 
 
     } catch (error) {
+
+        if (
+            error?.name ===
+            'AbortError'
+        ) {
+
+            return;
+
+        }
+
+
+        // Do not let a stale failed request replace
+        // the state of a newer successful request.
+        if (
+            requestSequence !==
+            queueRequestSequence
+        ) {
+
+            return;
+
+        }
+
 
         console.error(
             '[A5 Queue Error]',
@@ -1814,6 +1884,18 @@ const loadQueueData = async () => {
 
         }
 
+    } finally {
+
+        if (
+            requestSequence ===
+            queueRequestSequence
+        ) {
+
+            queueRequestController =
+                null;
+
+        }
+
     }
 
 };
@@ -1829,6 +1911,17 @@ const refreshQueue = async () => {
         getElement(
             'refresh-queue-button'
         );
+
+
+    // Avoid starting another manual refresh while one is active.
+    if (
+        button?.disabled &&
+        queueRequestController
+    ) {
+
+        return;
+
+    }
 
 
     if (button) {
@@ -1965,6 +2058,13 @@ const setupFilters = () => {
 
 const setupEventListeners = () => {
 
+    if (queuePageInitialized) {
+
+        return;
+
+    }
+
+
     const refreshButton =
         getElement(
             'refresh-queue-button'
@@ -1999,6 +2099,8 @@ const setupEventListeners = () => {
 
     setupFilters();
 
+    queuePageInitialized = true;
+
 };
 
 
@@ -2027,7 +2129,11 @@ const startAutoRefresh = () => {
                     isAdminAuthenticated()
                 ) {
 
-                    loadQueueData();
+                    if (!queueRequestController) {
+
+                        loadQueueData();
+
+                    }
 
                 } else {
 
@@ -2062,6 +2168,15 @@ window.addEventListener(
 
         }
 
+
+        if (queueRequestController) {
+
+            queueRequestController.abort();
+
+            queueRequestController = null;
+
+        }
+
     }
 );
 
@@ -2071,6 +2186,13 @@ window.addEventListener(
 // ================================================================
 
 const initQueuePage = async () => {
+
+    if (queuePageInitialized) {
+
+        return;
+
+    }
+
 
     if (
         !isAdminAuthenticated()
