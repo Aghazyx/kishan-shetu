@@ -1150,3 +1150,20 @@ window.showAuditHash =
 
 window.triggerSimulatedSMS =
   triggerSimulatedSMS;
+  function populateBookingDisplay() {
+  const bookingData = JSON.parse(sessionStorage.getItem('bookingData') || '{}');
+  const farmerName = sessionStorage.getItem('farmerName');
+
+  if (!bookingData.tokenId) return;
+
+  // Replace these IDs with your actual HTML element IDs
+  document.getElementById('ui-farmer-name').textContent = farmerName;
+  document.getElementById('ui-token-number').textContent = bookingData.tokenId;
+  document.getElementById('ui-booking-date').textContent = bookingData.date;
+  document.getElementById('ui-booking-slot').textContent = bookingData.timeSlot;
+  document.getElementById('ui-booking-center').textContent = bookingData.center;
+  document.getElementById('ui-booking-qty').textContent = `${bookingData.estimatedQuantityQuintals} qtl`;
+}
+
+// Bind to your Stage 4 transition logic
+document.addEventListener('stage4-active', populateBookingDisplay);

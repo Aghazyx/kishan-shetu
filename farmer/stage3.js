@@ -1411,3 +1411,38 @@ window.submitSlotBooking =
 
 window.updateStage4FromBooking =
   updateStage4FromBooking;
+  async function bookSlotBackend(bookingParams) {
+  try {
+    const payload = {
+      kccNumber: sessionStorage.getItem('kccNumber'),
+      farmerId: sessionStorage.getItem('farmerId'),
+      cropType: bookingParams.crop, 
+      quantityQuintals: bookingParams.quantity, // estimated booking (e.g. 45 qtl)
+      preferredDate: bookingParams.date,
+      centerId: bookingParams.centerId,
+      timeSlot: bookingParams.timeSlot,
+      vehicleNumber: bookingParams.vehicle
+    };
+
+    const response = await fetch('/api/slots/book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      sessionStorage.setItem('bookingId', data.booking.bookingId);
+      sessionStorage.setItem('tokenId', data.booking.tokenId);
+      sessionStorage.setItem('bookingData', JSON.stringify(data.booking));
+      return true;
+    } else {
+      console.error('Booking failed:', data.message);
+      return false;
+    }
+  } catch (error) {
+    console.error('API Error:', error);
+    return false;
+  }
+}
