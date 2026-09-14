@@ -139,6 +139,15 @@ let allFarmers = [];
 
 let searchTimeout = null;
 
+// Prevent an older API response from overwriting newer data.
+let farmerRequestSequence = 0;
+
+// Abort an older request when a new search/refresh starts.
+let farmerRequestController = null;
+
+// Prevent duplicate global event listeners.
+let farmersPageInitialized = false;
+
 
 // ================================================================
 // FORMATTERS
@@ -260,6 +269,10 @@ const setLoadingState = (isLoading) => {
     loadingElement.style.display =
       isLoading ? '' : 'none';
   }
+
+  if (refreshButton) {
+    refreshButton.disabled = isLoading;
+  }
 };
 
 
@@ -287,6 +300,20 @@ const loadFarmers = async (search = '') => {
     return;
   }
 
+  // Abort any previous request.
+  if (farmerRequestController) {
+    farmerRequestController.abort();
+  }
+
+  farmerRequestController =
+    new AbortController();
+
+  const requestController =
+    farmerRequestController;
+
+  const requestSequence =
+    ++farmerRequestSequence;
+
   setLoadingState(true);
 
   showMessage(
@@ -297,6 +324,11 @@ const loadFarmers = async (search = '') => {
   try {
 
     const session = getAdminSession();
+
+    if (!session) {
+      handleSessionExpired();
+      return;
+    }
 
     const trimmedSearch =
       String(search || '').trim();
@@ -313,22 +345,36 @@ const loadFarmers = async (search = '') => {
           method: 'GET',
 
           headers: {
-            'x-admin-session': session
-          }
+            'x-admin-session': session,
+            'Accept': 'application/json'
+          },
+
+          signal: requestController.signal
         }
       );
+
+
+    // A newer request has already started.
+    if (requestSequence !== farmerRequestSequence) {
+      return;
+    }
+
 
     let data = {};
 
     try {
       data = await response.json();
     } catch {
-      data = {};
+      throw new Error(
+        'The administration backend returned an invalid response.'
+      );
     }
 
 
+    // 401/403 both indicate an invalid or expired admin session.
     if (
       response.status === 401 ||
+      response.status === 403 ||
       data.authenticated === false
     ) {
       handleSessionExpired();
@@ -344,6 +390,7 @@ const loadFarmers = async (search = '') => {
     }
 
 
+    // Never replace valid data with an unexpected non-array.
     allFarmers =
       Array.isArray(data.farmers)
         ? data.farmers
@@ -362,6 +409,19 @@ const loadFarmers = async (search = '') => {
 
 
   } catch (error) {
+
+    // Ignore intentionally cancelled requests.
+    if (error.name === 'AbortError') {
+      return;
+    }
+
+
+    // Do not allow an older failed request
+    // to overwrite the result of a newer request.
+    if (requestSequence !== farmerRequestSequence) {
+      return;
+    }
+
 
     console.error(
       '[A3 Farmer Management Error]',
@@ -388,7 +448,14 @@ const loadFarmers = async (search = '') => {
 
   } finally {
 
-    setLoadingState(false);
+    // Only the current request may control loading state.
+    if (requestSequence === farmerRequestSequence) {
+      setLoadingState(false);
+
+      if (farmerRequestController === requestController) {
+        farmerRequestController = null;
+      }
+    }
 
   }
 
@@ -422,6 +489,9 @@ const renderSummary = (data = {}) => {
     ).length;
 
 
+  // IMPORTANT:
+  // Use actual procured quantity from the backend.
+  // Do not calculate payout/procurement from booked quantity.
   const totalProcurement =
     farmers.reduce(
       (total, farmer) => {
@@ -642,6 +712,15 @@ const attachFarmerButtons = () => {
 
 
   buttons.forEach(button => {
+
+    // Prevent duplicate click listeners if the table
+    // is rendered repeatedly.
+    if (button.dataset.bound === 'true') {
+      return;
+    }
+
+    button.dataset.bound = 'true';
+
 
     button.addEventListener(
       'click',
@@ -912,7 +991,7 @@ const openFarmerDetails = (farmer) => {
 
         <div class="detail-group">
           <span class="detail-label">
-            Procured Quantity
+            Actual Procured Quantity
           </span>
 
           <strong>
@@ -968,6 +1047,32 @@ const openFarmerDetails = (farmer) => {
 
               <div>
                 <span class="detail-label">
+                  Booking ID
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    latestBooking.bookingId || '—'
+                  )}
+                </strong>
+              </div>
+
+
+              <div>
+                <span class="detail-label">
+                  Farmer ID
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    latestBooking.farmerId || farmer.id || '—'
+                  )}
+                </strong>
+              </div>
+
+
+              <div>
+                <span class="detail-label">
                   Date
                 </span>
 
@@ -1007,7 +1112,7 @@ const openFarmerDetails = (farmer) => {
 
               <div>
                 <span class="detail-label">
-                  Quantity
+                  Booked Quantity
                 </span>
 
                 <strong>
@@ -1099,6 +1204,32 @@ const openFarmerDetails = (farmer) => {
 
               <div>
                 <span class="detail-label">
+                  Booking ID
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    latestReceipt.bookingId || '—'
+                  )}
+                </strong>
+              </div>
+
+
+              <div>
+                <span class="detail-label">
+                  Farmer ID
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    latestReceipt.farmerId || farmer.id || '—'
+                  )}
+                </strong>
+              </div>
+
+
+              <div>
+                <span class="detail-label">
                   Crop
                 </span>
 
@@ -1112,7 +1243,7 @@ const openFarmerDetails = (farmer) => {
 
               <div>
                 <span class="detail-label">
-                  Net Quantity
+                  Actual Net Quantity
                 </span>
 
                 <strong>
@@ -1307,134 +1438,162 @@ const closeFarmerDetails = () => {
 
 
 // ================================================================
-// SEARCH
+// PAGE EVENT INITIALIZATION
 // ================================================================
 
-if (farmerSearchInput) {
+const initializeFarmersPage = () => {
 
-  farmerSearchInput.addEventListener(
-    'input',
+  // Prevent duplicate initialization.
+  if (farmersPageInitialized) {
+    return;
+  }
+
+  farmersPageInitialized = true;
+
+
+  // ==============================================================
+  // SEARCH
+  // ==============================================================
+
+  if (farmerSearchInput) {
+
+    farmerSearchInput.addEventListener(
+      'input',
+      event => {
+
+        const search =
+          event.target.value;
+
+
+        clearTimeout(searchTimeout);
+
+
+        searchTimeout =
+          setTimeout(
+            () => {
+              loadFarmers(search);
+            },
+            300
+          );
+
+      }
+    );
+
+  }
+
+
+  // ==============================================================
+  // REFRESH BUTTON
+  // ==============================================================
+
+  if (refreshButton) {
+
+    refreshButton.addEventListener(
+      'click',
+      () => {
+
+        const search =
+          farmerSearchInput
+            ? farmerSearchInput.value
+            : '';
+
+
+        loadFarmers(search);
+
+      }
+    );
+
+  }
+
+
+  // ==============================================================
+  // EXISTING MODAL CLOSE BUTTON
+  // ==============================================================
+
+  const existingCloseButton =
+    getElement(
+      'close-farmer-modal'
+    );
+
+
+  if (existingCloseButton) {
+
+    existingCloseButton.addEventListener(
+      'click',
+      closeFarmerDetails
+    );
+
+  }
+
+
+  // ==============================================================
+  // EXISTING MODAL BACKDROP
+  // ==============================================================
+
+  const existingModal =
+    getElement(
+      'farmer-details-modal'
+    );
+
+
+  if (existingModal) {
+
+    existingModal.addEventListener(
+      'click',
+      event => {
+
+        if (
+          event.target ===
+          existingModal
+        ) {
+          closeFarmerDetails();
+        }
+
+      }
+    );
+
+  }
+
+
+  // ==============================================================
+  // ESCAPE KEY
+  // ==============================================================
+
+  document.addEventListener(
+    'keydown',
     event => {
 
-      const search =
-        event.target.value;
-
-
-      clearTimeout(searchTimeout);
-
-
-      searchTimeout =
-        setTimeout(
-          () => {
-            loadFarmers(search);
-          },
-          300
-        );
-
-    }
-  );
-
-}
-
-
-// ================================================================
-// REFRESH BUTTON
-// ================================================================
-
-if (refreshButton) {
-
-  refreshButton.addEventListener(
-    'click',
-    () => {
-
-      const search =
-        farmerSearchInput
-          ? farmerSearchInput.value
-          : '';
-
-
-      loadFarmers(search);
-
-    }
-  );
-
-}
-
-
-// ================================================================
-// EXISTING MODAL CLOSE BUTTON
-// ================================================================
-
-const existingCloseButton =
-  getElement(
-    'close-farmer-modal'
-  );
-
-
-if (existingCloseButton) {
-
-  existingCloseButton.addEventListener(
-    'click',
-    closeFarmerDetails
-  );
-
-}
-
-
-// ================================================================
-// MODAL BACKDROP
-// ================================================================
-
-const existingModal =
-  getElement(
-    'farmer-details-modal'
-  );
-
-
-if (existingModal) {
-
-  existingModal.addEventListener(
-    'click',
-    event => {
-
-      if (
-        event.target ===
-        existingModal
-      ) {
+      if (event.key === 'Escape') {
         closeFarmerDetails();
       }
 
     }
   );
 
-}
 
+  // ==============================================================
+  // INITIAL LOAD
+  // ==============================================================
 
-// ================================================================
-// ESCAPE KEY
-// ================================================================
+  loadFarmers();
 
-document.addEventListener(
-  'keydown',
-  event => {
-
-    if (event.key === 'Escape') {
-      closeFarmerDetails();
-    }
-
-  }
-);
+};
 
 
 // ================================================================
 // INITIAL LOAD
 // ================================================================
 
-document.addEventListener(
-  'DOMContentLoaded',
-  () => {
+if (document.readyState === 'loading') {
 
-    loadFarmers();
+  document.addEventListener(
+    'DOMContentLoaded',
+    initializeFarmersPage,
+    { once: true }
+  );
 
-  }
-);
+} else {
+
+  initializeFarmersPage();
+
+}

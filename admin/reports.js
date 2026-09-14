@@ -90,6 +90,20 @@ const getElement = (
 
 
 // ================================================================
+// REQUEST STATE
+// ================================================================
+
+let reportsRequestController =
+    null;
+
+let reportsRequestSequence =
+    0;
+
+let reportsPageInitialized =
+    false;
+
+
+// ================================================================
 // ADMIN API REQUEST
 // ================================================================
 
@@ -123,6 +137,9 @@ const adminFetch = async (
                 headers: {
 
                     'Content-Type':
+                        'application/json',
+
+                    'Accept':
                         'application/json',
 
                     ...(options.headers || {}),
@@ -168,7 +185,7 @@ const adminFetch = async (
     if (!response.ok) {
 
         throw new Error(
-            data.message ||
+            data?.message ||
             `Request failed with status ${response.status}.`
         );
 
@@ -404,6 +421,226 @@ const formatDateTime = (
 
         }
     );
+
+};
+
+
+// ================================================================
+// ACTUAL PROCUREMENT QUANTITY
+// ================================================================
+// IMPORTANT:
+// Do not substitute booking/estimated quantity for actual
+// procurement quantity in reports, payment totals, charts,
+// analytics, or CSV exports.
+//
+// Example:
+// Booking = 45 qtl
+// Actual procurement = 100 qtl
+// Reports must use 100 qtl for procurement totals/payout data.
+// ================================================================
+
+const getActualProcuredQuantity = (
+    record
+) => {
+
+    const candidates = [
+
+        record?.actualProcuredQuantityQuintals,
+
+        record?.actualProcurementQuantityQuintals,
+
+        record?.procuredQuantityQuintals,
+
+        record?.actualQuantityQuintals,
+
+        record?.actualProcuredQuantity,
+
+        record?.procuredQuantity,
+
+        record?.quantityQuintals,
+
+        record?.quantity,
+
+        record?.procuredQuintals
+
+    ];
+
+
+    for (
+        const value of candidates
+    ) {
+
+        if (
+            value !== null &&
+            value !== undefined &&
+            value !== ''
+        ) {
+
+            const number =
+                Number(
+                    value
+                );
+
+
+            if (
+                Number.isFinite(
+                    number
+                )
+            ) {
+
+                return number;
+
+            }
+
+        }
+
+    }
+
+
+    return 0;
+
+};
+
+
+// ================================================================
+// PAYMENT / TRACEABILITY HELPERS
+// ================================================================
+
+const getReportBookingId = (
+    record
+) => {
+
+    return (
+        record?.bookingId ||
+        record?.bookingID ||
+        record?.booking?.bookingId ||
+        ''
+    );
+
+};
+
+
+const getReportFarmerId = (
+    record
+) => {
+
+    return (
+        record?.farmerId ||
+        record?.farmerID ||
+        record?.farmer?.farmerId ||
+        record?.farmer?.id ||
+        ''
+    );
+
+};
+
+
+const getReportMSP = (
+    record
+) => {
+
+    const candidates = [
+
+        record?.msp,
+
+        record?.mspPerQuintal,
+
+        record?.mspRate,
+
+        record?.minimumSupportPrice,
+
+        record?.minimumSupportPricePerQuintal
+
+    ];
+
+
+    for (
+        const value of candidates
+    ) {
+
+        if (
+            value !== null &&
+            value !== undefined &&
+            value !== ''
+        ) {
+
+            const number =
+                Number(
+                    value
+                );
+
+
+            if (
+                Number.isFinite(
+                    number
+                )
+            ) {
+
+                return number;
+
+            }
+
+        }
+
+    }
+
+
+    return 0;
+
+};
+
+
+const getReportPayout = (
+    record
+) => {
+
+    const candidates = [
+
+        record?.payoutAmount,
+
+        record?.payout,
+
+        record?.netPayout,
+
+        record?.payableAmount,
+
+        record?.paymentAmount
+
+    ];
+
+
+    for (
+        const value of candidates
+    ) {
+
+        if (
+            value !== null &&
+            value !== undefined &&
+            value !== ''
+        ) {
+
+            const number =
+                Number(
+                    value
+                );
+
+
+            if (
+                Number.isFinite(
+                    number
+                )
+            ) {
+
+                return number;
+
+            }
+
+        }
+
+    }
+
+
+    return 0;
 
 };
 
@@ -1059,9 +1296,9 @@ const renderCropAnalytics = (
 
                             <div>
                                 ${formatNumber(
-                                    crop.quantityQuintals ??
-                                    crop.procuredQuintals ??
-                                    0
+                                    getActualProcuredQuantity(
+                                        crop
+                                    )
                                 )}
                                 qtl
                             </div>
@@ -1167,6 +1404,7 @@ const renderCenterAnalytics = (
                             <div>
                                 ${formatNumber(
                                     center.procuredQuintals ??
+                                    center.actualProcuredQuantityQuintals ??
                                     0
                                 )}
                                 qtl procured
@@ -1247,7 +1485,6 @@ const renderQualitySummary = (
             0
         )
     );
-
 
 };
 
@@ -1367,14 +1604,12 @@ const renderDailyPerformance = (
 
         tbody.innerHTML = `
             <tr>
-
                 <td
                     colspan="4"
                     class="reports-empty-cell"
                 >
                     No daily performance data available.
                 </td>
-
             </tr>
         `;
 
@@ -1409,9 +1644,9 @@ const renderDailyPerformance = (
 
                             <td>
                                 ${formatNumber(
-                                    item.quantityQuintals ??
-                                    item.procuredQuintals ??
-                                    0
+                                    getActualProcuredQuantity(
+                                        item
+                                    )
                                 )}
                                 qtl
                             </td>
@@ -1585,8 +1820,37 @@ const renderRecentActivity = (
                         );
 
 
+                    const actualQuantity =
+                        getActualProcuredQuantity(
+                            activity
+                        );
+
+
+                    const bookingId =
+                        getReportBookingId(
+                            activity
+                        );
+
+
+                    const farmerId =
+                        getReportFarmerId(
+                            activity
+                        );
+
+
                     return `
-                        <tr>
+                        <tr
+                            data-token-id="${escapeHtml(
+                                activity.tokenId ||
+                                ''
+                            )}"
+                            data-booking-id="${escapeHtml(
+                                bookingId
+                            )}"
+                            data-farmer-id="${escapeHtml(
+                                farmerId
+                            )}"
+                        >
 
                             <td>
 
@@ -1631,9 +1895,7 @@ const renderRecentActivity = (
 
                             <td>
                                 ${formatNumber(
-                                    activity.quantityQuintals ??
-                                    activity.procuredQuintals ??
-                                    0
+                                    actualQuantity
                                 )}
                                 qtl
                             </td>
@@ -2043,10 +2305,8 @@ const renderCropChart = (
                             data:
                                 filteredCrops.map(
                                     crop =>
-                                        Number(
-                                            crop.quantityQuintals ??
-                                            crop.procuredQuintals ??
-                                            0
+                                        getActualProcuredQuantity(
+                                            crop
                                         )
                                 )
 
@@ -2167,7 +2427,8 @@ const renderCenterChart = (
                                 centers.map(
                                     center =>
                                         Number(
-                                            center.procuredQuintals ||
+                                            center.procuredQuintals ??
+                                            center.actualProcuredQuantityQuintals ??
                                             0
                                         )
                                 )
@@ -2408,10 +2669,8 @@ const renderDailyChart = (
                             data:
                                 ordered.map(
                                     item =>
-                                        Number(
-                                            item.quantityQuintals ??
-                                            item.procuredQuintals ??
-                                            0
+                                        getActualProcuredQuantity(
+                                            item
                                         )
                                 ),
 
@@ -2732,10 +2991,8 @@ const exportReportCSV = () => {
                 activity.crop ||
                 '',
 
-                Number(
-                    activity.quantityQuintals ??
-                    activity.procuredQuintals ??
-                    0
+                getActualProcuredQuantity(
+                    activity
                 ).toFixed(2),
 
                 activity.center ||
@@ -2751,11 +3008,8 @@ const exportReportCSV = () => {
                     activity
                 ),
 
-                Number(
-                    activity.payoutAmount ??
-                    activity.payableAmount ??
-                    activity.paymentAmount ??
-                    0
+                getReportPayout(
+                    activity
                 ).toFixed(2),
 
                 activity.date ||
@@ -2897,6 +3151,31 @@ const loadReportData = async () => {
     }
 
 
+    // ------------------------------------------------------------
+    // Prevent older requests from overwriting newer data.
+    // ------------------------------------------------------------
+
+    if (
+        reportsRequestController
+    ) {
+
+        reportsRequestController.abort();
+
+    }
+
+
+    const controller =
+        new AbortController();
+
+
+    reportsRequestController =
+        controller;
+
+
+    const requestSequence =
+        ++reportsRequestSequence;
+
+
     setLoadingState(
         true
     );
@@ -2914,10 +3193,88 @@ const loadReportData = async () => {
             buildReportQuery();
 
 
-        const data =
-            await adminFetch(
-                `/api/admin/reports${query}`
+        const response =
+            await fetch(
+                `${API_BASE_URL}/api/admin/reports${query}`,
+                {
+
+                    method:
+                        'GET',
+
+                    headers: {
+
+                        'Content-Type':
+                            'application/json',
+
+                        'Accept':
+                            'application/json',
+
+                        'x-admin-session':
+                            getAdminSession()
+
+                    },
+
+                    signal:
+                        controller.signal
+
+                }
             );
+
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            if (
+                requestSequence ===
+                reportsRequestSequence
+            ) {
+
+                redirectToLogin();
+
+            }
+
+            return;
+
+        }
+
+
+        let data = {};
+
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            data = {};
+
+        }
+
+
+        if (
+            requestSequence !==
+            reportsRequestSequence
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                data?.message ||
+                `Request failed with status ${response.status}.`
+            );
+
+        }
 
 
         if (
@@ -3069,6 +3426,26 @@ const loadReportData = async () => {
 
     } catch (error) {
 
+        if (
+            error?.name ===
+            'AbortError'
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            requestSequence !==
+            reportsRequestSequence
+        ) {
+
+            return;
+
+        }
+
+
         console.error(
             '[A7 Reports Error]',
             error
@@ -3146,9 +3523,19 @@ const loadReportData = async () => {
 
     } finally {
 
-        setLoadingState(
-            false
-        );
+        if (
+            requestSequence ===
+            reportsRequestSequence
+        ) {
+
+            reportsRequestController =
+                null;
+
+            setLoadingState(
+                false
+            );
+
+        }
 
     }
 
@@ -3161,6 +3548,15 @@ const loadReportData = async () => {
 
 const refreshReports = () => {
 
+    if (
+        reportsRequestController
+    ) {
+
+        return;
+
+    }
+
+
     loadReportData();
 
 };
@@ -3171,6 +3567,15 @@ const refreshReports = () => {
 // ================================================================
 
 const setupEventListeners = () => {
+
+    if (
+        reportsPageInitialized
+    ) {
+
+        return;
+
+    }
+
 
     const refreshButton =
         getElement(
@@ -3198,7 +3603,11 @@ const setupEventListeners = () => {
 
         dateFilter.addEventListener(
             'change',
-            loadReportData
+            () => {
+
+                loadReportData();
+
+            }
         );
 
     }
@@ -3214,7 +3623,11 @@ const setupEventListeners = () => {
 
         centerFilter.addEventListener(
             'change',
-            loadReportData
+            () => {
+
+                loadReportData();
+
+            }
         );
 
     }
@@ -3312,6 +3725,10 @@ const setupEventListeners = () => {
 
     }
 
+
+    reportsPageInitialized =
+        true;
+
 };
 
 
@@ -3335,6 +3752,18 @@ const logoutAdmin = async () => {
     }
 
 
+    if (
+        reportsRequestController
+    ) {
+
+        reportsRequestController.abort();
+
+        reportsRequestController =
+            null;
+
+    }
+
+
     try {
 
         const sessionId =
@@ -3353,6 +3782,9 @@ const logoutAdmin = async () => {
                     headers: {
 
                         'Content-Type':
+                            'application/json',
+
+                        'Accept':
                             'application/json',
 
                         'x-admin-session':
@@ -3414,18 +3846,32 @@ const startAutoRefresh = () => {
             () => {
 
                 if (
-                    isAdminAuthenticated()
+                    !isAdminAuthenticated()
                 ) {
-
-                    loadReportData();
-
-                } else {
 
                     clearInterval(
                         autoRefreshTimer
                     );
 
+                    autoRefreshTimer =
+                        null;
+
+                    return;
+
                 }
+
+
+                // Do not create overlapping requests.
+                if (
+                    reportsRequestController
+                ) {
+
+                    return;
+
+                }
+
+
+                loadReportData();
 
             },
             AUTO_REFRESH_INTERVAL
@@ -3449,6 +3895,21 @@ window.addEventListener(
             clearInterval(
                 autoRefreshTimer
             );
+
+            autoRefreshTimer =
+                null;
+
+        }
+
+
+        if (
+            reportsRequestController
+        ) {
+
+            reportsRequestController.abort();
+
+            reportsRequestController =
+                null;
 
         }
 
@@ -3483,6 +3944,15 @@ window.logoutAdmin =
 const initReportsPage = async () => {
 
     if (
+        reportsPageInitialized
+    ) {
+
+        return;
+
+    }
+
+
+    if (
         !isAdminAuthenticated()
     ) {
 
@@ -3506,5 +3976,9 @@ const initReportsPage = async () => {
 
 document.addEventListener(
     'DOMContentLoaded',
-    initReportsPage
+    initReportsPage,
+    {
+        once:
+            true
+    }
 );

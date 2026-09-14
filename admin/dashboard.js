@@ -109,6 +109,28 @@ function formatDashboardDate(dateString) {
 // DASHBOARD DATA FETCH
 // ================================================================
 
+let dashboardRequestController = null;
+let dashboardRequestSequence = 0;
+
+
+function clearAdminSessionAndRedirect() {
+
+    sessionStorage.removeItem(
+        'kisanSetuAdminSession'
+    );
+
+    sessionStorage.removeItem(
+        'kisanSetuAdminAuthenticated'
+    );
+
+    sessionStorage.removeItem(
+        'kisanSetuAdminUser'
+    );
+
+    window.location.href = 'admin.html';
+}
+
+
 async function fetchDashboardData() {
 
     const session = requireAdminSession();
@@ -116,6 +138,21 @@ async function fetchDashboardData() {
     if (!session) {
         return;
     }
+
+
+    // Cancel an older refresh so stale responses cannot
+    // overwrite newer dashboard data.
+    if (dashboardRequestController) {
+        dashboardRequestController.abort();
+    }
+
+
+    const requestController = new AbortController();
+
+    dashboardRequestController = requestController;
+
+    const requestSequence =
+        ++dashboardRequestSequence;
 
 
     try {
@@ -133,44 +170,83 @@ async function fetchDashboardData() {
 
                 headers: {
                     'x-admin-session': session
-                }
+                },
+
+                signal:
+                    requestController.signal
             }
         );
 
 
         // --------------------------------------------------------
-        // SESSION EXPIRED
+        // SESSION EXPIRED / INVALID ADMIN SESSION
         // --------------------------------------------------------
 
-        if (response.status === 401) {
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
 
-            sessionStorage.removeItem(
-                'kisanSetuAdminSession'
-            );
+            if (
+                requestSequence ===
+                dashboardRequestSequence
+            ) {
 
-            sessionStorage.removeItem(
-                'kisanSetuAdminAuthenticated'
-            );
+                clearAdminSessionAndRedirect();
 
-            sessionStorage.removeItem(
-                'kisanSetuAdminUser'
-            );
-
-            window.location.href = 'admin.html';
+            }
 
             return;
         }
 
 
-        const data = await response.json();
+        // --------------------------------------------------------
+        // SAFE RESPONSE PARSING
+        // --------------------------------------------------------
 
+        let data;
 
-        if (!response.ok || !data.success) {
+        try {
+
+            data = await response.json();
+
+        } catch (parseError) {
 
             throw new Error(
-                data.message ||
-                'Unable to load dashboard data.'
+                response.ok
+                    ? 'The dashboard returned an invalid response.'
+                    : `Dashboard request failed (${response.status}).`
             );
+
+        }
+
+
+        if (
+            !response.ok ||
+            !data ||
+            data.success !== true
+        ) {
+
+            throw new Error(
+                (data && data.message) ||
+                `Unable to load dashboard data${
+                    response.status
+                        ? ` (${response.status})`
+                        : ''
+                }.`
+            );
+
+        }
+
+
+        // Ignore a response if a newer refresh
+        // has already started.
+        if (
+            requestSequence !==
+            dashboardRequestSequence
+        ) {
+
+            return;
 
         }
 
@@ -190,6 +266,30 @@ async function fetchDashboardData() {
 
     } catch (error) {
 
+        // Aborted requests are expected when
+        // a newer refresh starts.
+        if (
+            error &&
+            error.name === 'AbortError'
+        ) {
+
+            return;
+
+        }
+
+
+        // Never allow an older failed request to
+        // overwrite newer dashboard state.
+        if (
+            requestSequence !==
+            dashboardRequestSequence
+        ) {
+
+            return;
+
+        }
+
+
         console.error(
             '[Admin Dashboard Error]',
             error
@@ -203,8 +303,21 @@ async function fetchDashboardData() {
 
 
         showDashboardError(
-            error.message
+            error.message ||
+            'Unable to load dashboard data.'
         );
+
+
+    } finally {
+
+        if (
+            dashboardRequestController ===
+            requestController
+        ) {
+
+            dashboardRequestController = null;
+
+        }
 
     }
 
@@ -468,7 +581,10 @@ function renderCenterStatus(centers) {
     }
 
 
-    if (!Array.isArray(centers) || centers.length === 0) {
+    if (
+        !Array.isArray(centers) ||
+        centers.length === 0
+    ) {
 
         container.innerHTML = `
             <div class="empty-state">
@@ -630,9 +746,7 @@ function renderRecentTransactions(transactions) {
                     colspan="7"
                     class="table-empty"
                 >
-
                     No transactions available.
-
                 </td>
 
             </tr>
@@ -666,6 +780,9 @@ function renderRecentTransactions(transactions) {
                         : 'Pending';
 
 
+                // IMPORTANT:
+                // Actual procurement quantity takes
+                // priority over booking quantity.
                 const quantity =
                     transaction.actualQuantityQuintals ??
                     transaction.bookedQuantityQuintals ??
@@ -755,13 +872,13 @@ function renderRecentTransactions(transactions) {
 
                         <td>
 
-                            <span class="status-badge ${statusClass}">
-
+                            <span
+                                class="status-badge ${statusClass}"
+                            >
                                 ${escapeHtml(
                                     transaction.status ||
                                     'Unknown'
                                 )}
-
                             </span>
 
                         </td>
