@@ -1,0 +1,16 @@
+[
+  {
+    "procurementId": "PROC-1789401123953-17C98E",
+    "bookingId": "BOOK-1789400808305-111DF8",
+    "tokenId": "TKN-00808312-B1C5",
+    "farmerId": "FRM-1789333379008-6E02B3",
+    "kccNumber": "KCC-PB-2024-9102",
+    "grossWeightKg": 40000,
+    "tareWeightKg": 3487,
+    "netWeightKg": 36513,
+    "actualQuantityQuintals": 365.13,
+    "cropType": "paddy",
+    "status": "QUALITY_COMPLETED",
+    "createdAt": "2026-09-14T15:52:03.953Z"
+  }
+]

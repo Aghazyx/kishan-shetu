@@ -8,18 +8,30 @@
 
 
     /*
-     * Existing farmer landing page.
+     * Farmer portal.
      *
-     * If your farmer entry page is index.html,
-     * leave this unchanged.
+     * portal-gateway.html is inside the /farmer folder,
+     * and index.html is also inside the /farmer folder.
      */
     const FARMER_PORTAL_URL = "index.html";
 
 
     /*
-     * Existing admin login page.
+     * Admin portal.
+     *
+     * The admin folder is outside the /farmer folder:
+     *
+     * project/
+     * ├── farmer/
+     * │   ├── index.html
+     * │   └── portal-gateway.html
+     * │
+     * └── admin/
+     *     └── admin.html
+     *
+     * Therefore we must go one directory up first.
      */
-    const ADMIN_PORTAL_URL = "admin/admin.html";
+    const ADMIN_PORTAL_URL = "../admin/admin.html";
 
 
     const farmerButton =
@@ -55,5 +67,6 @@
         });
 
     }
+
 
 })();

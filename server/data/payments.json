@@ -1,0 +1,18 @@
+[
+  {
+    "paymentId": "PAY-1789401123953-3F3264",
+    "transactionId": "TXN-1789401123953-F1709A",
+    "receiptId": "RCP-1789401123953-E22B5E",
+    "procurementId": "PROC-1789401123953-17C98E",
+    "tokenId": "TKN-00808312-B1C5",
+    "farmerId": "FRM-1789333379008-6E02B3",
+    "amount": 891282.33,
+    "quantityQuintals": 365.13,
+    "mspPricePerQuintal": 2441,
+    "status": "PENDING",
+    "pfmsReference": null,
+    "utr": null,
+    "createdAt": "2026-09-14T15:52:03.953Z",
+    "updatedAt": "2026-09-14T15:52:03.953Z"
+  }
+]

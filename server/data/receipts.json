@@ -198,5 +198,32 @@
     "totalPayoutAmount": 11375,
     "status": "Quality Approved",
     "timestamp": "2026-09-12T11:07:16.377Z"
+  },
+  {
+    "receiptId": "RCP-1789401123953-E22B5E",
+    "transactionId": "TXN-1789401123953-F1709A",
+    "procurementId": "PROC-1789401123953-17C98E",
+    "qualityId": "QUALITY-1789401123953-F79C49",
+    "bookingId": "BOOK-1789400808305-111DF8",
+    "tokenId": "TKN-00808312-B1C5",
+    "farmerId": "FRM-1789333379008-6E02B3",
+    "kccNumber": "KCC-PB-2024-9102",
+    "farmerName": "Gurpreet Kaur",
+    "cropType": "paddy",
+    "grossWeightKg": 40000,
+    "tareWeightKg": 3487,
+    "grossWeight": 40000,
+    "tareWeight": 3487,
+    "netWeightKg": 36513,
+    "netWeightQuintals": 365.13,
+    "actualQuantityQuintals": 365.13,
+    "moisturePercentage": 13,
+    "foreignMatterPercentage": 0.5,
+    "qualityGrade": "Grade B",
+    "mspPricePerQuintal": 2441,
+    "totalPayoutAmount": 891282.33,
+    "status": "Quality Approved",
+    "paymentStatus": "Pending",
+    "timestamp": "2026-09-14T15:52:03.953Z"
   }
 ]

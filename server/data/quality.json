@@ -1,0 +1,13 @@
+[
+  {
+    "qualityId": "QUALITY-1789401123953-F79C49",
+    "procurementId": "PROC-1789401123953-17C98E",
+    "bookingId": "BOOK-1789400808305-111DF8",
+    "tokenId": "TKN-00808312-B1C5",
+    "farmerId": "FRM-1789333379008-6E02B3",
+    "moisturePercentage": 13,
+    "foreignMatterPercentage": 0.5,
+    "qualityGrade": "Grade B",
+    "createdAt": "2026-09-14T15:52:03.953Z"
+  }
+]

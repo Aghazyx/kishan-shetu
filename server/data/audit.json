@@ -265,5 +265,187 @@
     },
     "previousHash": "0ab981b8064f21b12c6b4db2190bcd7df8fa384253619ea3f10467894cb20735",
     "hash": "fbb44c847edd98e4d1110403c606770fb5aa5f06d6e5cc4e6e1e80c3b5b43ff8"
+  },
+  {
+    "auditId": "AUD-1789400357483-DFE960",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789400357480-F07A3E",
+    "timestamp": "2026-09-14T15:39:17.483Z",
+    "payload": {
+      "farmerId": "FRM-1789333371668-031DC0",
+      "tokenId": "TKN-00357481-97D5",
+      "quantityQuintals": 45,
+      "centerId": "Mandi-Center-01",
+      "date": "2026-09-10",
+      "timeSlot": "10:00 AM - 12:00 PM"
+    },
+    "previousHash": "fbb44c847edd98e4d1110403c606770fb5aa5f06d6e5cc4e6e1e80c3b5b43ff8",
+    "hash": "f80e6b46166af8a5e8e94205ad4a9bb55fd184bdcd34c82324a8b7cbdc69fab6"
+  },
+  {
+    "auditId": "AUD-1789400808316-C64D00",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789400808305-111DF8",
+    "timestamp": "2026-09-14T15:46:48.316Z",
+    "payload": {
+      "farmerId": "FRM-1789333379008-6E02B3",
+      "tokenId": "TKN-00808312-B1C5",
+      "quantityQuintals": 45,
+      "centerId": "Mandi-Center-01",
+      "date": "2026-09-09",
+      "timeSlot": "10:00 AM - 12:00 PM"
+    },
+    "previousHash": "f80e6b46166af8a5e8e94205ad4a9bb55fd184bdcd34c82324a8b7cbdc69fab6",
+    "hash": "616e10567d632377eba4a53012152db1d554ad71d42ae22184a4fdb446e43594"
+  },
+  {
+    "auditId": "AUD-1789401083875-9F65F2",
+    "eventType": "GEOFENCE_CHECK_IN",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789400808305-111DF8",
+    "timestamp": "2026-09-14T15:51:23.875Z",
+    "payload": {
+      "tokenId": "TKN-00808312-B1C5",
+      "farmerId": "FRM-1789333379008-6E02B3",
+      "centerId": "Mandi-Center-01",
+      "distanceMeters": 0,
+      "allowedRadiusMeters": 500
+    },
+    "previousHash": "616e10567d632377eba4a53012152db1d554ad71d42ae22184a4fdb446e43594",
+    "hash": "c521e8d8a8eda3ca0092c8455a7f1479ae1fa3b574e3c68af23e56869c3831b8"
+  },
+  {
+    "auditId": "AUD-1789401123957-1219BF",
+    "eventType": "WEIGHMENT_COMPLETED",
+    "entityType": "PROCUREMENT",
+    "entityId": "PROC-1789401123953-17C98E",
+    "timestamp": "2026-09-14T15:52:03.957Z",
+    "payload": {
+      "tokenId": "TKN-00808312-B1C5",
+      "grossWeightKg": 40000,
+      "tareWeightKg": 3487,
+      "netWeightKg": 36513,
+      "actualQuantityQuintals": 365.13
+    },
+    "previousHash": "c521e8d8a8eda3ca0092c8455a7f1479ae1fa3b574e3c68af23e56869c3831b8",
+    "hash": "379c7a6cf7a7e57ef6a561dd52c13603f8e7ffeb93d0eb5c2b21f368bc417e75"
+  },
+  {
+    "auditId": "AUD-1789401123957-477562",
+    "eventType": "QUALITY_COMPLETED",
+    "entityType": "QUALITY",
+    "entityId": "QUALITY-1789401123953-F79C49",
+    "timestamp": "2026-09-14T15:52:03.957Z",
+    "payload": {
+      "tokenId": "TKN-00808312-B1C5",
+      "procurementId": "PROC-1789401123953-17C98E",
+      "qualityGrade": "Grade B",
+      "moisturePercentage": 13,
+      "foreignMatterPercentage": 0.5
+    },
+    "previousHash": "379c7a6cf7a7e57ef6a561dd52c13603f8e7ffeb93d0eb5c2b21f368bc417e75",
+    "hash": "8e5fa1d598a88a7c58e3f3a390123d87f6044664626d20f24b472c366fd79242"
+  },
+  {
+    "auditId": "AUD-1789401123958-539416",
+    "eventType": "RECEIPT_GENERATED",
+    "entityType": "RECEIPT",
+    "entityId": "RCP-1789401123953-E22B5E",
+    "timestamp": "2026-09-14T15:52:03.958Z",
+    "payload": {
+      "tokenId": "TKN-00808312-B1C5",
+      "procurementId": "PROC-1789401123953-17C98E",
+      "qualityId": "QUALITY-1789401123953-F79C49",
+      "amount": 891282.33
+    },
+    "previousHash": "8e5fa1d598a88a7c58e3f3a390123d87f6044664626d20f24b472c366fd79242",
+    "hash": "75a9865e8b7e9871e86331bb9860e694eec2a628149bf433b76693594815bfe5"
+  },
+  {
+    "auditId": "AUD-1789455672610-78908A",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789455672606-96A14D",
+    "timestamp": "2026-09-15T07:01:12.610Z",
+    "payload": {
+      "farmerId": "FRM-DEMO-001",
+      "tokenId": "TKN-55672607-4DA4",
+      "quantityQuintals": 45,
+      "centerId": "Mandi-Center-01",
+      "date": "2026-09-08",
+      "timeSlot": "02:00 PM - 04:00 PM"
+    },
+    "previousHash": "75a9865e8b7e9871e86331bb9860e694eec2a628149bf433b76693594815bfe5",
+    "hash": "86b4f6eb52774d930342e67db9341b19196196680fcdaaa091ca9adf683074e2"
+  },
+  {
+    "auditId": "AUD-1789458098607-16A6BA",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789458098603-10FBCD",
+    "timestamp": "2026-09-15T07:41:38.607Z",
+    "payload": {
+      "farmerId": "FRM-DEMO-001",
+      "tokenId": "TKN-58098604-CABC",
+      "quantityQuintals": 45,
+      "centerId": "Mandi-Center-01",
+      "date": "2027-03-26",
+      "timeSlot": "02:00 PM - 04:00 PM"
+    },
+    "previousHash": "86b4f6eb52774d930342e67db9341b19196196680fcdaaa091ca9adf683074e2",
+    "hash": "8dade1017d6296a38a967d29e4c2ebb0e105d0a65e93338721c08f362149c96e"
+  },
+  {
+    "auditId": "AUD-1789458293456-E7ED62",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789458293454-062D2A",
+    "timestamp": "2026-09-15T07:44:53.456Z",
+    "payload": {
+      "farmerId": "FRM-DEMO-001",
+      "tokenId": "TKN-58293454-7372",
+      "quantityQuintals": 45,
+      "centerId": "Mandi-Center-01",
+      "date": "2026-09-24",
+      "timeSlot": "02:00 PM - 04:00 PM"
+    },
+    "previousHash": "8dade1017d6296a38a967d29e4c2ebb0e105d0a65e93338721c08f362149c96e",
+    "hash": "87d125f9e8a67e2747eb84fb24cf305b2267e707c761dd22f5d9fd2a330c7e4b"
+  },
+  {
+    "auditId": "AUD-1789458368637-8A513E",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789458368636-D4D236",
+    "timestamp": "2026-09-15T07:46:08.637Z",
+    "payload": {
+      "farmerId": "FRM-DEMO-001",
+      "tokenId": "TKN-58368636-A0A7",
+      "quantityQuintals": 45,
+      "centerId": "Mandi-Center-01",
+      "date": "2026-11-18",
+      "timeSlot": "02:00 PM - 04:00 PM"
+    },
+    "previousHash": "87d125f9e8a67e2747eb84fb24cf305b2267e707c761dd22f5d9fd2a330c7e4b",
+    "hash": "06b51546f5fba790420231f7a52127f11a5de41760a931bc95a5092c8d7c2f9c"
+  },
+  {
+    "auditId": "AUD-1789460665597-B1C9E1",
+    "eventType": "BOOKING_CREATED",
+    "entityType": "BOOKING",
+    "entityId": "BOOK-1789460665594-7FB651",
+    "timestamp": "2026-09-15T08:24:25.597Z",
+    "payload": {
+      "farmerId": "FRM-DEMO-001",
+      "tokenId": "TKN-60665595-498D",
+      "quantityQuintals": 45,
+      "centerId": "Mandi-Center-01",
+      "date": "2026-10-15",
+      "timeSlot": "02:00 PM - 04:00 PM"
+    },
+    "previousHash": "06b51546f5fba790420231f7a52127f11a5de41760a931bc95a5092c8d7c2f9c",
+    "hash": "b1c9b18f039c06be159820a6a1078d15596627b62b20ec17f2f3028a3b8fcee0"
   }
 ]
