@@ -1125,3 +1125,38 @@
     });
 
 })();
+// Speech Synthesis AI Voice Over Driver
+document.addEventListener('DOMContentLoaded', () => {
+    const voiceBtn = document.getElementById('ai-voice-btn');
+    const voiceIcon = document.getElementById('ai-voice-icon');
+    const voiceStatus = document.getElementById('ai-voice-status');
+
+    if (!voiceBtn || !('speechSynthesis' in window)) return;
+
+    let isSpeaking = false;
+    const guideText = "Welcome to Kisan Setu. Your end-to-end digital procurement platform. Complete your KCC verification, book your mandi slot, track real-time gate telemetry, and receive direct payment disbursement securely.";
+
+    voiceBtn.addEventListener('click', () => {
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+            voiceIcon.className = 'fas fa-volume-up';
+            voiceStatus.textContent = 'AI Voice Assistant: Click to listen to workflow guidance';
+        } else {
+            const utterance = new SpeechSynthesisUtterance(guideText);
+            utterance.rate = 0.95;
+            utterance.pitch = 1.0;
+            
+            utterance.onend = () => {
+                isSpeaking = false;
+                voiceIcon.className = 'fas fa-volume-up';
+                voiceStatus.textContent = 'AI Voice Assistant: Click to listen to workflow guidance';
+            };
+
+            window.speechSynthesis.speak(utterance);
+            isSpeaking = true;
+            voiceIcon.className = 'fas fa-stop';
+            voiceStatus.textContent = 'AI Voice Playing... Click to stop';
+        }
+    });
+});

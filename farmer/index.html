@@ -961,23 +961,17 @@
       </div>
 
 
-      <div class="user-pill glass-pill">
-
-        <div class="user-info">
-
-          <strong>
-            Sardar Ramesh Singh
-            <i
-              class="fa-solid fa-key"
-              style="font-size:10px;"
-            ></i>
-          </strong>
-
-          <small>
-            OTP Verified • KCC
-          </small>
-
-        </div>
+      <div class="user-pill" style="position: relative; cursor: pointer;">
+    <div class="user-avatar" id="nav-user-avatar">SR</div>
+    <div class="user-info">
+        <select id="farmer-selector" style="background: transparent; border: none; font-weight: 600; color: inherit; font-size: 0.95rem; cursor: pointer; outline: none;">
+            <option value="KCC-PB-2024-8841" selected style="color: #333;">Sardar Ramesh Singh</option>
+            <option value="KCC-PB-2024-9912" style="color: #333;">Gurpreet Kaur</option>
+            <option value="KCC-PB-2024-7734" style="color: #333;">Rajesh Kumar</option>
+        </select>
+        <span class="user-status">OTP Verified • KCC</span>
+    </div>
+</div>
 
         <div class="avatar">
           SR
@@ -1040,19 +1034,13 @@
     </div>
 
 
-    <div class="work-cycle-tagline">
-
-      <i
-        class="fa-solid fa-shield-halved"
-        style="color:var(--dark-olive);"
-      ></i>
-
-      <span>
-        End-to-End Automated Grain Procurement, Geofenced Gate Entry,
-        & Direct Benefit Transfer Engine
-      </span>
-
-    </div>
+    <div class="hero-badge" style="display: flex; align-items: center; gap: 10px; padding: 6px 14px;">
+    <button id="ai-voice-btn" style="background: #2e7d32; color: #fff; border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;" title="Play AI Voice Assistance">
+        <i class="fas fa-volume-up" id="ai-voice-icon"></i>
+    </button>
+    <span id="ai-voice-status" style="font-weight: 500;">AI Voice Assistant: Click to listen to workflow guidance</span>
+</div>
+  </div>
 
   </div>
 
@@ -1846,64 +1834,33 @@
           </div>
 
 
-          <div class="crop-cards-wrapper">
+          <div class="crop-card">
+    <div class="crop-header">
+        <div>
+            <h4>Wheat (ਕਣਕ / Wheat)</h4>
+            <span class="crop-season">Rabi 2025–26</span>
+        </div>
+        <span class="cap-badge" id="wheat-cap">Not fetched</span>
+    </div>
+    <div class="mandi-price-tag" style="margin-top: 10px; padding: 6px 10px; background: rgba(46, 125, 50, 0.08); border-radius: 6px; border: 1px solid rgba(46, 125, 50, 0.2); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+        <span style="color: #2e7d32; font-weight: 600;">🌾 Live Mandi Rate:</span>
+        <strong style="color: #1b5e20;">₹2,610 / quintal</strong>
+    </div>
+</div>
 
-            <div class="crop-card">
-
-              <div>
-
-                <strong>
-                  Wheat (ਕਣਕ / Wheat)
-                </strong>
-
-                <br>
-
-                <small
-                  style="font-size:10px; color:var(--text-muted);"
-                >
-                  Rabi 2025-26
-                </small>
-
-              </div>
-
-              <span
-                class="qty-tag"
-                id="wheat-cap"
-              >
-                Not fetched
-              </span>
-
-            </div>
-
-
-            <div class="crop-card">
-
-              <div>
-
-                <strong>
-                  Paddy Grade A (ਝੋਨਾ)
-                </strong>
-
-                <br>
-
-                <small
-                  style="font-size:10px; color:var(--text-muted);"
-                >
-                  Kharif 2025-26
-                </small>
-
-              </div>
-
-              <span
-                class="qty-tag"
-                id="paddy-cap"
-              >
-                Not fetched
-              </span>
-
-            </div>
-
-          </div>
+<div class="crop-card">
+    <div class="crop-header">
+        <div>
+            <h4>Paddy Grade A (ਝੋਨਾ)</h4>
+            <span class="crop-season">Kharif 2025–26</span>
+        </div>
+        <span class="cap-badge" id="paddy-cap">Not fetched</span>
+    </div>
+    <div class="mandi-price-tag" style="margin-top: 10px; padding: 6px 10px; background: rgba(46, 125, 50, 0.08); border-radius: 6px; border: 1px solid rgba(46, 125, 50, 0.2); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+        <span style="color: #2e7d32; font-weight: 600;">🌾 Live Mandi Rate:</span>
+        <strong style="color: #1b5e20;">₹2,485 / quintal</strong>
+    </div>
+</div>
 
 
           <button
@@ -2273,6 +2230,9 @@
           </p>
 
         </div>
+         <a href="https://weather.com/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        <i class="fas fa-cloud-sun"></i> Weather Today
+    </a>
 
 
         <button

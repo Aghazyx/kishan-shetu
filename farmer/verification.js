@@ -1454,3 +1454,21 @@
     );
 
 })();
+// Dynamic navbar profile update & preset trigger sync
+document.getElementById('farmer-selector')?.addEventListener('change', (e) => {
+    const kccVal = e.target.value;
+    const avatarMap = {
+        'KCC-PB-2024-8841': 'SR',
+        'KCC-PB-2024-9912': 'GK',
+        'KCC-PB-2024-7734': 'RK'
+    };
+    const avatarEl = document.getElementById('nav-user-avatar');
+    if (avatarEl) avatarEl.textContent = avatarMap[kccVal] || 'KS';
+
+    const kccInput = document.getElementById('kcc-number-input');
+    if (kccInput) {
+        kccInput.value = kccVal;
+        const fetchBtn = document.getElementById('btn-fetch-farmer');
+        if (fetchBtn) fetchBtn.click();
+    }
+});
