@@ -1,1841 +1,1188 @@
-// ==========================================
-// KISAN SETU - STAGE 3
-// BATCH SLOT BOOKING & TOKEN GENERATION
-// DATABASE-BACKED SLOT AVAILABILITY
-// ==========================================
+(function () {
+    "use strict";
 
-"use strict";
+    // ==========================================
+    // KISAN SETU - STAGE 3
+    // BATCH SLOT BOOKING & TOKEN GENERATION
+    // ==========================================
 
-const STAGE3_API_BASE_URL = "http://localhost:5050";
+    const API_BASE_URL = "http://localhost:5050";
 
-const STAGE3_STORAGE_KEYS = {
-    booking: "kisanSetuBooking",
-    stage4Booking: "stage4BookingData",
-    bookingId: "activeBookingId",
-    tokenId: "activeTokenId",
-    tokenIdLegacy: "tokenId",
-    bookingIdLegacy: "bookingId",
-    bookingDataLegacy: "bookingData",
-    selectedTimeSlot: "selectedTimeSlot",
-    vehicleNumber: "vehicleNumber",
-    bookingDate: "bookingDate",
-    farmerName: "verifiedFarmerName",
-    aadhaar: "verifiedAadhaar"
-};
+    const DEFAULT_CENTER_ID = "Mandi-Center-01";
 
-const STAGE3_DEFAULTS = {
-    centerId: "Mandi-Center-01",
-    centerName: "Khanna Grain Market (Asia's Largest)",
+    const DEFAULT_CENTER_NAME =
+        "Khanna Grain Market (Asia's Largest)";
 
-    /*
-     * Backend slot configuration:
-     * 08:00 AM - 10:00 AM
-     * 10:00 AM - 12:00 PM
-     * 12:00 PM - 02:00 PM
-     * 02:00 PM - 04:00 PM
-     * 04:00 PM - 06:00 PM
-     * 06:00 PM - 08:00 PM
-     * 08:00 PM - 10:00 PM
-     * 10:00 PM - 12:00 AM
-     * 12:00 AM - 02:00 AM
-     * 02:00 AM - 04:00 AM
-     */
-    timeSlot: "10:00 AM - 12:00 PM",
+    const MAX_SLOT_QUANTITY = 50;
 
-    maxQuantityQuintals: 50
-};
+    const BACKEND_SLOTS = [
+        "08:00 AM - 10:00 AM",
+        "10:00 AM - 12:00 PM",
+        "12:00 PM - 02:00 PM",
+        "02:00 PM - 04:00 PM",
+        "04:00 PM - 06:00 PM",
+        "06:00 PM - 08:00 PM",
+        "08:00 PM - 10:00 PM",
+        "10:00 PM - 12:00 AM",
+        "12:00 AM - 02:00 AM",
+        "02:00 AM - 04:00 AM"
+    ];
 
-let currentTargetMandi =
-    STAGE3_DEFAULTS.centerName;
+    let currentCenterId =
+        DEFAULT_CENTER_ID;
 
-let currentSelectedSlot =
-    STAGE3_DEFAULTS.timeSlot;
+    let currentTargetMandi =
+        DEFAULT_CENTER_NAME;
 
-let currentCenterId =
-    STAGE3_DEFAULTS.centerId;
+    let currentSelectedSlot =
+        BACKEND_SLOTS[0];
 
-let currentAvailability = [];
+    let currentAvailability = [];
 
-let bookingInProgress = false;
-let availabilityRequestId = 0;
+    let bookingInProgress = false;
+
+    let availabilityRequestId = 0;
 
 
-// ==========================================
-// STAGE 3 INITIALIZATION
-// ==========================================
+    // ==========================================
+    // STORAGE HELPERS
+    // ==========================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+    function getStorageValue(key) {
 
-        console.log(
-            "[Stage 3] Initializing..."
+        return (
+            sessionStorage.getItem(key) ||
+            localStorage.getItem(key) ||
+            ""
+        );
+    }
+
+
+    function getJSON(key) {
+
+        const raw =
+            getStorageValue(key);
+
+        if (!raw) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(raw);
+        } catch {
+            return null;
+        }
+    }
+
+
+    function saveJSON(
+        key,
+        value
+    ) {
+
+        const serialized =
+            JSON.stringify(value);
+
+        sessionStorage.setItem(
+            key,
+            serialized
         );
 
-        initializeDateField();
+        localStorage.setItem(
+            key,
+            serialized
+        );
+    }
 
-        initializeTimeSlots();
 
-        initializeFormControls();
+    // ==========================================
+    // DATE
+    // ==========================================
 
-        initializeBookingButton();
+    function getLocalDateString() {
 
-        initializeRerouteButton();
+        const now =
+            new Date();
 
-        restoreSavedSlot();
+        const year =
+            now.getFullYear();
 
-        restoreExistingBooking();
+        const month =
+            String(
+                now.getMonth() + 1
+            ).padStart(2, "0");
 
-        updateMandiStatus();
+        const day =
+            String(
+                now.getDate()
+            ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    function initializeDateField() {
+
+        const dateInput =
+            document.querySelector(
+                "#stage-view-3 input[type='date']"
+            );
+
+        if (!dateInput) {
+            return;
+        }
+
+        dateInput.id =
+            "booking-date-input";
+
+        const today =
+            getLocalDateString();
+
+        dateInput.min =
+            today;
+
+        if (
+            !dateInput.value ||
+            dateInput.value < today
+        ) {
+            dateInput.value =
+                today;
+        }
+
+        dateInput.addEventListener(
+            "change",
+            refreshSlotAvailability
+        );
+    }
+
+
+    // ==========================================
+    // VERIFIED FARMER
+    // ==========================================
+
+    function getVerifiedKccNumber() {
+
+        return (
+            getStorageValue(
+                "verifiedKccNumber"
+            ) ||
+            getStorageValue(
+                "kccNumber"
+            ) ||
+            document.getElementById(
+                "kcc-input"
+            )?.value?.trim() ||
+            ""
+        );
+    }
+
+
+    function getFarmerId() {
+
+        return (
+            getStorageValue(
+                "farmerId"
+            ) ||
+            getStorageValue(
+                "verifiedFarmerId"
+            ) ||
+            ""
+        );
+    }
+
+
+    function getFarmerName() {
+
+        const element =
+            document.getElementById(
+                "farmer-name-val"
+            );
+
+        return (
+            element?.innerText?.trim() ||
+            getStorageValue(
+                "verifiedFarmerName"
+            ) ||
+            "Verified Farmer"
+        );
+    }
+
+
+    function getAadhaar() {
+
+        return (
+            getStorageValue(
+                "verifiedAadhaar"
+            ) ||
+            ""
+        );
+    }
+
+
+    // ==========================================
+    // STAGE 3 FORM
+    // ==========================================
+
+    function getFormValues() {
+
+        const cropElement =
+            document.getElementById(
+                "crop-select"
+            );
+
+        const quantityElement =
+            document.getElementById(
+                "qty-input"
+            );
+
+        const dateElement =
+            document.getElementById(
+                "booking-date-input"
+            ) ||
+            document.querySelector(
+                "#stage-view-3 input[type='date']"
+            );
+
+        const vehicleElement =
+            document.getElementById(
+                "vehicle-input"
+            );
+
+        return {
+
+            cropType:
+                cropElement?.value ||
+                "",
+
+            quantity:
+                Number(
+                    quantityElement?.value
+                ) || 0,
+
+            preferredDate:
+                dateElement?.value ||
+                getLocalDateString(),
+
+            vehicleNumber:
+                vehicleElement?.value?.trim() ||
+                "",
+
+            cropText:
+                cropElement?.options[
+                    cropElement.selectedIndex
+                ]?.text ||
+                "Crop"
+        };
+    }
+
+
+    // ==========================================
+    // INITIALIZE TIME SLOTS
+    // ==========================================
+
+    function initializeTimeSlots() {
+
+        const buttons =
+            document.querySelectorAll(
+                "#stage-view-3 .time-slot-btn"
+            );
+
+        if (!buttons.length) {
+            return;
+        }
+
+        buttons.forEach(
+            function (
+                button,
+                index
+            ) {
+
+                const backendSlot =
+                    BACKEND_SLOTS[index];
+
+                if (
+                    backendSlot
+                ) {
+
+                    button.innerText =
+                        backendSlot;
+
+                    button.dataset.timeSlot =
+                        backendSlot;
+
+                    button.dataset.slotId =
+                        `SLOT-${String(
+                            index + 1
+                        ).padStart(2, "0")}`;
+                }
+
+                button.onclick =
+                    function () {
+                        selectSlot(button);
+                    };
+            }
+        );
+
+
+        const selected =
+            document.querySelector(
+                "#stage-view-3 .time-slot-btn.selected"
+            );
+
+        if (selected) {
+
+            currentSelectedSlot =
+                selected.innerText.trim();
+
+        } else {
+
+            const first =
+                buttons[0];
+
+            first.classList.add(
+                "selected"
+            );
+
+            currentSelectedSlot =
+                first.innerText.trim();
+        }
+    }
+
+
+    // ==========================================
+    // SELECT SLOT
+    // ==========================================
+
+    function selectSlot(
+        button,
+        silent = false
+    ) {
+
+        if (!button) {
+            return;
+        }
+
+        if (
+            button.disabled &&
+            !silent
+        ) {
+
+            return;
+        }
+
+        const buttons =
+            document.querySelectorAll(
+                "#stage-view-3 .time-slot-btn"
+            );
+
+        buttons.forEach(
+            function (item) {
+                item.classList.remove(
+                    "selected"
+                );
+            }
+        );
+
+        button.classList.add(
+            "selected"
+        );
+
+        currentSelectedSlot =
+            button.dataset.timeSlot ||
+            button.innerText.trim();
+
+        sessionStorage.setItem(
+            "selectedTimeSlot",
+            currentSelectedSlot
+        );
+
+        localStorage.setItem(
+            "selectedTimeSlot",
+            currentSelectedSlot
+        );
+
+        if (!silent) {
+            console.log(
+                "[Stage 3] Selected slot:",
+                currentSelectedSlot
+            );
+        }
+    }
+
+
+    // ==========================================
+    // REFRESH SLOT AVAILABILITY
+    // ==========================================
+
+    async function refreshSlotAvailability() {
+
+        const dateInput =
+            document.getElementById(
+                "booking-date-input"
+            ) ||
+            document.querySelector(
+                "#stage-view-3 input[type='date']"
+            );
+
+        if (!dateInput) {
+            return;
+        }
+
+        const date =
+            dateInput.value ||
+            getLocalDateString();
+
+        const quantity =
+            Number(
+                document.getElementById(
+                    "qty-input"
+                )?.value
+            ) || 0;
+
+        const requestId =
+            ++availabilityRequestId;
+
+
+        const url =
+            new URL(
+                `${API_BASE_URL}/api/slots/availability`
+            );
+
+        url.searchParams.set(
+            "date",
+            date
+        );
+
+        url.searchParams.set(
+            "centerId",
+            currentCenterId
+        );
+
+        if (
+            quantity > 0
+        ) {
+
+            url.searchParams.set(
+                "quantityQuintals",
+                String(quantity)
+            );
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    url.toString(),
+                    {
+                        method: "GET",
+                        headers: {
+                            Accept:
+                                "application/json"
+                        }
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if (
+                requestId !==
+                availabilityRequestId
+            ) {
+                return;
+            }
+
+            if (
+                !response.ok ||
+                data.success !== true
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to load slot availability."
+                );
+            }
+
+
+            currentAvailability =
+                Array.isArray(
+                    data.availability
+                )
+                    ? data.availability
+                    : [];
+
+
+            synchronizeVisibleSlots(
+                quantity
+            );
+
+
+            updateMandiStatusFromAvailability();
+
+
+            console.log(
+                "[Stage 3] Availability:",
+                currentAvailability
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "[Stage 3] Availability error:",
+                error
+            );
+
+            currentAvailability =
+                [];
+
+            const buttons =
+                document.querySelectorAll(
+                    "#stage-view-3 .time-slot-btn"
+                );
+
+            buttons.forEach(
+                function (button) {
+
+                    button.disabled =
+                        false;
+
+                    button.title =
+                        "Availability could not be loaded. Backend will validate the booking.";
+
+                }
+            );
+        }
+    }
+
+
+    // ==========================================
+    // SYNCHRONIZE VISIBLE SLOTS
+    // ==========================================
+
+    function synchronizeVisibleSlots(
+        quantity
+    ) {
+
+        const buttons =
+            Array.from(
+                document.querySelectorAll(
+                    "#stage-view-3 .time-slot-btn"
+                )
+            );
+
+        if (!buttons.length) {
+            return;
+        }
+
+
+        buttons.forEach(
+            function (
+                button,
+                index
+            ) {
+
+                const availability =
+                    currentAvailability[index];
+
+                if (!availability) {
+                    return;
+                }
+
+                button.innerText =
+                    availability.timeSlot;
+
+                button.dataset.timeSlot =
+                    availability.timeSlot;
+
+                button.dataset.slotId =
+                    availability.slotId;
+
+                const accepts =
+                    quantity > 0
+                        ? availability.canAcceptRequestedQuantity === true
+                        : availability.available === true;
+
+                button.disabled =
+                    !accepts;
+
+                button.setAttribute(
+                    "aria-disabled",
+                    String(!accepts)
+                );
+
+
+                if (
+                    availability.full
+                ) {
+
+                    button.title =
+                        "This slot is full.";
+
+                } else if (
+                    quantity > 0 &&
+                    !accepts
+                ) {
+
+                    button.title =
+                        `Only ${availability.remainingQuintals} qtl remain.`;
+
+                } else if (
+                    availability.hasBookings
+                ) {
+
+                    button.title =
+                        `${availability.bookedQuintals} qtl booked. ${availability.remainingQuintals} qtl remain.`;
+
+                } else {
+
+                    button.title =
+                        "Slot available.";
+                }
+            }
+        );
+
+
+        /*
+         * Critical improvement:
+         *
+         * If the currently selected slot cannot
+         * accept the requested quantity, automatically
+         * move the selection to the first slot that can.
+         */
+
+        const selectedAvailability =
+            currentAvailability.find(
+                function (slot) {
+
+                    return (
+                        slot.timeSlot ===
+                        currentSelectedSlot
+                    );
+                }
+            );
+
+
+        if (
+            quantity > 0 &&
+            (
+                !selectedAvailability ||
+                selectedAvailability.canAcceptRequestedQuantity !== true
+            )
+        ) {
+
+            const replacement =
+                currentAvailability.find(
+                    function (slot) {
+
+                        return (
+                            slot.canAcceptRequestedQuantity ===
+                            true
+                        );
+                    }
+                );
+
+
+            if (replacement) {
+
+                const replacementButton =
+                    buttons.find(
+                        function (button) {
+
+                            return (
+                                button.dataset.timeSlot ===
+                                replacement.timeSlot
+                            );
+                        }
+                    );
+
+
+                if (
+                    replacementButton
+                ) {
+
+                    selectSlot(
+                        replacementButton,
+                        true
+                    );
+
+                    replacementButton.disabled =
+                        false;
+
+                    console.log(
+                        "[Stage 3] Automatically moved to available slot:",
+                        replacement.timeSlot
+                    );
+                }
+            }
+        }
+    }
+
+
+    // ==========================================
+    // SELECTED AVAILABILITY
+    // ==========================================
+
+    function getSelectedAvailability() {
+
+        return currentAvailability.find(
+            function (slot) {
+
+                return (
+                    slot.timeSlot ===
+                    currentSelectedSlot
+                );
+            }
+        );
+    }
+
+
+    // ==========================================
+    // MANDI STATUS
+    // ==========================================
+
+    function setMandiStatus(
+        text,
+        background,
+        color,
+        wait,
+        queue
+    ) {
+
+        const badge =
+            document.getElementById(
+                "mandi-status-badge"
+            );
+
+        const waitElement =
+            document.getElementById(
+                "est-wait-val"
+            );
+
+        const queueElement =
+            document.getElementById(
+                "active-queue-val"
+            );
+
+        if (badge) {
+            badge.innerText =
+                text;
+
+            badge.style.background =
+                background;
+
+            badge.style.color =
+                color;
+        }
+
+        if (waitElement) {
+            waitElement.innerText =
+                wait;
+        }
+
+        if (queueElement) {
+            queueElement.innerText =
+                queue;
+        }
+    }
+
+
+    function updateMandiStatusFromAvailability() {
+
+        const selected =
+            getSelectedAvailability();
+
+        if (
+            selected?.full
+        ) {
+
+            setMandiStatus(
+                "SLOT FULL",
+                "#fee2e2",
+                "#991b1b",
+                "Choose another slot",
+                "FULL"
+            );
+
+            return;
+        }
+
+
+        if (
+            selected?.canAcceptRequestedQuantity === false
+        ) {
+
+            setMandiStatus(
+                "LIMITED CAPACITY",
+                "#fef3c7",
+                "#92400e",
+                `${selected.remainingQuintals} qtl remain`,
+                `${selected.bookedQuintals} qtl booked`
+            );
+
+            return;
+        }
+
+
+        if (
+            selected?.hasBookings
+        ) {
+
+            setMandiStatus(
+                "PARTIALLY BOOKED",
+                "#fef3c7",
+                "#92400e",
+                `${selected.remainingQuintals} qtl remain`,
+                `${selected.bookedQuintals} qtl booked`
+            );
+
+            return;
+        }
+
+
+        setMandiStatus(
+            "AVAILABLE",
+            "#dff2e1",
+            "#236835",
+            "38 min",
+            "Open"
+        );
+    }
+
+
+    function updateMandiStatus() {
+
+        const quantity =
+            Number(
+                document.getElementById(
+                    "qty-input"
+                )?.value
+            ) || 0;
+
+        const crop =
+            document.getElementById(
+                "crop-select"
+            )?.value ||
+            "wheat";
+
+
+        if (
+            quantity >= 80
+        ) {
+
+            setMandiStatus(
+                "HIGH CONGESTION",
+                "#fee2e2",
+                "#991b1b",
+                "54 min",
+                "28 Trucks"
+            );
+
+        } else if (
+            quantity >= 60 ||
+            crop === "paddy"
+        ) {
+
+            setMandiStatus(
+                "MODERATE-HIGH",
+                "#fef3c7",
+                "#92400e",
+                "45 min",
+                "20 Trucks"
+            );
+
+        } else {
+
+            setMandiStatus(
+                "MODERATE CONGESTION",
+                "#fef3c7",
+                "#92400e",
+                "38 min",
+                "12 Trucks"
+            );
+        }
+
+
+        refreshSlotAvailability();
+    }
+
+
+    // ==========================================
+    // REROUTE
+    // ==========================================
+
+    function applyReroute() {
+
+        currentCenterId =
+            "Mandi-Center-02";
+
+        currentTargetMandi =
+            "Karnal Central Krishi Mandi";
+
+
+        const title =
+            document.getElementById(
+                "target-mandi-title"
+            );
+
+        if (title) {
+            title.innerText =
+                currentTargetMandi;
+        }
+
+
+        setMandiStatus(
+            "OPTIMIZED FLOW",
+            "#dff2e1",
+            "#236835",
+            "18 min",
+            "4 Trucks"
+        );
+
+
+        const description =
+            document.getElementById(
+                "overflow-desc"
+            );
+
+        if (description) {
+
+            description.innerHTML =
+                "<strong>Successfully Rerouted!</strong> Karnal Mandi queue load-balancer lock confirmed. Turnaround guarantee active.";
+        }
+
 
         refreshSlotAvailability();
 
         console.log(
-            "[Stage 3] Initialized successfully."
+            "[Stage 3] Rerouted to:",
+            currentTargetMandi,
+            currentCenterId
         );
-
-    }
-);
-
-
-// ==========================================
-// DATE INITIALIZATION
-// ==========================================
-
-function initializeDateField() {
-
-    const dateElement =
-        document.querySelector(
-            "#stage-view-3 input[type='date']"
-        );
-
-    if (!dateElement) {
-        return;
     }
 
-    const localToday =
-        getLocalDateString();
 
-    /*
-     * The original HTML may contain an old
-     * demonstration date. Replace it only
-     * when it is missing or already in the past.
-     */
+    // ==========================================
+    // BOOKING BUTTON
+    // ==========================================
 
-    if (
-        !dateElement.value ||
-        dateElement.value < localToday
-    ) {
+    function getBookingButton() {
 
-        dateElement.value =
-            localToday;
-
-    }
-
-    dateElement.min =
-        localToday;
-
-    dateElement.addEventListener(
-        "change",
-        () => {
-
-            if (
-                !dateElement.value
-            ) {
-                return;
-            }
-
-            if (
-                dateElement.value <
-                getLocalDateString()
-            ) {
-
-                dateElement.value =
-                    getLocalDateString();
-
-            }
-
-            sessionStorage.setItem(
-                STAGE3_STORAGE_KEYS.bookingDate,
-                dateElement.value
-            );
-
-            refreshSlotAvailability();
-
-        }
-    );
-
-}
-
-
-// ==========================================
-// LOCAL DATE
-// ==========================================
-
-function getLocalDateString() {
-
-    const currentDate =
-        new Date();
-
-    const year =
-        currentDate.getFullYear();
-
-    const month =
-        String(
-            currentDate.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const day =
-        String(
-            currentDate.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    return `${year}-${month}-${day}`;
-
-}
-
-
-// ==========================================
-// TIME SLOT INITIALIZATION
-// ==========================================
-
-function initializeTimeSlots() {
-
-    const slotButtons =
-        document.querySelectorAll(
-            "#stage-view-3 .time-slot-btn"
-        );
-
-    slotButtons.forEach(
-        (button) => {
-
-            button.onclick =
-                () => {
-
-                    if (
-                        button.disabled
-                    ) {
-                        return;
-                    }
-
-                    selectSlot(
-                        button
-                    );
-
-                };
-
-        }
-    );
-
-    const initiallySelected =
-        document.querySelector(
-            "#stage-view-3 .time-slot-btn.selected"
-        );
-
-    if (
-        initiallySelected &&
-        !initiallySelected.disabled
-    ) {
-
-        currentSelectedSlot =
-            initiallySelected.innerText.trim();
-
-    }
-
-}
-
-
-// ==========================================
-// FORM CONTROL INITIALIZATION
-// ==========================================
-
-function initializeFormControls() {
-
-    const cropSelect =
-        document.getElementById(
-            "crop-select"
-        );
-
-    const quantityInput =
-        document.getElementById(
-            "qty-input"
-        );
-
-    if (cropSelect) {
-
-        cropSelect.onchange =
-            () => {
-
-                updateMandiStatus();
-
-                refreshSlotAvailability();
-
-            };
-
-    }
-
-    if (quantityInput) {
-
-        quantityInput.oninput =
-            () => {
-
-                updateMandiStatus();
-
-                refreshSlotAvailability();
-
-            };
-
-    }
-
-}
-
-
-// ==========================================
-// BOOKING BUTTON INITIALIZATION
-// ==========================================
-
-function initializeBookingButton() {
-
-    const bookingButton =
-        document.querySelector(
+        return document.querySelector(
             "#stage-view-3 .card-panel:first-child .btn-action-dark"
         );
-
-    if (!bookingButton) {
-        return;
     }
 
-    bookingButton.onclick =
-        submitSlotBooking;
 
-}
+    // ==========================================
+    // BOOK SLOT
+    // ==========================================
 
+    async function submitSlotBooking() {
 
-// ==========================================
-// REROUTE BUTTON INITIALIZATION
-// ==========================================
-
-function initializeRerouteButton() {
-
-    const rerouteButton =
-        document.querySelector(
-            "#stage-view-3 .btn-reroute"
-        );
-
-    if (!rerouteButton) {
-        return;
-    }
-
-    rerouteButton.onclick =
-        applyReroute;
-
-}
-
-
-// ==========================================
-// RESTORE SAVED SLOT
-// ==========================================
-
-function restoreSavedSlot() {
-
-    const savedSlot =
-        sessionStorage.getItem(
-            STAGE3_STORAGE_KEYS.selectedTimeSlot
-        );
-
-    if (!savedSlot) {
-        return;
-    }
-
-    const slotButtons =
-        document.querySelectorAll(
-            "#stage-view-3 .time-slot-btn"
-        );
-
-    const matchingSlot =
-        Array.from(
-            slotButtons
-        ).find(
-            (button) =>
-                button.innerText.trim() ===
-                savedSlot
-        );
-
-    if (matchingSlot) {
-
-        selectSlot(
-            matchingSlot,
-            false
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// RESTORE EXISTING BOOKING
-// ==========================================
-
-function restoreExistingBooking() {
-
-    const savedBooking =
-        sessionStorage.getItem(
-            STAGE3_STORAGE_KEYS.booking
-        );
-
-    if (!savedBooking) {
-        return;
-    }
-
-    try {
-
-        const booking =
-            JSON.parse(
-                savedBooking
-            );
-
-        if (
-            booking &&
-            booking.tokenId
-        ) {
-
-            updateStage4FromBooking(
-                booking
-            );
-
-            console.log(
-                "[Stage 3] Existing booking restored:",
-                booking.tokenId
-            );
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "[Stage 3] Could not restore saved booking.",
-            error
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// TIME SLOT SELECTION
-// ==========================================
-
-function selectSlot(
-    element,
-    saveToSession = true
-) {
-
-    if (!element) {
-        return;
-    }
-
-    if (
-        element.disabled
-    ) {
-
-        console.warn(
-            "[Stage 3] Attempted to select unavailable slot:",
-            element.innerText
-        );
-
-        return;
-
-    }
-
-    const slotButtons =
-        document.querySelectorAll(
-            "#stage-view-3 .time-slot-btn"
-        );
-
-    slotButtons.forEach(
-        (slot) => {
-
-            slot.classList.remove(
-                "selected"
-            );
-
-        }
-    );
-
-    element.classList.add(
-        "selected"
-    );
-
-    currentSelectedSlot =
-        element.innerText.trim();
-
-    if (saveToSession) {
-
-        sessionStorage.setItem(
-            STAGE3_STORAGE_KEYS.selectedTimeSlot,
-            currentSelectedSlot
-        );
-
-    }
-
-    console.log(
-        "[Stage 3] Selected slot:",
-        currentSelectedSlot
-    );
-
-}
-
-
-// ==========================================
-// SLOT AVAILABILITY
-// ==========================================
-
-async function refreshSlotAvailability() {
-
-    const dateElement =
-        document.querySelector(
-            "#stage-view-3 input[type='date']"
-        );
-
-    if (!dateElement) {
-        return;
-    }
-
-    const requestedDate =
-        dateElement.value;
-
-    if (!requestedDate) {
-        return;
-    }
-
-    const requestId =
-        ++availabilityRequestId;
-
-    const quantityElement =
-        document.getElementById(
-            "qty-input"
-        );
-
-    const requestedQuantity =
-        Number(
-            quantityElement?.value
-        ) || 0;
-
-    const url =
-        new URL(
-            `${STAGE3_API_BASE_URL}/api/slots/availability`
-        );
-
-    url.searchParams.set(
-        "date",
-        requestedDate
-    );
-
-    url.searchParams.set(
-        "centerId",
-        currentCenterId
-    );
-
-    if (
-        requestedQuantity > 0
-    ) {
-
-        url.searchParams.set(
-            "quantityQuintals",
-            requestedQuantity
-        );
-
-    }
-
-    try {
-
-        console.log(
-            "[Stage 3] Loading slot availability:",
-            url.toString()
-        );
-
-        const response =
-            await fetch(
-                url.toString(),
-                {
-                    method: "GET",
-                    headers: {
-                        "Accept":
-                            "application/json"
-                    }
-                }
-            );
-
-        let data;
-
-        try {
-
-            data =
-                await response.json();
-
-        } catch {
-
-            throw new Error(
-                `Invalid availability response (HTTP ${response.status}).`
-            );
-
-        }
-
-        if (
-            requestId !==
-            availabilityRequestId
-        ) {
+        if (bookingInProgress) {
             return;
         }
 
-        if (
-            !response.ok ||
-            data?.success !== true
-        ) {
+        bookingInProgress =
+            true;
 
-            throw new Error(
-                data?.message ||
-                `Availability request failed with HTTP ${response.status}.`
+
+        const bookingButton =
+            getBookingButton();
+
+        const values =
+            getFormValues();
+
+        const kccNumber =
+            getVerifiedKccNumber();
+
+        const farmerId =
+            getFarmerId();
+
+
+        // --------------------------------------
+        // BASIC VALIDATION
+        // --------------------------------------
+
+        if (!kccNumber) {
+
+            showBookingError(
+                "Farmer verification is required before slot booking."
             );
 
-        }
+            bookingInProgress =
+                false;
 
-        currentAvailability =
-            Array.isArray(
-                data.availability
-            )
-                ? data.availability
-                : [];
-
-        applyAvailabilityToTimeSlots(
-            currentAvailability,
-            requestedQuantity
-        );
-
-        updateSelectedSlotAgainstAvailability(
-            requestedQuantity
-        );
-
-        updateMandiStatusFromAvailability(
-            currentAvailability
-        );
-
-        console.log(
-            "[Stage 3] Slot availability loaded:",
-            currentAvailability
-        );
-
-    } catch (error) {
-
-        console.error(
-            "[Stage 3 Availability Error]",
-            error
-        );
-
-        if (
-            requestId !==
-            availabilityRequestId
-        ) {
             return;
         }
 
-        /*
-         * Do not silently pretend that slots are
-         * available if the backend cannot be reached.
-         */
-
-        markAvailabilityUnavailable();
-
-    }
-
-}
-
-
-// ==========================================
-// APPLY AVAILABILITY TO EXISTING BUTTONS
-// ==========================================
-
-function applyAvailabilityToTimeSlots(
-    availability,
-    requestedQuantity
-) {
-
-    const slotButtons =
-        document.querySelectorAll(
-            "#stage-view-3 .time-slot-btn"
-        );
-
-    if (
-        !slotButtons.length
-    ) {
-        return;
-    }
-
-    /*
-     * The backend is the source of truth for
-     * slot names and capacity.
-     *
-     * Existing button styling remains untouched.
-     * Only button text/state/attributes are
-     * synchronized.
-     */
-
-    const backendSlots =
-        availability.map(
-            (slot) => slot.timeSlot
-        );
-
-    /*
-     * If the original HTML uses outdated slot
-     * labels, synchronize those labels with the
-     * backend timetable while preserving the
-     * existing button elements and styling.
-     */
-
-    slotButtons.forEach(
-        (button, index) => {
-
-            const backendSlot =
-                availability[index];
-
-            if (!backendSlot) {
-
-                button.disabled =
-                    true;
-
-                button.setAttribute(
-                    "aria-disabled",
-                    "true"
-                );
-
-                button.title =
-                    "No slot information available.";
-
-                return;
-
-            }
-
-            button.innerText =
-                backendSlot.timeSlot;
-
-            button.dataset.slotId =
-                backendSlot.slotId;
-
-            button.dataset.timeSlot =
-                backendSlot.timeSlot;
-
-            const canAccept =
-                requestedQuantity > 0
-                    ? backendSlot.canAcceptRequestedQuantity === true
-                    : backendSlot.available === true;
-
-            const isFull =
-                backendSlot.full === true;
-
-            const hasBookings =
-                backendSlot.hasBookings === true;
-
-            button.disabled =
-                !canAccept;
-
-            button.setAttribute(
-                "aria-disabled",
-                String(
-                    !canAccept
-                )
-            );
-
-            /*
-             * These classes do not alter the existing
-             * design unless corresponding CSS exists.
-             * They allow the UI to distinguish:
-             *
-             * - partially booked
-             * - full
-             * - available
-             */
-            button.classList.toggle(
-                "slot-partially-booked",
-                hasBookings &&
-                !isFull
-            );
-
-            button.classList.toggle(
-                "slot-full",
-                isFull
-            );
-
-            button.classList.toggle(
-                "slot-available",
-                backendSlot.available === true
-            );
-
-            if (isFull) {
-
-                button.title =
-                    "This slot is full.";
-
-            } else if (
-                hasBookings &&
-                requestedQuantity > 0 &&
-                !canAccept
-            ) {
-
-                button.title =
-                    `Only ${backendSlot.remainingQuintals} quintals remain in this slot.`;
-
-            } else if (
-                hasBookings
-            ) {
-
-                button.title =
-                    `${backendSlot.bookedQuintals} quintals already booked. ${backendSlot.remainingQuintals} quintals remain.`;
-
-            } else {
-
-                button.title =
-                    "Slot available.";
-
-            }
-
-        }
-    );
-
-    /*
-     * If there are fewer frontend buttons than
-     * backend slots, the available backend data is
-     * still stored in currentAvailability and the
-     * booking request can only use an actual visible
-     * button.
-     */
-
-    if (
-        backendSlots.length !==
-        slotButtons.length
-    ) {
-
-        console.warn(
-            "[Stage 3] Frontend/backend slot count differs:",
-            {
-                frontendButtons:
-                    slotButtons.length,
-                backendSlots:
-                    backendSlots.length
-            }
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// MARK AVAILABILITY FAILURE
-// ==========================================
-
-function markAvailabilityUnavailable() {
-
-    currentAvailability = [];
-
-    const slotButtons =
-        document.querySelectorAll(
-            "#stage-view-3 .time-slot-btn"
-        );
-
-    slotButtons.forEach(
-        (button) => {
-
-            button.disabled =
-                true;
-
-            button.setAttribute(
-                "aria-disabled",
-                "true"
-            );
-
-            button.title =
-                "Unable to verify slot availability from the Kisan Setu backend.";
-
-        }
-    );
-
-}
-
-
-// ==========================================
-// CHECK SELECTED SLOT AGAINST AVAILABILITY
-// ==========================================
-
-function updateSelectedSlotAgainstAvailability(
-    requestedQuantity
-) {
-
-    const selected =
-        currentAvailability.find(
-            (slot) =>
-                slot.timeSlot ===
-                currentSelectedSlot
-        );
-
-    if (!selected) {
-
-        const firstAvailable =
-            currentAvailability.find(
-                (slot) =>
-                    requestedQuantity > 0
-                        ? slot.canAcceptRequestedQuantity === true
-                        : slot.available === true
-            );
-
-        if (firstAvailable) {
-
-            const matchingButton =
-                findSlotButton(
-                    firstAvailable.timeSlot
-                );
-
-            if (matchingButton) {
-
-                selectSlot(
-                    matchingButton,
-                    true
-                );
-
-            }
-
-        }
-
-        return;
-
-    }
-
-    const canAccept =
-        requestedQuantity > 0
-            ? selected.canAcceptRequestedQuantity === true
-            : selected.available === true;
-
-    if (
-        !canAccept
-    ) {
-
-        const firstAvailable =
-            currentAvailability.find(
-                (slot) =>
-                    requestedQuantity > 0
-                        ? slot.canAcceptRequestedQuantity === true
-                        : slot.available === true
-            );
-
-        if (firstAvailable) {
-
-            const matchingButton =
-                findSlotButton(
-                    firstAvailable.timeSlot
-                );
-
-            if (matchingButton) {
-
-                selectSlot(
-                    matchingButton,
-                    true
-                );
-
-            }
-
-        } else {
-
-            currentSelectedSlot =
-                "";
-
-            sessionStorage.removeItem(
-                STAGE3_STORAGE_KEYS.selectedTimeSlot
-            );
-
-        }
-
-    }
-
-}
-
-
-// ==========================================
-// FIND SLOT BUTTON
-// ==========================================
-
-function findSlotButton(
-    timeSlot
-) {
-
-    const slotButtons =
-        document.querySelectorAll(
-            "#stage-view-3 .time-slot-btn"
-        );
-
-    return Array.from(
-        slotButtons
-    ).find(
-        (button) =>
-            button.innerText.trim() ===
-            timeSlot
-    ) || null;
-
-}
-
-
-// ==========================================
-// SELECTED SLOT AVAILABILITY
-// ==========================================
-
-function getSelectedSlotAvailability() {
-
-    return (
-        currentAvailability.find(
-            (slot) =>
-                slot.timeSlot ===
-                currentSelectedSlot
-        ) ||
-        null
-    );
-
-}
-
-
-// ==========================================
-// MANDI / CONGESTION STATUS
-// ==========================================
-
-function updateMandiStatus() {
-
-    const quantityElement =
-        document.getElementById(
-            "qty-input"
-        );
-
-    const cropElement =
-        document.getElementById(
-            "crop-select"
-        );
-
-    const statusBadge =
-        document.getElementById(
-            "mandi-status-badge"
-        );
-
-    if (
-        !quantityElement ||
-        !cropElement ||
-        !statusBadge
-    ) {
-        return;
-    }
-
-    const quantity =
-        Number(
-            quantityElement.value
-        ) || 0;
-
-    const crop =
-        cropElement.value;
-
-    /*
-     * The congestion display remains the same
-     * prototype logic as the original UI.
-     *
-     * Actual slot capacity comes from the backend.
-     */
-
-    if (
-        quantity >= 80
-    ) {
-
-        setMandiStatus(
-            "HIGH CONGESTION",
-            "#fee2e2",
-            "#991b1b",
-            "54 min",
-            "28 Trucks"
-        );
-
-    } else if (
-        quantity >= 60 ||
-        crop === "paddy"
-    ) {
-
-        setMandiStatus(
-            "MODERATE-HIGH",
-            "#fef3c7",
-            "#92400e",
-            "45 min",
-            "20 Trucks"
-        );
-
-    } else {
-
-        setMandiStatus(
-            "MODERATE CONGESTION",
-            "#fef3c7",
-            "#92400e",
-            "38 min",
-            "12 Trucks"
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// UPDATE MANDI STATUS FROM BACKEND
-// ==========================================
-
-function updateMandiStatusFromAvailability(
-    availability
-) {
-
-    if (
-        !Array.isArray(
-            availability
-        ) ||
-        availability.length === 0
-    ) {
-        return;
-    }
-
-    const totalSlots =
-        availability.length;
-
-    const fullSlots =
-        availability.filter(
-            (slot) =>
-                slot.full === true
-        ).length;
-
-    const partiallyBookedSlots =
-        availability.filter(
-            (slot) =>
-                slot.status ===
-                "partially-booked"
-        ).length;
-
-    const selectedSlot =
-        getSelectedSlotAvailability();
-
-    /*
-     * Preserve the existing visual/status
-     * language but make it respond to actual
-     * backend occupancy when possible.
-     */
-
-    if (
-        selectedSlot?.full
-    ) {
-
-        setMandiStatus(
-            "SLOT FULL",
-            "#fee2e2",
-            "#991b1b",
-            "Please select another slot",
-            `${fullSlots} Full`
-        );
-
-        return;
-
-    }
-
-    if (
-        fullSlots ===
-        totalSlots
-    ) {
-
-        setMandiStatus(
-            "FULLY BOOKED",
-            "#fee2e2",
-            "#991b1b",
-            "No slots available",
-            `${fullSlots} Full`
-        );
-
-        return;
-
-    }
-
-    if (
-        partiallyBookedSlots >
-        0
-    ) {
-
-        setMandiStatus(
-            "MODERATE CONGESTION",
-            "#fef3c7",
-            "#92400e",
-            selectedSlot?.remainingQuintals != null
-                ? `${selectedSlot.remainingQuintals} qtl remain`
-                : "38 min",
-            `${partiallyBookedSlots} Partial`
-        );
-
-        return;
-
-    }
-
-    updateMandiStatus();
-
-}
-
-
-// ==========================================
-// SET MANDI STATUS
-// ==========================================
-
-function setMandiStatus(
-    status,
-    background,
-    color,
-    wait,
-    queue
-) {
-
-    const statusBadge =
-        document.getElementById(
-            "mandi-status-badge"
-        );
-
-    const waitElement =
-        document.getElementById(
-            "est-wait-val"
-        );
-
-    const queueElement =
-        document.getElementById(
-            "active-queue-val"
-        );
-
-    if (statusBadge) {
-
-        statusBadge.innerText =
-            status;
-
-        statusBadge.style.background =
-            background;
-
-        statusBadge.style.color =
-            color;
-
-    }
-
-    if (waitElement) {
-
-        waitElement.innerText =
-            wait;
-
-    }
-
-    if (queueElement) {
-
-        queueElement.innerText =
-            queue;
-
-    }
-
-}
-
-
-// ==========================================
-// OVERFLOW REROUTING
-// ==========================================
-
-function applyReroute() {
-
-    currentTargetMandi =
-        "Karnal Central Krishi Mandi";
-
-    currentCenterId =
-        "Mandi-Center-02";
-
-    const mandiTitle =
-        document.getElementById(
-            "target-mandi-title"
-        );
-
-    const statusBadge =
-        document.getElementById(
-            "mandi-status-badge"
-        );
-
-    const waitElement =
-        document.getElementById(
-            "est-wait-val"
-        );
-
-    const queueElement =
-        document.getElementById(
-            "active-queue-val"
-        );
-
-    const overflowDescription =
-        document.getElementById(
-            "overflow-desc"
-        );
-
-    if (mandiTitle) {
-
-        mandiTitle.innerText =
-            currentTargetMandi;
-
-    }
-
-    if (statusBadge) {
-
-        statusBadge.innerText =
-            "OPTIMIZED FLOW";
-
-        statusBadge.style.background =
-            "#dff2e1";
-
-        statusBadge.style.color =
-            "#236835";
-
-    }
-
-    if (waitElement) {
-
-        waitElement.innerText =
-            "18 min";
-
-    }
-
-    if (queueElement) {
-
-        queueElement.innerText =
-            "4 Trucks";
-
-    }
-
-    if (overflowDescription) {
-
-        overflowDescription.innerHTML =
-            "<strong>Successfully Rerouted!</strong> " +
-            "Karnal Mandi queue load-balancer lock confirmed. " +
-            "Turnaround guarantee active.";
-
-    }
-
-    console.log(
-        "[Stage 3] Rerouted to:",
-        currentTargetMandi,
-        currentCenterId
-    );
-
-    /*
-     * Rerouting changes the actual backend center
-     * against which availability must be checked.
-     */
-
-    refreshSlotAvailability();
-
-}
-
-
-// ==========================================
-// GET VERIFIED KCC
-// ==========================================
-
-function getVerifiedKccNumber() {
-
-    const possibleKeys = [
-        "verifiedKccNumber",
-        "kccNumber"
-    ];
-
-    for (
-        const key of possibleKeys
-    ) {
-
-        const value =
-            sessionStorage.getItem(
-                key
-            );
 
         if (
-            value &&
-            value.trim()
+            !values.cropType
         ) {
 
-            return value.trim();
-
-        }
-
-    }
-
-    const kccInput =
-        document.getElementById(
-            "kcc-input"
-        );
-
-    if (
-        kccInput &&
-        kccInput.value.trim()
-    ) {
-
-        return kccInput.value.trim();
-
-    }
-
-    return "";
-
-}
-
-
-// ==========================================
-// GET VERIFIED FARMER
-// ==========================================
-
-function getVerifiedFarmerName() {
-
-    const visibleFarmer =
-        document
-            .getElementById(
-                "farmer-name-val"
-            )
-            ?.innerText
-            .trim();
-
-    if (
-        visibleFarmer &&
-        visibleFarmer !==
-            "Not fetched" &&
-        visibleFarmer !==
-            "Verified Farmer"
-    ) {
-
-        return visibleFarmer;
-
-    }
-
-    const savedFarmer =
-        sessionStorage.getItem(
-            STAGE3_STORAGE_KEYS.farmerName
-        );
-
-    if (
-        savedFarmer &&
-        savedFarmer.trim()
-    ) {
-
-        return savedFarmer.trim();
-
-    }
-
-    const savedFarmerObject =
-        sessionStorage.getItem(
-            "verifiedFarmer"
-        );
-
-    if (savedFarmerObject) {
-
-        try {
-
-            const farmer =
-                JSON.parse(
-                    savedFarmerObject
-                );
-
-            if (
-                typeof farmer ===
-                    "string" &&
-                farmer.trim()
-            ) {
-
-                return farmer.trim();
-
-            }
-
-            if (
-                farmer?.name &&
-                farmer.name.trim()
-            ) {
-
-                return farmer.name.trim();
-
-            }
-
-        } catch (error) {
-
-            console.warn(
-                "[Stage 3] Could not parse verified farmer data."
+            showBookingError(
+                "Please select a crop type."
             );
 
+            bookingInProgress =
+                false;
+
+            return;
         }
 
-    }
 
-    return "Verified Farmer";
+        if (
+            values.quantity <= 0
+        ) {
 
-}
+            showBookingError(
+                "Please enter a valid procurement quantity."
+            );
 
+            bookingInProgress =
+                false;
 
-// ==========================================
-// GET VERIFIED AADHAAR
-// ==========================================
+            return;
+        }
 
-function getVerifiedAadhaar() {
 
-    return (
-        sessionStorage.getItem(
-            STAGE3_STORAGE_KEYS.aadhaar
-        ) ||
-        sessionStorage.getItem(
-            "verifiedAadhaar"
-        ) ||
-        ""
-    );
+        if (
+            values.quantity >
+            MAX_SLOT_QUANTITY
+        ) {
 
-}
+            showBookingError(
+                "A single time slot can accept a maximum of 50 quintals."
+            );
 
+            bookingInProgress =
+                false;
 
-// ==========================================
-// GET FARMER ID
-// ==========================================
+            return;
+        }
 
-function getFarmerId() {
 
-    return (
-        sessionStorage.getItem(
-            "farmerId"
-        ) ||
-        sessionStorage.getItem(
-            "verifiedFarmerId"
-        ) ||
-        ""
-    );
+        if (
+            !values.preferredDate ||
+            values.preferredDate <
+            getLocalDateString()
+        ) {
 
-}
+            showBookingError(
+                "Please select today or a future booking date."
+            );
 
+            bookingInProgress =
+                false;
 
-// ==========================================
-// SLOT BOOKING
-// ==========================================
+            return;
+        }
 
-async function submitSlotBooking() {
 
-    if (
-        bookingInProgress
-    ) {
+        if (
+            !values.vehicleNumber
+        ) {
 
-        console.warn(
-            "[Stage 3] Booking already in progress."
-        );
+            showBookingError(
+                "Please enter the vehicle plate number."
+            );
 
-        return;
+            bookingInProgress =
+                false;
 
-    }
+            return;
+        }
 
-    bookingInProgress =
-        true;
 
-    const bookingButton =
-        document.querySelector(
-            "#stage-view-3 .card-panel:first-child .btn-action-dark"
-        );
-
-    const cropElement =
-        document.getElementById(
-            "crop-select"
-        );
-
-    const quantityElement =
-        document.getElementById(
-            "qty-input"
-        );
-
-    const dateElement =
-        document.querySelector(
-            "#stage-view-3 input[type='date']"
-        );
-
-    const vehicleElement =
-        document.getElementById(
-            "vehicle-input"
-        );
-
-    const kccNumber =
-        getVerifiedKccNumber();
-
-    const cropType =
-        cropElement?.value;
-
-    const quantity =
-        Number(
-            quantityElement?.value
-        );
-
-    const preferredDate =
-        dateElement?.value;
-
-    const vehicleNumber =
-        vehicleElement?.value.trim();
-
-    // ======================================
-    // VALIDATION
-    // ======================================
-
-    if (!kccNumber) {
-
-        showBookingError(
-            "Farmer verification is required before slot booking."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (!cropType) {
-
-        showBookingError(
-            "Please select a crop type."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (
-        !Number.isFinite(
-            quantity
-        ) ||
-        quantity <= 0
-    ) {
-
-        showBookingError(
-            "Please enter a valid procurement quantity greater than 0."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (
-        quantity >
-        STAGE3_DEFAULTS.maxQuantityQuintals
-    ) {
-
-        showBookingError(
-            `Maximum bookable quantity is ${STAGE3_DEFAULTS.maxQuantityQuintals} quintals per time slot.`
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (!preferredDate) {
-
-        showBookingError(
-            "Please select a preferred date."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    const localToday =
-        getLocalDateString();
-
-    if (
-        preferredDate <
-        localToday
-    ) {
-
-        showBookingError(
-            "The selected booking date has already passed. Please select today or a future date."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (!vehicleNumber) {
-
-        showBookingError(
-            "Please enter the vehicle plate number."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (!currentSelectedSlot) {
-
-        showBookingError(
-            "Please select an arrival time slot."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    // ======================================
-    // VERIFY CURRENT SLOT AVAILABILITY
-    // ======================================
-
-    const selectedAvailability =
-        getSelectedSlotAvailability();
-
-    if (!selectedAvailability) {
-
-        /*
-         * Force a fresh backend check before
-         * allowing a booking when availability
-         * has not been loaded.
-         */
+        // --------------------------------------
+        // REFRESH AVAILABILITY BEFORE BOOKING
+        // --------------------------------------
 
         await refreshSlotAvailability();
 
-        const refreshedAvailability =
-            getSelectedSlotAvailability();
 
-        if (!refreshedAvailability) {
+        let selected =
+            getSelectedAvailability();
 
-            showBookingError(
-                "The selected slot could not be verified. Please wait for availability to load and try again."
-            );
 
-            resetBookingState();
+        /*
+         * If selected slot is occupied or does
+         * not have enough capacity, automatically
+         * choose the first valid slot.
+         */
 
-            return;
+        if (
+            !selected ||
+            selected.canAcceptRequestedQuantity !== true
+        ) {
 
-        }
+            selected =
+                currentAvailability.find(
+                    function (slot) {
 
-    }
-
-    const finalSelectedAvailability =
-        getSelectedSlotAvailability();
-
-    if (
-        !finalSelectedAvailability
-    ) {
-
-        showBookingError(
-            "The selected slot is not available for booking."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (
-        finalSelectedAvailability.full
-    ) {
-
-        showBookingError(
-            "The selected time slot is already full. Please choose another available slot."
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    if (
-        finalSelectedAvailability.canAcceptRequestedQuantity ===
-        false
-    ) {
-
-        showBookingError(
-            `The selected slot has only ${finalSelectedAvailability.remainingQuintals} quintals remaining. Your booking requires ${quantity} quintals.`
-        );
-
-        resetBookingState();
-
-        return;
-
-    }
-
-    // ======================================
-    // PREVENT DUPLICATE EXISTING BOOKING
-    // ======================================
-
-    const existingBooking =
-        sessionStorage.getItem(
-            STAGE3_STORAGE_KEYS.booking
-        );
-
-    if (existingBooking) {
-
-        try {
-
-            const parsedBooking =
-                JSON.parse(
-                    existingBooking
+                        return (
+                            slot.canAcceptRequestedQuantity ===
+                            true
+                        );
+                    }
                 );
 
-            if (
-                parsedBooking?.tokenId &&
-                parsedBooking?.status &&
-                parsedBooking.status !==
-                    "Cancelled"
-            ) {
 
-                const proceed =
-                    window.confirm(
-                        `An active booking already exists with token ${parsedBooking.tokenId}.\n\nDo you want to create another booking?`
+            if (selected) {
+
+                const button =
+                    document.querySelector(
+                        `#stage-view-3 .time-slot-btn[data-time-slot="${CSS.escape(
+                            selected.timeSlot
+                        )}"]`
                     );
 
-                if (!proceed) {
 
-                    resetBookingState();
+                if (button) {
 
-                    return;
+                    button.disabled =
+                        false;
 
+                    selectSlot(
+                        button,
+                        true
+                    );
                 }
-
             }
-
-        } catch {
-
-            /*
-             * Ignore malformed stale session
-             * data and allow backend validation.
-             */
-
         }
 
-    }
 
-    // ======================================
-    // BUTTON STATE
-    // ======================================
+        if (
+            !selected ||
+            selected.canAcceptRequestedQuantity !== true
+        ) {
 
-    const originalHTML =
-        bookingButton?.innerHTML;
+            const reason =
+                selected
+                    ? `No visible slot can accept ${values.quantity} qtl right now.`
+                    : "No slot is currently available for the requested quantity.";
 
-    try {
+            showBookingError(
+                reason
+            );
+
+            bookingInProgress =
+                false;
+
+            return;
+        }
+
+
+        // --------------------------------------
+        // BUTTON LOADING
+        // --------------------------------------
+
+        const originalHTML =
+            bookingButton?.innerHTML;
+
 
         if (bookingButton) {
 
@@ -1844,984 +1191,706 @@ async function submitSlotBooking() {
 
             bookingButton.innerHTML =
                 '<i class="fa-solid fa-spinner fa-spin"></i> Booking Slot...';
-
         }
 
-        // ==================================
-        // BUILD BACKEND PAYLOAD
-        // ==================================
 
         const payload = {
 
             kccNumber,
 
-            farmerId:
-                getFarmerId(),
+            farmerId,
 
-            cropType,
+            cropType:
+                values.cropType,
 
             quantityQuintals:
-                quantity,
+                values.quantity,
 
-            preferredDate,
+            preferredDate:
+                values.preferredDate,
 
             centerId:
                 currentCenterId,
 
             timeSlot:
-                currentSelectedSlot,
+                selected.timeSlot,
 
-            vehicleNumber
-
+            vehicleNumber:
+                values.vehicleNumber
         };
+
 
         console.log(
             "[Stage 3] Booking payload:",
             payload
         );
 
-        // ==================================
-        // BACKEND REQUEST
-        // ==================================
-
-        const response =
-            await fetch(
-                `${STAGE3_API_BASE_URL}/api/slots/book`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-
-                }
-            );
-
-        // ==================================
-        // READ RESPONSE
-        // ==================================
-
-        let data;
 
         try {
 
-            data =
-                await response.json();
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/slots/book`,
+                    {
+                        method: "POST",
 
-        } catch {
+                        headers: {
+                            "Content-Type":
+                                "application/json",
 
-            throw new Error(
-                `Backend returned an invalid response (HTTP ${response.status}).`
-            );
+                            Accept:
+                                "application/json"
+                        },
 
-        }
-
-        // ==================================
-        // HANDLE BACKEND ERROR
-        // ==================================
-
-        if (!response.ok) {
-
-            const message =
-                getBackendErrorMessage(
-                    response.status,
-                    data
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+                    }
                 );
 
-            throw new Error(
-                message
-            );
 
-        }
+            let data = {};
 
-        if (
-            !data ||
-            data.success !== true
-        ) {
+            try {
 
-            throw new Error(
-                data?.message ||
-                "Slot booking failed."
-            );
+                data =
+                    await response.json();
 
-        }
+            } catch {
 
-        // ==================================
-        // VERIFY BOOKING OBJECT
-        // ==================================
-
-        const booking =
-            data.booking;
-
-        if (
-            !booking ||
-            !booking.tokenId ||
-            !booking.bookingId
-        ) {
-
-            throw new Error(
-                "Booking succeeded but the backend did not return a valid booking ID and digital token."
-            );
-
-        }
-
-        console.log(
-            "[Stage 3] Backend booking successful:",
-            booking
-        );
-
-        // ==================================
-        // BACKEND SOURCE OF TRUTH
-        // ==================================
-
-        const finalToken =
-            booking.tokenId;
-
-        const finalBookingId =
-            booking.bookingId;
-
-        const finalDate =
-            booking.date ||
-            booking.preferredDate ||
-            preferredDate;
-
-        const finalTimeSlot =
-            booking.timeSlot ||
-            currentSelectedSlot;
-
-        const finalCenterId =
-            booking.centerId ||
-            currentCenterId;
-
-        const finalCenter =
-            booking.center ||
-            booking.centerName ||
-            currentTargetMandi;
-
-        const finalQuantity =
-            Number(
-                booking.quantityQuintals
-            );
-
-        const safeQuantity =
-            Number.isFinite(
-                finalQuantity
-            )
-                ? finalQuantity
-                : quantity;
-
-        const finalVehicle =
-            booking.vehicleNumber ||
-            vehicleNumber;
-
-        const farmerName =
-            booking.farmerName ||
-            getVerifiedFarmerName();
-
-        const aadhaar =
-            booking.aadhaar ||
-            getVerifiedAadhaar();
-
-        const selectedCropText =
-            cropElement?.options[
-                cropElement.selectedIndex
-            ]?.text ||
-            cropType;
-
-        // ==================================
-        // NORMALIZED FRONTEND BOOKING
-        // ==================================
-
-        const frontendBooking = {
-
-            ...booking,
-
-            bookingId:
-                finalBookingId,
-
-            tokenId:
-                finalToken,
-
-            kccNumber,
-
-            farmerId:
-                booking.farmerId ||
-                getFarmerId(),
-
-            farmerName,
-
-            aadhaar,
-
-            cropType,
-
-            cropText:
-                selectedCropText,
-
-            quantityQuintals:
-                safeQuantity,
-
-            date:
-                finalDate,
-
-            timeSlot:
-                finalTimeSlot,
-
-            centerId:
-                finalCenterId,
-
-            center:
-                finalCenter,
-
-            vehicleNumber:
-                finalVehicle
-
-        };
-
-        // ==================================
-        // SAVE CANONICAL SESSION STATE
-        // ==================================
-
-        saveBookingSession(
-            frontendBooking
-        );
-
-        // ==================================
-        // UPDATE STAGE 4
-        // ==================================
-
-        updateStage4FromBooking(
-            frontendBooking
-        );
-
-        if (
-            typeof window.refreshStage4 ===
-            "function"
-        ) {
-
-            window.refreshStage4();
-
-        }
-
-        // ==================================
-        // UPDATE NOTIFICATION MODAL
-        // ==================================
-
-        updateNotificationModal(
-            frontendBooking
-        );
-
-        const notificationModal =
-            document.getElementById(
-                "notification-fanout-modal"
-            );
-
-        if (notificationModal) {
-
-            notificationModal.classList.add(
-                "open"
-            );
-
-        }
-
-        /*
-         * Refresh availability after a successful
-         * booking so the newly occupied quantity
-         * immediately becomes visible.
-         */
-
-        refreshSlotAvailability();
-
-        console.log(
-            "[Stage 3] Booking completed successfully:",
-            frontendBooking
-        );
-
-    } catch (error) {
-
-        console.error(
-            "[Stage 3 Booking Error]",
-            error
-        );
-
-        showBookingError(
-            error.message ||
-            "Unable to complete slot booking."
-        );
-
-    } finally {
-
-        if (bookingButton) {
-
-            bookingButton.disabled =
-                false;
-
-            if (originalHTML) {
-
-                bookingButton.innerHTML =
-                    originalHTML;
-
+                throw new Error(
+                    `Backend returned HTTP ${response.status}.`
+                );
             }
 
+
+            if (
+                !response.ok ||
+                data.success !== true
+            ) {
+
+                throw new Error(
+                    getBackendErrorMessage(
+                        response.status,
+                        data
+                    )
+                );
+            }
+
+
+            const backendBooking =
+                data.booking;
+
+
+            if (
+                !backendBooking?.tokenId
+            ) {
+
+                throw new Error(
+                    "Booking succeeded but no digital token was returned."
+                );
+            }
+
+
+            const normalizedBooking = {
+
+                ...backendBooking,
+
+                kccNumber:
+                    backendBooking.kccNumber ||
+                    kccNumber,
+
+                farmerId:
+                    backendBooking.farmerId ||
+                    farmerId,
+
+                farmerName:
+                    backendBooking.farmerName ||
+                    getFarmerName(),
+
+                aadhaar:
+                    backendBooking.aadhaar ||
+                    getAadhaar(),
+
+                vehicleNumber:
+                    backendBooking.vehicleNumber ||
+                    values.vehicleNumber,
+
+                cropType:
+                    backendBooking.cropType ||
+                    values.cropType,
+
+                quantityQuintals:
+                    Number(
+                        backendBooking.quantityQuintals
+                    ) ||
+                    values.quantity,
+
+                date:
+                    backendBooking.date ||
+                    values.preferredDate,
+
+                timeSlot:
+                    backendBooking.timeSlot ||
+                    selected.timeSlot,
+
+                centerId:
+                    backendBooking.centerId ||
+                    currentCenterId,
+
+                center:
+                    backendBooking.center ||
+                    currentTargetMandi,
+
+                status:
+                    backendBooking.status ||
+                    "Scheduled"
+            };
+
+
+            // ----------------------------------
+            // SAVE BOOKING EVERYWHERE
+            // ----------------------------------
+
+            saveJSON(
+                "kisanSetuBooking",
+                normalizedBooking
+            );
+
+            saveJSON(
+                "kisanSetuStage4Booking",
+                normalizedBooking
+            );
+
+            sessionStorage.setItem(
+                "activeTokenId",
+                normalizedBooking.tokenId
+            );
+
+            localStorage.setItem(
+                "activeTokenId",
+                normalizedBooking.tokenId
+            );
+
+            sessionStorage.setItem(
+                "activeBookingId",
+                normalizedBooking.bookingId
+            );
+
+            localStorage.setItem(
+                "activeBookingId",
+                normalizedBooking.bookingId
+            );
+
+            sessionStorage.setItem(
+                "kisanSetuTokenId",
+                normalizedBooking.tokenId
+            );
+
+            localStorage.setItem(
+                "kisanSetuTokenId",
+                normalizedBooking.tokenId
+            );
+
+            sessionStorage.setItem(
+                "selectedTimeSlot",
+                normalizedBooking.timeSlot
+            );
+
+            localStorage.setItem(
+                "selectedTimeSlot",
+                normalizedBooking.timeSlot
+            );
+
+            sessionStorage.setItem(
+                "vehicleNumber",
+                normalizedBooking.vehicleNumber
+            );
+
+            localStorage.setItem(
+                "vehicleNumber",
+                normalizedBooking.vehicleNumber
+            );
+
+
+            // ----------------------------------
+            // STAGE 4
+            // ----------------------------------
+
+            updateStage4FromBooking(
+                normalizedBooking
+            );
+
+            if (
+                typeof window.refreshStage4 ===
+                "function"
+            ) {
+
+                window.refreshStage4();
+            }
+
+
+            // ----------------------------------
+            // NOTIFICATION MODAL
+            // ----------------------------------
+
+            updateNotificationModal(
+                normalizedBooking
+            );
+
+
+            const modal =
+                document.getElementById(
+                    "notification-fanout-modal"
+                );
+
+            if (modal) {
+                modal.classList.add(
+                    "open"
+                );
+            }
+
+
+            // ----------------------------------
+            // REFRESH AVAILABILITY
+            // ----------------------------------
+
+            refreshSlotAvailability();
+
+
+            console.log(
+                "[Stage 3] Booking successful:",
+                normalizedBooking
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "[Stage 3] Booking error:",
+                error
+            );
+
+            showBookingError(
+                error.message ||
+                "Unable to complete slot booking."
+            );
+
+        } finally {
+
+            if (bookingButton) {
+
+                bookingButton.disabled =
+                    false;
+
+                if (
+                    originalHTML
+                ) {
+
+                    bookingButton.innerHTML =
+                        originalHTML;
+                }
+            }
+
+            bookingInProgress =
+                false;
         }
-
-        bookingInProgress =
-            false;
-
     }
 
-}
 
+    // ==========================================
+    // BACKEND ERROR
+    // ==========================================
 
-// ==========================================
-// SAVE BOOKING SESSION
-// ==========================================
-
-function saveBookingSession(
-    booking
-) {
-
-    const bookingJSON =
-        JSON.stringify(
-            booking
-        );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.booking,
-        bookingJSON
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.stage4Booking,
-        bookingJSON
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.bookingId,
-        booking.bookingId
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.tokenId,
-        booking.tokenId
-    );
-
-    /*
-     * Legacy keys are retained so older
-     * Stage 4/5/6 scripts can still resolve
-     * the active transaction.
-     */
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.bookingIdLegacy,
-        booking.bookingId
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.tokenIdLegacy,
-        booking.tokenId
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.bookingDataLegacy,
-        bookingJSON
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.selectedTimeSlot,
-        booking.timeSlot
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.vehicleNumber,
-        booking.vehicleNumber
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.bookingDate,
-        booking.date
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.farmerName,
-        booking.farmerName
-    );
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.aadhaar,
-        booking.aadhaar || ""
-    );
-
-}
-
-
-// ==========================================
-// BACKEND ERROR MESSAGE
-// ==========================================
-
-function getBackendErrorMessage(
-    status,
-    data
-) {
-
-    if (
-        data &&
-        data.message
+    function getBackendErrorMessage(
+        status,
+        data
     ) {
 
         if (
-            data.code ===
-            "SLOT_CAPACITY_EXCEEDED" &&
+            data?.code ===
+                "SLOT_CAPACITY_EXCEEDED" &&
             data.availability
         ) {
 
             return (
-                `${data.message}\n\n` +
-                `Slot capacity: ${data.availability.capacityQuintals} qtl\n` +
-                `Already booked: ${data.availability.bookedQuintals} qtl\n` +
+                `This slot cannot accept the requested quantity.\n\n` +
+                `Capacity: ${data.availability.capacityQuintals} qtl\n` +
+                `Booked: ${data.availability.bookedQuintals} qtl\n` +
                 `Remaining: ${data.availability.remainingQuintals} qtl`
             );
-
         }
 
+
         if (
-            data.code ===
+            data?.code ===
             "SLOT_FULL"
         ) {
 
-            return data.message;
-
+            return (
+                data.message ||
+                "This slot is full. Please choose another slot."
+            );
         }
 
+
         if (
-            data.code ===
+            data?.code ===
             "FARMER_DATE_ALREADY_BOOKED"
         ) {
 
             return (
-                `${data.message}\n\n` +
-                `Existing token: ${data.booking?.tokenId || "Already booked"}`
+                "This farmer already has an active booking for this date."
             );
-
         }
 
-        return data.message;
-
-    }
-
-    if (
-        status === 400
-    ) {
-
-        return (
-            "The booking information is invalid. " +
-            "Please check the entered details."
-        );
-
-    }
-
-    if (
-        status === 404
-    ) {
-
-        return (
-            "The selected mandi or booking resource could not be found."
-        );
-
-    }
-
-    if (
-        status === 409
-    ) {
-
-        return (
-            "The selected slot is full or does not have enough remaining capacity. Please choose another slot."
-        );
-
-    }
-
-    if (
-        status === 500
-    ) {
-
-        return (
-            "The Kisan Setu backend encountered an internal error while creating the booking."
-        );
-
-    }
-
-    return (
-        `Slot booking failed with HTTP ${status}.`
-    );
-
-}
-
-
-// ==========================================
-// UPDATE STAGE 4
-// ==========================================
-
-function updateStage4FromBooking(
-    booking
-) {
-
-    if (!booking) {
-        return;
-    }
-
-    // ======================================
-    // TOKEN
-    // ======================================
-
-    const tokenDisplay =
-        document.getElementById(
-            "token-display-id"
-        );
-
-    if (tokenDisplay) {
-
-        tokenDisplay.innerText =
-            booking.tokenId ||
-            "Pending";
-
-    }
-
-    // ======================================
-    // FARMER
-    // ======================================
-
-    const farmerName =
-        booking.farmerName ||
-        getVerifiedFarmerName();
-
-    // ======================================
-    // CROP
-    // ======================================
-
-    const cropElement =
-        document.getElementById(
-            "crop-select"
-        );
-
-    const selectedCropText =
-        booking.cropText ||
-        cropElement?.options[
-            cropElement.selectedIndex
-        ]?.text ||
-        booking.cropType ||
-        "Crop";
-
-    const farmerDescription =
-        document.getElementById(
-            "token-farmer-desc"
-        );
-
-    if (farmerDescription) {
-
-        farmerDescription.innerText =
-            `${farmerName} • ${selectedCropText}`;
-
-    }
-
-    // ======================================
-    // STAGE 4 TOKEN DETAILS
-    // ======================================
-
-    const stage4Elements = {
-
-        token:
-            document.getElementById(
-                "token-display-id"
-            ),
-
-        farmer:
-            document.getElementById(
-                "token-farmer-desc"
-            )
-
-    };
-
-    if (stage4Elements.token) {
-
-        stage4Elements.token.innerText =
-            booking.tokenId ||
-            "Pending";
-
-    }
-
-    // ======================================
-    // QR / TOKEN SLIP
-    // ======================================
-
-    const qrFarmer =
-        document.getElementById(
-            "qr-farmer-name"
-        );
-
-    const qrCrop =
-        document.getElementById(
-            "qr-crop-type"
-        );
-
-    const qrQuantity =
-        document.getElementById(
-            "qr-booked-qty"
-        );
-
-    const qrCentre =
-        document.getElementById(
-            "qr-mandi-centre"
-        );
-
-    const qrVehicle =
-        document.getElementById(
-            "qr-vehicle-plate"
-        );
-
-    const qrDateSlot =
-        document.getElementById(
-            "qr-date-slot"
-        );
-
-    if (qrFarmer) {
-
-        qrFarmer.innerText =
-            farmerName;
-
-    }
-
-    if (qrCrop) {
-
-        qrCrop.innerText =
-            selectedCropText;
-
-    }
-
-    if (qrQuantity) {
-
-        qrQuantity.innerText =
-            `${booking.quantityQuintals || 0} Quintals`;
-
-    }
-
-    if (qrCentre) {
-
-        qrCentre.innerText =
-            booking.center ||
-            currentTargetMandi;
-
-    }
-
-    if (qrVehicle) {
-
-        qrVehicle.innerText =
-            booking.vehicleNumber ||
-            "Not provided";
-
-    }
-
-    if (qrDateSlot) {
-
-        qrDateSlot.innerText =
-            `${booking.date || ""} (${booking.timeSlot || ""})`;
-
-    }
-
-    // ======================================
-    // STAGE 4 SESSION STATE
-    // ======================================
-
-    sessionStorage.setItem(
-        STAGE3_STORAGE_KEYS.stage4Booking,
-        JSON.stringify(
-            booking
-        )
-    );
-
-    console.log(
-        "[Stage 3] Stage 4 synchronized:",
-        {
-            token:
-                booking.tokenId,
-
-            farmer:
-                farmerName,
-
-            crop:
-                selectedCropText,
-
-            quantity:
-                booking.quantityQuintals,
-
-            date:
-                booking.date,
-
-            slot:
-                booking.timeSlot,
-
-            center:
-                booking.center,
-
-            vehicle:
-                booking.vehicleNumber
-        }
-    );
-
-}
-
-
-// ==========================================
-// NOTIFICATION MODAL
-// ==========================================
-
-function updateNotificationModal(
-    booking
-) {
-
-    const modalToken =
-        document.getElementById(
-            "modal-token-tag"
-        );
-
-    const alertText =
-        document.getElementById(
-            "modal-alert-text"
-        );
-
-    if (modalToken) {
-
-        modalToken.innerText =
-            booking.tokenId;
-
-    }
-
-    if (alertText) {
-
-        alertText.innerText =
-            `DoCA Alert: Slot confirmed for ` +
-            `${booking.farmerName}. ` +
-            `Token: ${booking.tokenId} for ` +
-            `${booking.cropText} ` +
-            `(${booking.quantityQuintals} qtl) on ` +
-            `${booking.date} ` +
-            `(${booking.timeSlot}) at ` +
-            `${booking.center}.`;
-
-    }
-
-}
-
-
-// ==========================================
-// RESET BOOKING STATE
-// ==========================================
-
-function resetBookingState() {
-
-    bookingInProgress =
-        false;
-
-}
-
-
-// ==========================================
-// BOOKING ERROR
-// ==========================================
-
-function showBookingError(
-    message
-) {
-
-    alert(
-        `Slot booking failed:\n\n${message}`
-    );
-
-}
-
-
-// ==========================================
-// OPTIONAL PROGRAMMATIC BOOKING API
-// ==========================================
-
-async function bookSlotBackend(
-    bookingParams
-) {
-
-    if (!bookingParams) {
-
-        return false;
-
-    }
-
-    const payload = {
-
-        kccNumber:
-            getVerifiedKccNumber(),
-
-        farmerId:
-            getFarmerId(),
-
-        cropType:
-            bookingParams.crop,
-
-        quantityQuintals:
-            Number(
-                bookingParams.quantity
-            ),
-
-        preferredDate:
-            bookingParams.date,
-
-        centerId:
-            bookingParams.centerId ||
-            currentCenterId,
-
-        timeSlot:
-            bookingParams.timeSlot ||
-            currentSelectedSlot,
-
-        vehicleNumber:
-            bookingParams.vehicle
-
-    };
-
-    try {
-
-        const response =
-            await fetch(
-                `${STAGE3_API_BASE_URL}/api/slots/book`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-
-                }
-            );
-
-        const data =
-            await response.json();
 
         if (
-            !response.ok ||
-            data.success !== true ||
-            !data.booking
+            data?.message
         ) {
 
-            console.error(
-                "[Stage 3] Backend booking failed:",
-                data
-            );
-
-            return false;
-
+            return data.message;
         }
 
-        const booking =
-            data.booking;
 
-        const normalizedBooking = {
+        if (
+            status === 409
+        ) {
 
-            ...booking,
+            return (
+                "The selected slot cannot accept this booking. Please choose another available slot."
+            );
+        }
 
-            kccNumber:
-                payload.kccNumber,
 
-            farmerId:
-                booking.farmerId ||
-                payload.farmerId,
-
-            cropType:
-                booking.cropType ||
-                payload.cropType,
-
-            quantityQuintals:
-                Number(
-                    booking.quantityQuintals
-                ) ||
-                payload.quantityQuintals,
-
-            date:
-                booking.date ||
-                payload.preferredDate,
-
-            timeSlot:
-                booking.timeSlot ||
-                payload.timeSlot,
-
-            centerId:
-                booking.centerId ||
-                payload.centerId,
-
-            vehicleNumber:
-                booking.vehicleNumber ||
-                payload.vehicleNumber,
-
-            farmerName:
-                booking.farmerName ||
-                getVerifiedFarmerName()
-
-        };
-
-        saveBookingSession(
-            normalizedBooking
+        return (
+            `Slot booking failed (HTTP ${status}).`
         );
+    }
+
+
+    // ==========================================
+    // BOOKING ERROR
+    // ==========================================
+
+    function showBookingError(
+        message
+    ) {
+
+        /*
+         * Keep booking errors local to Stage 3.
+         * No global alert is fired by initialization.
+         */
+
+        alert(
+            `Slot booking failed:\n\n${message}`
+        );
+    }
+
+
+    // ==========================================
+    // STAGE 4 SYNCHRONIZATION
+    // ==========================================
+
+    function updateStage4FromBooking(
+        booking
+    ) {
+
+        const token =
+            document.getElementById(
+                "token-display-id"
+            );
+
+        if (token) {
+            token.innerText =
+                booking.tokenId;
+        }
+
+
+        const farmerDescription =
+            document.getElementById(
+                "token-farmer-desc"
+            );
+
+        if (farmerDescription) {
+
+            farmerDescription.innerText =
+                `${booking.farmerName || getFarmerName()} • ${
+                    booking.cropType || "Crop"
+                }`;
+        }
+
+
+        const gateElement =
+            document.querySelector(
+                "#stage-view-4 .card-panel strong"
+            );
+
+        if (
+            gateElement &&
+            booking.timeSlot
+        ) {
+
+            gateElement.innerText =
+                booking.timeSlot;
+        }
+
+
+        const qrFarmer =
+            document.getElementById(
+                "qr-farmer-name"
+            );
+
+        if (qrFarmer) {
+            qrFarmer.innerText =
+                booking.farmerName ||
+                getFarmerName();
+        }
+
+
+        const qrCrop =
+            document.getElementById(
+                "qr-crop-type"
+            );
+
+        if (qrCrop) {
+            qrCrop.innerText =
+                booking.cropType ||
+                "Crop";
+        }
+
+
+        const qrQuantity =
+            document.getElementById(
+                "qr-booked-qty"
+            );
+
+        if (qrQuantity) {
+
+            qrQuantity.innerText =
+                `${booking.quantityQuintals} Quintals`;
+        }
+
+
+        const qrCentre =
+            document.getElementById(
+                "qr-mandi-centre"
+            );
+
+        if (qrCentre) {
+
+            qrCentre.innerText =
+                booking.center ||
+                currentTargetMandi;
+        }
+
+
+        const qrVehicle =
+            document.getElementById(
+                "qr-vehicle-plate"
+            );
+
+        if (qrVehicle) {
+
+            qrVehicle.innerText =
+                booking.vehicleNumber ||
+                "Not provided";
+        }
+    }
+
+
+    // ==========================================
+    // NOTIFICATION MODAL
+    // ==========================================
+
+    function updateNotificationModal(
+        booking
+    ) {
+
+        const alertText =
+            document.getElementById(
+                "modal-alert-text"
+            );
+
+        const modalToken =
+            document.getElementById(
+                "modal-token-tag"
+            );
+
+
+        if (modalToken) {
+
+            modalToken.innerText =
+                booking.tokenId;
+        }
+
+
+        if (alertText) {
+
+            alertText.innerText =
+                `DoCA Alert: Slot confirmed for ${
+                    booking.farmerName ||
+                    getFarmerName()
+                }. Token: ${
+                    booking.tokenId
+                } for ${
+                    booking.cropType
+                } (${
+                    booking.quantityQuintals
+                } qtl) on ${
+                    booking.date
+                } (${
+                    booking.timeSlot
+                }) at ${
+                    booking.center ||
+                    currentTargetMandi
+                }.`;
+        }
+    }
+
+
+    // ==========================================
+    // EXISTING BOOKING RESTORE
+    // ==========================================
+
+    function restoreExistingBooking() {
+
+        const booking =
+            getJSON(
+                "kisanSetuBooking"
+            );
+
+        if (!booking) {
+            return;
+        }
+
+        if (
+            !booking.tokenId
+        ) {
+            return;
+        }
 
         updateStage4FromBooking(
-            normalizedBooking
+            booking
         );
+
+        console.log(
+            "[Stage 3] Existing booking restored:",
+            booking.tokenId
+        );
+    }
+
+
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
+
+    function initialize() {
+
+        initializeDateField();
+
+        initializeTimeSlots();
+
+        restoreExistingBooking();
+
+
+        const crop =
+            document.getElementById(
+                "crop-select"
+            );
+
+        const quantity =
+            document.getElementById(
+                "qty-input"
+            );
+
+
+        if (crop) {
+
+            crop.onchange =
+                function () {
+                    updateMandiStatus();
+                };
+        }
+
+
+        if (quantity) {
+
+            quantity.oninput =
+                function () {
+                    updateMandiStatus();
+                };
+        }
+
+
+        const bookingButton =
+            getBookingButton();
+
+        if (bookingButton) {
+
+            bookingButton.onclick =
+                submitSlotBooking;
+        }
+
+
+        const rerouteButton =
+            document.querySelector(
+                "#stage-view-3 .btn-reroute"
+            );
+
+        if (rerouteButton) {
+
+            rerouteButton.onclick =
+                applyReroute;
+        }
+
 
         refreshSlotAvailability();
 
-        return true;
 
-    } catch (error) {
-
-        console.error(
-            "[Stage 3] API Error:",
-            error
+        console.log(
+            "[Stage 3] Initialized."
         );
-
-        return false;
-
     }
 
-}
+
+    // ==========================================
+    // EXPOSE
+    // ==========================================
+
+    window.selectSlot =
+        selectSlot;
+
+    window.updateMandiStatus =
+        updateMandiStatus;
+
+    window.applyReroute =
+        applyReroute;
+
+    window.submitSlotBooking =
+        submitSlotBooking;
+
+    window.refreshSlotAvailability =
+        refreshSlotAvailability;
+
+    window.updateStage4FromBooking =
+        updateStage4FromBooking;
 
 
-// ==========================================
-// EXPOSE FUNCTIONS
-// ==========================================
+    if (
+        document.readyState ===
+        "loading"
+    ) {
 
-window.selectSlot =
-    selectSlot;
+        document.addEventListener(
+            "DOMContentLoaded",
+            initialize
+        );
 
-window.updateMandiStatus =
-    updateMandiStatus;
+    } else {
 
-window.applyReroute =
-    applyReroute;
+        initialize();
+    }
 
-window.submitSlotBooking =
-    submitSlotBooking;
-
-window.updateStage4FromBooking =
-    updateStage4FromBooking;
-
-window.bookSlotBackend =
-    bookSlotBackend;
-
-window.refreshSlotAvailability =
-    refreshSlotAvailability;
+})();

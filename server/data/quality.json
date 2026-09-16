@@ -9,5 +9,27 @@
     "foreignMatterPercentage": 0.5,
     "qualityGrade": "Grade B",
     "createdAt": "2026-09-14T15:52:03.953Z"
+  },
+  {
+    "qualityId": "QUALITY-1789541637711-9DE38D",
+    "procurementId": "PROC-1789541637711-40AA3D",
+    "bookingId": "BOOK-1789541575519-147698",
+    "tokenId": "TKN-41575520-1D6F",
+    "farmerId": "FRM-1789333379008-6E02B3",
+    "moisturePercentage": 11,
+    "foreignMatterPercentage": 0.3,
+    "qualityGrade": "Grade A",
+    "createdAt": "2026-09-16T06:53:57.711Z"
+  },
+  {
+    "qualityId": "QUALITY-1789558296948-03FC3A",
+    "procurementId": "PROC-1789558296948-E831B6",
+    "bookingId": "BOOK-1789558174438-C6B864",
+    "tokenId": "TKN-58174439-ACE8",
+    "farmerId": "FRM-DEMO-001",
+    "moisturePercentage": 12,
+    "foreignMatterPercentage": 0.5,
+    "qualityGrade": "Grade A",
+    "createdAt": "2026-09-16T11:31:36.948Z"
   }
 ]

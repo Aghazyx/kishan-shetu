@@ -1,1599 +1,1781 @@
-// ================================================================
-// KISAN SETU ADMIN PORTAL
-// A3 • FARMER MANAGEMENT
-// ================================================================
+(function () {
+    "use strict";
 
-const API_BASE_URL = 'http://localhost:5050';
+    // ================================================================
+    // KISAN SETU ADMIN PORTAL
+    // A3 • FARMER MANAGEMENT
+    // ================================================================
 
+    const API_BASE_URL =
+        "http://localhost:5050";
 
-// ================================================================
-// ADMIN SESSION
-// ================================================================
+    let allFarmers = [];
 
-const getAdminSession = () => {
-  return sessionStorage.getItem('kisanSetuAdminSession');
-};
+    let searchTimeout = null;
 
+    let farmerRequestController = null;
 
-const isAdminAuthenticated = () => {
-  return Boolean(getAdminSession());
-};
+    let farmerRequestSequence = 0;
 
+    let farmersPageInitialized = false;
 
-const handleSessionExpired = () => {
-  sessionStorage.removeItem('kisanSetuAdminAuthenticated');
-  sessionStorage.removeItem('kisanSetuAdminUser');
-  sessionStorage.removeItem('kisanSetuAdminSession');
 
-  window.location.href = 'admin.html';
-};
+    // ================================================================
+    // STORAGE / SESSION
+    // ================================================================
 
-
-// ================================================================
-// DOM HELPERS
-// ================================================================
-
-const getElement = (...ids) => {
-  for (const id of ids) {
-    const element = document.getElementById(id);
-
-    if (element) {
-      return element;
-    }
-  }
-
-  return null;
-};
-
-
-const setText = (element, value) => {
-  if (element) {
-    element.textContent = value;
-  }
-};
-
-
-// ================================================================
-// PAGE ELEMENTS
-// ================================================================
-
-const farmerSearchInput = getElement(
-  'farmer-search-input',
-  'farmer-search',
-  'search-farmers',
-  'farmerSearch',
-  'searchInput'
-);
-
-
-const farmerTableBody = getElement(
-  'farmer-table-body',
-  'farmers-table-body',
-  'farmerTableBody',
-  'farmersTableBody'
-);
-
-
-const totalFarmersElement = getElement(
-  'total-farmers',
-  'totalFarmers',
-  'farmer-count'
-);
-
-
-const activeFarmersElement = getElement(
-  'active-farmers',
-  'activeFarmers',
-  'active-bookings'
-);
-
-
-const completedFarmersElement = getElement(
-  'completed-farmers',
-  'completedFarmers',
-  'completed-transactions'
-);
-
-
-const totalProcurementElement = getElement(
-  'total-procurement',
-  'totalProcurement'
-);
-
-
-const pageMessage = getElement(
-  'farmer-status-message',
-  'farmers-message',
-  'farmer-message',
-  'page-message'
-);
-
-
-const loadingElement = getElement(
-  'farmer-loading'
-);
-
-
-const emptyStateElement = getElement(
-  'farmer-empty-state'
-);
-
-
-const tableContainerElement = getElement(
-  'farmer-table-container'
-);
-
-
-const refreshButton = getElement(
-  'refresh-farmers',
-  'refreshFarmers',
-  'refresh-button'
-);
-
-
-// ================================================================
-// STATE
-// ================================================================
-
-let allFarmers = [];
-
-let searchTimeout = null;
-
-// Prevent an older API response from overwriting newer data.
-let farmerRequestSequence = 0;
-
-// Abort an older request when a new search/refresh starts.
-let farmerRequestController = null;
-
-// Prevent duplicate global event listeners.
-let farmersPageInitialized = false;
-
-
-// ================================================================
-// FORMATTERS
-// ================================================================
-
-const formatNumber = (value) => {
-  const number = Number(value || 0);
-
-  return number.toLocaleString('en-IN', {
-    maximumFractionDigits: 2
-  });
-};
-
-
-const formatCurrency = (value) => {
-  const number = Number(value || 0);
-
-  return `₹${number.toLocaleString('en-IN', {
-    maximumFractionDigits: 2
-  })}`;
-};
-
-
-const formatDate = (value) => {
-  if (!value) {
-    return '—';
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return String(value);
-  }
-
-  return date.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  });
-};
-
-
-const formatCrop = (crop) => {
-  if (!crop) {
-    return '—';
-  }
-
-  const text = String(crop);
-
-  return text.charAt(0).toUpperCase() +
-    text.slice(1).toLowerCase();
-};
-
-
-const escapeHTML = (value) => {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-};
-
-
-// ================================================================
-// STATUS HELPERS
-// ================================================================
-
-const getFarmerStatus = (farmer) => {
-  const activeBookings =
-    Number(farmer.activeBookings || 0);
-
-  const completedTransactions =
-    Number(farmer.completedTransactions || 0);
-
-  if (activeBookings > 0) {
-    return {
-      label: 'Active',
-      className: 'status-active'
-    };
-  }
-
-  if (completedTransactions > 0) {
-    return {
-      label: 'Completed',
-      className: 'status-completed'
-    };
-  }
-
-  return {
-    label: 'Registered',
-    className: 'status-registered'
-  };
-};
-
-
-// ================================================================
-// PAGE MESSAGE
-// ================================================================
-
-const showMessage = (message, type = 'info') => {
-  if (!pageMessage) {
-    return;
-  }
-
-  pageMessage.textContent = message;
-
-  pageMessage.className =
-    `page-message ${type}`;
-};
-
-
-// ================================================================
-// LOADING / EMPTY STATE
-// ================================================================
-
-const setLoadingState = (isLoading) => {
-  if (loadingElement) {
-    loadingElement.style.display =
-      isLoading ? '' : 'none';
-  }
-
-  if (refreshButton) {
-    refreshButton.disabled = isLoading;
-  }
-};
-
-
-const setEmptyState = (isEmpty) => {
-  if (emptyStateElement) {
-    emptyStateElement.style.display =
-      isEmpty ? '' : 'none';
-  }
-
-  if (tableContainerElement) {
-    tableContainerElement.style.display =
-      isEmpty ? 'none' : '';
-  }
-};
-
-
-// ================================================================
-// LOAD FARMERS
-// ================================================================
-
-const loadFarmers = async (search = '') => {
-
-  if (!isAdminAuthenticated()) {
-    handleSessionExpired();
-    return;
-  }
-
-  // Abort any previous request.
-  if (farmerRequestController) {
-    farmerRequestController.abort();
-  }
-
-  farmerRequestController =
-    new AbortController();
-
-  const requestController =
-    farmerRequestController;
-
-  const requestSequence =
-    ++farmerRequestSequence;
-
-  setLoadingState(true);
-
-  showMessage(
-    'Loading farmer records...',
-    'loading'
-  );
-
-  try {
-
-    const session = getAdminSession();
-
-    if (!session) {
-      handleSessionExpired();
-      return;
-    }
-
-    const trimmedSearch =
-      String(search || '').trim();
-
-    const query =
-      trimmedSearch
-        ? `?search=${encodeURIComponent(trimmedSearch)}`
-        : '';
-
-    const response =
-      await fetch(
-        `${API_BASE_URL}/api/admin/farmers${query}`,
-        {
-          method: 'GET',
-
-          headers: {
-            'x-admin-session': session,
-            'Accept': 'application/json'
-          },
-
-          signal: requestController.signal
-        }
-      );
-
-
-    // A newer request has already started.
-    if (requestSequence !== farmerRequestSequence) {
-      return;
-    }
-
-
-    let data = {};
-
-    try {
-      data = await response.json();
-    } catch {
-      throw new Error(
-        'The administration backend returned an invalid response.'
-      );
-    }
-
-
-    // 401/403 both indicate an invalid or expired admin session.
-    if (
-      response.status === 401 ||
-      response.status === 403 ||
-      data.authenticated === false
-    ) {
-      handleSessionExpired();
-      return;
-    }
-
-
-    if (!response.ok || !data.success) {
-      throw new Error(
-        data.message ||
-        'Unable to load farmer records.'
-      );
-    }
-
-
-    // Never replace valid data with an unexpected non-array.
-    allFarmers =
-      Array.isArray(data.farmers)
-        ? data.farmers
-        : [];
-
-
-    renderSummary(data);
-
-    renderFarmers(allFarmers);
-
-
-    showMessage(
-      `${allFarmers.length} farmer record(s) loaded.`,
-      'success'
-    );
-
-
-  } catch (error) {
-
-    // Ignore intentionally cancelled requests.
-    if (error.name === 'AbortError') {
-      return;
-    }
-
-
-    // Do not allow an older failed request
-    // to overwrite the result of a newer request.
-    if (requestSequence !== farmerRequestSequence) {
-      return;
-    }
-
-
-    console.error(
-      '[A3 Farmer Management Error]',
-      error
-    );
-
-
-    allFarmers = [];
-
-    renderSummary({
-      totalRegisteredFarmers: 0,
-      totalFarmers: 0
-    });
-
-    renderFarmers([]);
-
-
-    showMessage(
-      error.message ||
-      'Unable to connect to the administration backend.',
-      'error'
-    );
-
-
-  } finally {
-
-    // Only the current request may control loading state.
-    if (requestSequence === farmerRequestSequence) {
-      setLoadingState(false);
-
-      if (farmerRequestController === requestController) {
-        farmerRequestController = null;
-      }
-    }
-
-  }
-
-};
-
-
-// ================================================================
-// SUMMARY CARDS
-// ================================================================
-
-const renderSummary = (data = {}) => {
-
-  const farmers = allFarmers;
-
-
-  const activeCount =
-    farmers.filter(
-      farmer =>
-        Number(
-          farmer.activeBookings || 0
-        ) > 0
-    ).length;
-
-
-  const completedCount =
-    farmers.filter(
-      farmer =>
-        Number(
-          farmer.completedTransactions || 0
-        ) > 0
-    ).length;
-
-
-  // IMPORTANT:
-  // Use actual procured quantity from the backend.
-  // Do not calculate payout/procurement from booked quantity.
-  const totalProcurement =
-    farmers.reduce(
-      (total, farmer) => {
+    function getAdminSession() {
 
         return (
-          total +
-          Number(
-            farmer.totalProcuredQuintals || 0
-          )
+            sessionStorage.getItem(
+                "kisanSetuAdminSession"
+            ) ||
+            localStorage.getItem(
+                "kisanSetuAdminSession"
+            ) ||
+            ""
+        );
+    }
+
+
+    function isAdminAuthenticated() {
+
+        const authenticated =
+            sessionStorage.getItem(
+                "kisanSetuAdminAuthenticated"
+            ) === "true";
+
+        const session =
+            getAdminSession();
+
+        return (
+            authenticated &&
+            Boolean(session)
+        );
+    }
+
+
+    function handleSessionExpired() {
+
+        sessionStorage.removeItem(
+            "kisanSetuAdminAuthenticated"
         );
 
-      },
-      0
-    );
-
-
-  const totalFarmerCount =
-    data.totalRegisteredFarmers ??
-    data.totalFarmers ??
-    farmers.length;
-
-
-  setText(
-    totalFarmersElement,
-    formatNumber(totalFarmerCount)
-  );
-
-
-  setText(
-    activeFarmersElement,
-    formatNumber(activeCount)
-  );
-
-
-  setText(
-    completedFarmersElement,
-    formatNumber(completedCount)
-  );
-
-
-  setText(
-    totalProcurementElement,
-    `${formatNumber(totalProcurement)} qtl`
-  );
-
-};
-
-
-// ================================================================
-// RENDER FARMER TABLE
-// ================================================================
-
-const renderFarmers = (farmers = []) => {
-
-  if (!farmerTableBody) {
-
-    console.warn(
-      '[A3] Farmer table body element not found.'
-    );
-
-    return;
-
-  }
-
-
-  farmerTableBody.innerHTML = '';
-
-
-  if (!farmers.length) {
-
-    setEmptyState(true);
-
-    farmerTableBody.innerHTML = `
-      <tr>
-        <td
-          colspan="10"
-          class="empty-state"
-        >
-          No farmer records found.
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-
-  setEmptyState(false);
-
-
-  farmers.forEach(farmer => {
-
-    const status =
-      getFarmerStatus(farmer);
-
-
-    const row =
-      document.createElement('tr');
-
-
-    row.innerHTML = `
-
-      <td>
-        <strong>
-          ${escapeHTML(
-            farmer.name || 'Unknown Farmer'
-          )}
-        </strong>
-
-        <div class="table-subtext">
-          ${escapeHTML(
-            farmer.id || '—'
-          )}
-        </div>
-      </td>
-
-
-      <td>
-        <span class="kcc-number">
-          ${escapeHTML(
-            farmer.kccNumber || '—'
-          )}
-        </span>
-      </td>
-
-
-      <td>
-        ${escapeHTML(
-          farmer.phone || '—'
-        )}
-      </td>
-
-
-      <td>
-        ${escapeHTML(
-          farmer.district || '—'
-        )}
-      </td>
-
-
-      <td>
-        ${formatNumber(
-          farmer.landHoldingAcres
-        )}
-        acres
-      </td>
-
-
-      <td>
-        ${formatNumber(
-          farmer.totalBookings
-        )}
-      </td>
-
-
-      <td>
-        ${formatNumber(
-          farmer.totalProcuredQuintals
-        )}
-        qtl
-      </td>
-
-
-      <td>
-        ${formatCurrency(
-          farmer.totalPayout
-        )}
-      </td>
-
-
-      <td>
-        <span
-          class="status-badge ${status.className}"
-        >
-          ${status.label}
-        </span>
-      </td>
-
-
-      <td>
-
-        <button
-          type="button"
-          class="view-farmer-btn"
-          data-farmer-id="${escapeHTML(
-            farmer.id || ''
-          )}"
-        >
-          View Details
-        </button>
-
-      </td>
-
-    `;
-
-
-    farmerTableBody.appendChild(row);
-
-  });
-
-
-  attachFarmerButtons();
-
-};
-
-
-// ================================================================
-// FARMER DETAIL BUTTONS
-// ================================================================
-
-const attachFarmerButtons = () => {
-
-  const buttons =
-    document.querySelectorAll(
-      '.view-farmer-btn'
-    );
-
-
-  buttons.forEach(button => {
-
-    // Prevent duplicate click listeners if the table
-    // is rendered repeatedly.
-    if (button.dataset.bound === 'true') {
-      return;
+        sessionStorage.removeItem(
+            "kisanSetuAdminUser"
+        );
+
+        sessionStorage.removeItem(
+            "kisanSetuAdminSession"
+        );
+
+        localStorage.removeItem(
+            "kisanSetuAdminAuthenticated"
+        );
+
+        localStorage.removeItem(
+            "kisanSetuAdminUser"
+        );
+
+        localStorage.removeItem(
+            "kisanSetuAdminSession"
+        );
+
+        window.location.href =
+            "admin.html";
     }
 
-    button.dataset.bound = 'true';
 
+    // ================================================================
+    // DOM HELPERS
+    // ================================================================
 
-    button.addEventListener(
-      'click',
-      () => {
+    function getElement() {
 
-        const farmerId =
-          button.dataset.farmerId;
+        const ids =
+            Array.from(
+                arguments
+            );
 
+        for (
+            const id of ids
+        ) {
 
-        const farmer =
-          allFarmers.find(
-            item =>
-              String(item.id) ===
-              String(farmerId)
-          );
+            const element =
+                document.getElementById(
+                    id
+                );
 
-
-        if (farmer) {
-          openFarmerDetails(farmer);
+            if (element) {
+                return element;
+            }
         }
 
-      }
-    );
-
-  });
-
-};
-
-
-// ================================================================
-// FARMER DETAILS MODAL
-// ================================================================
-
-const openFarmerDetails = (farmer) => {
-
-  let modal =
-    document.getElementById(
-      'farmer-details-modal'
-    );
-
-
-  if (!modal) {
-    modal = createFarmerDetailsModal();
-  }
-
-
-  const content =
-    modal.querySelector(
-      '.farmer-details-content'
-    );
-
-
-  if (!content) {
-    return;
-  }
-
-
-  const latestBooking =
-    farmer.latestBooking;
-
-
-  const latestReceipt =
-    farmer.latestReceipt;
-
-
-  const crops =
-    Array.isArray(farmer.crops)
-      ? farmer.crops.join(', ')
-      : '—';
-
-
-  content.innerHTML = `
-
-    <div class="farmer-detail-grid">
-
-      <div class="detail-group">
-        <span class="detail-label">
-          Farmer Name
-        </span>
-
-        <strong>
-          ${escapeHTML(
-            farmer.name || '—'
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          Farmer ID
-        </span>
-
-        <strong>
-          ${escapeHTML(
-            farmer.id || '—'
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          KCC Number
-        </span>
-
-        <strong>
-          ${escapeHTML(
-            farmer.kccNumber || '—'
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          Phone
-        </span>
-
-        <strong>
-          ${escapeHTML(
-            farmer.phone || '—'
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          State
-        </span>
-
-        <strong>
-          ${escapeHTML(
-            farmer.state || '—'
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          District
-        </span>
-
-        <strong>
-          ${escapeHTML(
-            farmer.district || '—'
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          Land Holding
-        </span>
-
-        <strong>
-          ${formatNumber(
-            farmer.landHoldingAcres
-          )}
-          acres
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          Mandi
-        </span>
-
-        <strong>
-          ${escapeHTML(
-            farmer.mandi || '—'
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          Registered
-        </span>
-
-        <strong>
-          ${formatDate(
-            farmer.registeredAt
-          )}
-        </strong>
-      </div>
-
-
-      <div class="detail-group">
-        <span class="detail-label">
-          Crops
-        </span>
-
-        <strong>
-          ${escapeHTML(crops)}
-        </strong>
-      </div>
-
-    </div>
-
-
-    <div class="farmer-detail-section">
-
-      <h4>
-        Procurement Summary
-      </h4>
-
-
-      <div class="farmer-detail-grid">
-
-        <div class="detail-group">
-          <span class="detail-label">
-            Total Bookings
-          </span>
-
-          <strong>
-            ${formatNumber(
-              farmer.totalBookings
-            )}
-          </strong>
-        </div>
-
-
-        <div class="detail-group">
-          <span class="detail-label">
-            Active Bookings
-          </span>
-
-          <strong>
-            ${formatNumber(
-              farmer.activeBookings
-            )}
-          </strong>
-        </div>
-
-
-        <div class="detail-group">
-          <span class="detail-label">
-            Completed Transactions
-          </span>
-
-          <strong>
-            ${formatNumber(
-              farmer.completedTransactions
-            )}
-          </strong>
-        </div>
-
-
-        <div class="detail-group">
-          <span class="detail-label">
-            Booked Quantity
-          </span>
-
-          <strong>
-            ${formatNumber(
-              farmer.totalBookedQuintals
-            )}
-            qtl
-          </strong>
-        </div>
-
-
-        <div class="detail-group">
-          <span class="detail-label">
-            Actual Procured Quantity
-          </span>
-
-          <strong>
-            ${formatNumber(
-              farmer.totalProcuredQuintals
-            )}
-            qtl
-          </strong>
-        </div>
-
-
-        <div class="detail-group">
-          <span class="detail-label">
-            Total Payout
-          </span>
-
-          <strong>
-            ${formatCurrency(
-              farmer.totalPayout
-            )}
-          </strong>
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="farmer-detail-section">
-
-      <h4>
-        Latest Booking
-      </h4>
-
-      ${
-        latestBooking
-          ? `
-
-            <div class="detail-record">
-
-              <div>
-                <span class="detail-label">
-                  Token
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestBooking.tokenId || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Booking ID
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestBooking.bookingId || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Farmer ID
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestBooking.farmerId || farmer.id || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Date
-                </span>
-
-                <strong>
-                  ${formatDate(
-                    latestBooking.date
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Time Slot
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestBooking.timeSlot || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Crop
-                </span>
-
-                <strong>
-                  ${formatCrop(
-                    latestBooking.cropType
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Booked Quantity
-                </span>
-
-                <strong>
-                  ${formatNumber(
-                    latestBooking.quantityQuintals
-                  )}
-                  qtl
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Center
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestBooking.center || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Status
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestBooking.status || '—'
-                  )}
-                </strong>
-              </div>
-
-            </div>
-
-          `
-          : `
-
-            <div class="empty-detail">
-              No booking history available.
-            </div>
-
-          `
-      }
-
-    </div>
-
-
-    <div class="farmer-detail-section">
-
-      <h4>
-        Latest Receipt
-      </h4>
-
-      ${
-        latestReceipt
-          ? `
-
-            <div class="detail-record">
-
-              <div>
-                <span class="detail-label">
-                  Receipt ID
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestReceipt.receiptId || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Token
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestReceipt.tokenId || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Booking ID
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestReceipt.bookingId || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Farmer ID
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestReceipt.farmerId || farmer.id || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Crop
-                </span>
-
-                <strong>
-                  ${formatCrop(
-                    latestReceipt.cropType
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Actual Net Quantity
-                </span>
-
-                <strong>
-                  ${formatNumber(
-                    latestReceipt.netWeightQuintals
-                  )}
-                  qtl
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Quality
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    latestReceipt.qualityGrade || '—'
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Payout
-                </span>
-
-                <strong>
-                  ${formatCurrency(
-                    latestReceipt.totalPayoutAmount
-                  )}
-                </strong>
-              </div>
-
-
-              <div>
-                <span class="detail-label">
-                  Date
-                </span>
-
-                <strong>
-                  ${formatDate(
-                    latestReceipt.timestamp
-                  )}
-                </strong>
-              </div>
-
-            </div>
-
-          `
-          : `
-
-            <div class="empty-detail">
-              No procurement receipt available.
-            </div>
-
-          `
-      }
-
-    </div>
-
-  `;
-
-
-  modal.classList.add('modal-open');
-
-  modal.style.display = 'flex';
-
-};
-
-
-// ================================================================
-// CREATE DETAILS MODAL
-// ================================================================
-
-const createFarmerDetailsModal = () => {
-
-  const modal =
-    document.createElement('div');
-
-
-  modal.id =
-    'farmer-details-modal';
-
-
-  modal.className =
-    'farmer-details-modal';
-
-
-  modal.innerHTML = `
-
-    <div class="farmer-details-dialog">
-
-      <div class="farmer-details-header">
-
-        <div>
-
-          <span class="section-eyebrow">
-            FARMER MANAGEMENT
-          </span>
-
-          <h3>
-            Farmer Details
-          </h3>
-
-        </div>
-
-
-        <button
-          type="button"
-          class="close-farmer-modal"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <div class="farmer-details-content">
-      </div>
-
-    </div>
-
-  `;
-
-
-  document.body.appendChild(modal);
-
-
-  const closeButton =
-    modal.querySelector(
-      '.close-farmer-modal'
-    );
-
-
-  if (closeButton) {
-
-    closeButton.addEventListener(
-      'click',
-      closeFarmerDetails
-    );
-
-  }
-
-
-  modal.addEventListener(
-    'click',
-    event => {
-
-      if (event.target === modal) {
-        closeFarmerDetails();
-      }
-
+        return null;
     }
-  );
 
 
-  return modal;
+    function setText(
+        element,
+        value
+    ) {
 
-};
-
-
-// ================================================================
-// CLOSE DETAILS MODAL
-// ================================================================
-
-const closeFarmerDetails = () => {
-
-  const modal =
-    document.getElementById(
-      'farmer-details-modal'
-    );
+        if (element) {
+            element.textContent =
+                value;
+        }
+    }
 
 
-  if (!modal) {
-    return;
-  }
+    // ================================================================
+    // PAGE ELEMENTS
+    // ================================================================
+
+    const farmerSearchInput =
+        getElement(
+            "farmer-search-input",
+            "farmer-search",
+            "search-farmers",
+            "farmerSearch",
+            "searchInput"
+        );
 
 
-  modal.classList.remove(
-    'modal-open'
-  );
+    const farmerTableBody =
+        getElement(
+            "farmer-table-body",
+            "farmers-table-body",
+            "farmerTableBody",
+            "farmersTableBody"
+        );
 
 
-  modal.style.display =
-    'none';
-
-};
-
-
-// ================================================================
-// PAGE EVENT INITIALIZATION
-// ================================================================
-
-const initializeFarmersPage = () => {
-
-  // Prevent duplicate initialization.
-  if (farmersPageInitialized) {
-    return;
-  }
-
-  farmersPageInitialized = true;
+    const totalFarmersElement =
+        getElement(
+            "total-farmers",
+            "totalFarmers",
+            "farmer-count"
+        );
 
 
-  // ==============================================================
-  // SEARCH
-  // ==============================================================
-
-  if (farmerSearchInput) {
-
-    farmerSearchInput.addEventListener(
-      'input',
-      event => {
-
-        const search =
-          event.target.value;
+    const activeBookingsElement =
+        getElement(
+            "active-bookings",
+            "active-farmers",
+            "activeFarmers"
+        );
 
 
-        clearTimeout(searchTimeout);
+    const totalProcurementElement =
+        getElement(
+            "total-procurement",
+            "totalProcurement"
+        );
 
 
-        searchTimeout =
-          setTimeout(
-            () => {
-              loadFarmers(search);
-            },
-            300
-          );
-
-      }
-    );
-
-  }
+    const totalPayoutElement =
+        getElement(
+            "total-payout",
+            "totalPayout"
+        );
 
 
-  // ==============================================================
-  // REFRESH BUTTON
-  // ==============================================================
-
-  if (refreshButton) {
-
-    refreshButton.addEventListener(
-      'click',
-      () => {
-
-        const search =
-          farmerSearchInput
-            ? farmerSearchInput.value
-            : '';
+    const pageMessage =
+        getElement(
+            "farmer-status-message",
+            "farmers-message",
+            "farmer-message",
+            "page-message"
+        );
 
 
-        loadFarmers(search);
-
-      }
-    );
-
-  }
+    const loadingElement =
+        getElement(
+            "farmer-loading"
+        );
 
 
-  // ==============================================================
-  // EXISTING MODAL CLOSE BUTTON
-  // ==============================================================
-
-  const existingCloseButton =
-    getElement(
-      'close-farmer-modal'
-    );
+    const emptyStateElement =
+        getElement(
+            "farmer-empty-state"
+        );
 
 
-  if (existingCloseButton) {
-
-    existingCloseButton.addEventListener(
-      'click',
-      closeFarmerDetails
-    );
-
-  }
+    const tableContainerElement =
+        getElement(
+            "farmer-table-container"
+        );
 
 
-  // ==============================================================
-  // EXISTING MODAL BACKDROP
-  // ==============================================================
+    // ================================================================
+    // FORMATTERS
+    // ================================================================
 
-  const existingModal =
-    getElement(
-      'farmer-details-modal'
-    );
+    function formatNumber(
+        value
+    ) {
+
+        const number =
+            Number(value);
+
+        return (
+            Number.isFinite(number)
+                ? number
+                : 0
+        ).toLocaleString(
+            "en-IN",
+            {
+                maximumFractionDigits:
+                    2
+            }
+        );
+    }
 
 
-  if (existingModal) {
+    function formatCurrency(
+        value
+    ) {
 
-    existingModal.addEventListener(
-      'click',
-      event => {
+        const number =
+            Number(value);
+
+        return `₹${(
+            Number.isFinite(number)
+                ? number
+                : 0
+        ).toLocaleString(
+            "en-IN",
+            {
+                maximumFractionDigits:
+                    2
+            }
+        )}`;
+    }
+
+
+    function formatDate(
+        value
+    ) {
+
+        if (!value) {
+            return "—";
+        }
+
+        const date =
+            new Date(value);
 
         if (
-          event.target ===
-          existingModal
+            Number.isNaN(
+                date.getTime()
+            )
         ) {
-          closeFarmerDetails();
+
+            return String(value);
         }
 
-      }
-    );
+        return date.toLocaleDateString(
+            "en-IN",
+            {
+                day:
+                    "2-digit",
 
-  }
+                month:
+                    "short",
 
-
-  // ==============================================================
-  // ESCAPE KEY
-  // ==============================================================
-
-  document.addEventListener(
-    'keydown',
-    event => {
-
-      if (event.key === 'Escape') {
-        closeFarmerDetails();
-      }
-
+                year:
+                    "numeric"
+            }
+        );
     }
-  );
 
 
-  // ==============================================================
-  // INITIAL LOAD
-  // ==============================================================
+    function formatCrop(
+        value
+    ) {
 
-  loadFarmers();
+        if (!value) {
+            return "—";
+        }
 
-};
+        const text =
+            String(value);
+
+        return (
+            text.charAt(0).toUpperCase() +
+            text.slice(1).toLowerCase()
+        );
+    }
 
 
-// ================================================================
-// INITIAL LOAD
-// ================================================================
+    function escapeHTML(
+        value
+    ) {
 
-if (document.readyState === 'loading') {
+        return String(
+            value ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+    }
 
-  document.addEventListener(
-    'DOMContentLoaded',
-    initializeFarmersPage,
-    { once: true }
-  );
 
-} else {
+    // ================================================================
+    // STATUS
+    // ================================================================
 
-  initializeFarmersPage();
+    function getFarmerStatus(
+        farmer
+    ) {
 
-}
+        const activeBookings =
+            Number(
+                farmer?.activeBookings || 0
+            );
+
+        const completedTransactions =
+            Number(
+                farmer?.completedTransactions || 0
+            );
+
+
+        if (
+            activeBookings > 0
+        ) {
+
+            return {
+                label:
+                    "Active",
+
+                className:
+                    "status-active"
+            };
+        }
+
+
+        if (
+            completedTransactions > 0
+        ) {
+
+            return {
+                label:
+                    "Completed",
+
+                className:
+                    "status-completed"
+            };
+        }
+
+
+        return {
+            label:
+                "Registered",
+
+            className:
+                "status-registered"
+        };
+    }
+
+
+    // ================================================================
+    // PAGE MESSAGE
+    // ================================================================
+
+    function showMessage(
+        message,
+        type = "info"
+    ) {
+
+        if (!pageMessage) {
+            return;
+        }
+
+        pageMessage.hidden =
+            false;
+
+        pageMessage.textContent =
+            message;
+
+        pageMessage.className =
+            `farmer-status-message ${type}`;
+    }
+
+
+    function hideMessage() {
+
+        if (!pageMessage) {
+            return;
+        }
+
+        pageMessage.hidden =
+            true;
+
+        pageMessage.textContent =
+            "";
+
+        pageMessage.className =
+            "farmer-status-message";
+    }
+
+
+    // ================================================================
+    // LOADING STATE
+    // ================================================================
+
+    function setLoadingState(
+        loading
+    ) {
+
+        if (loadingElement) {
+
+            loadingElement.hidden =
+                !loading;
+
+            loadingElement.style.display =
+                loading
+                    ? "flex"
+                    : "none";
+        }
+    }
+
+
+    function setEmptyState(
+        empty
+    ) {
+
+        if (emptyStateElement) {
+
+            emptyStateElement.hidden =
+                !empty;
+
+            emptyStateElement.style.display =
+                empty
+                    ? ""
+                    : "none";
+        }
+
+
+        if (tableContainerElement) {
+
+            tableContainerElement.hidden =
+                empty;
+
+            tableContainerElement.style.display =
+                empty
+                    ? "none"
+                    : "";
+        }
+    }
+
+
+    // ================================================================
+    // SUMMARY
+    // ================================================================
+
+    function renderSummary(
+        data = {}
+    ) {
+
+        const farmers =
+            Array.isArray(
+                allFarmers
+            )
+                ? allFarmers
+                : [];
+
+
+        const activeBookings =
+            farmers.reduce(
+                (
+                    total,
+                    farmer
+                ) =>
+                    total +
+                    Number(
+                        farmer.activeBookings ||
+                        0
+                    ),
+                0
+            );
+
+
+        const totalProcurement =
+            farmers.reduce(
+                (
+                    total,
+                    farmer
+                ) =>
+                    total +
+                    Number(
+                        farmer.totalProcuredQuintals ||
+                        0
+                    ),
+                0
+            );
+
+
+        const totalPayout =
+            farmers.reduce(
+                (
+                    total,
+                    farmer
+                ) =>
+                    total +
+                    Number(
+                        farmer.totalPayout ||
+                        0
+                    ),
+                0
+            );
+
+
+        const totalFarmerCount =
+            data.totalRegisteredFarmers ??
+            data.totalFarmers ??
+            farmers.length;
+
+
+        setText(
+            totalFarmersElement,
+            formatNumber(
+                totalFarmerCount
+            )
+        );
+
+
+        setText(
+            activeBookingsElement,
+            formatNumber(
+                activeBookings
+            )
+        );
+
+
+        setText(
+            totalProcurementElement,
+            `${formatNumber(
+                totalProcurement
+            )} qtl`
+        );
+
+
+        setText(
+            totalPayoutElement,
+            formatCurrency(
+                totalPayout
+            )
+        );
+    }
+
+
+    // ================================================================
+    // LOAD FARMERS
+    // ================================================================
+
+    async function loadFarmers(
+        search = ""
+    ) {
+
+        if (
+            !isAdminAuthenticated()
+        ) {
+
+            handleSessionExpired();
+
+            return;
+        }
+
+
+        if (
+            farmerRequestController
+        ) {
+
+            farmerRequestController.abort();
+        }
+
+
+        farmerRequestController =
+            new AbortController();
+
+
+        const requestController =
+            farmerRequestController;
+
+
+        const requestSequence =
+            ++farmerRequestSequence;
+
+
+        setLoadingState(
+            true
+        );
+
+
+        hideMessage();
+
+
+        const session =
+            getAdminSession();
+
+
+        const trimmedSearch =
+            String(
+                search || ""
+            ).trim();
+
+
+        const query =
+            trimmedSearch
+                ? `?search=${encodeURIComponent(
+                    trimmedSearch
+                )}`
+                : "";
+
+
+        try {
+
+            const timeoutController =
+                new AbortController();
+
+
+            const timeout =
+                setTimeout(
+                    function () {
+
+                        timeoutController.abort();
+
+                    },
+                    10000
+                );
+
+
+            const combinedSignal =
+                timeoutController.signal;
+
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/api/admin/farmers${query}`,
+                    {
+                        method:
+                            "GET",
+
+                        headers: {
+                            "x-admin-session":
+                                session,
+
+                            "Accept":
+                                "application/json"
+                        },
+
+                        signal:
+                            combinedSignal
+                    }
+                );
+
+
+            clearTimeout(
+                timeout
+            );
+
+
+            if (
+                requestSequence !==
+                farmerRequestSequence
+            ) {
+
+                return;
+            }
+
+
+            let data =
+                {};
+
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch {
+
+                throw new Error(
+                    "The administration backend returned an invalid response."
+                );
+            }
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403 ||
+                data.authenticated === false
+            ) {
+
+                handleSessionExpired();
+
+                return;
+            }
+
+
+            if (
+                !response.ok ||
+                data.success !== true
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to load farmer records."
+                );
+            }
+
+
+            allFarmers =
+                Array.isArray(
+                    data.farmers
+                )
+                    ? data.farmers
+                    : [];
+
+
+            renderSummary(
+                data
+            );
+
+
+            renderFarmers(
+                allFarmers
+            );
+
+
+            showMessage(
+                `${allFarmers.length} farmer record${
+                    allFarmers.length === 1
+                        ? ""
+                        : "s"
+                } loaded.`,
+                "success"
+            );
+
+
+        } catch (error) {
+
+            if (
+                error.name ===
+                "AbortError"
+            ) {
+
+                /*
+                 * Abort can mean either a search was replaced
+                 * or the backend timed out.
+                 */
+
+                if (
+                    requestSequence !==
+                    farmerRequestSequence
+                ) {
+
+                    return;
+                }
+
+
+                allFarmers =
+                    [];
+
+
+                renderSummary(
+                    {
+                        totalRegisteredFarmers:
+                            0
+                    }
+                );
+
+
+                renderFarmers(
+                    []
+                );
+
+
+                showMessage(
+                    "The farmer records request timed out. Check that the Kisan Setu backend is running on port 5050.",
+                    "error"
+                );
+
+
+                return;
+            }
+
+
+            if (
+                requestSequence !==
+                farmerRequestSequence
+            ) {
+
+                return;
+            }
+
+
+            console.error(
+                "[A3 Farmer Management Error]",
+                error
+            );
+
+
+            allFarmers =
+                [];
+
+
+            renderSummary(
+                {
+                    totalRegisteredFarmers:
+                        0
+                }
+            );
+
+
+            renderFarmers(
+                []
+            );
+
+
+            showMessage(
+                error.message ||
+                "Unable to connect to the administration backend.",
+                "error"
+            );
+
+
+        } finally {
+
+            if (
+                requestSequence ===
+                farmerRequestSequence
+            ) {
+
+                setLoadingState(
+                    false
+                );
+
+
+                if (
+                    farmerRequestController ===
+                    requestController
+                ) {
+
+                    farmerRequestController =
+                        null;
+                }
+            }
+        }
+    }
+
+
+    // ================================================================
+    // RENDER FARMERS
+    // ================================================================
+
+    function renderFarmers(
+        farmers = []
+    ) {
+
+        if (!farmerTableBody) {
+
+            console.warn(
+                "[A3] Farmer table body not found."
+            );
+
+            return;
+        }
+
+
+        farmerTableBody.innerHTML =
+            "";
+
+
+        if (
+            !Array.isArray(farmers) ||
+            !farmers.length
+        ) {
+
+            setEmptyState(
+                true
+            );
+
+            return;
+        }
+
+
+        setEmptyState(
+            false
+        );
+
+
+        farmers.forEach(
+            function (
+                farmer
+            ) {
+
+                const status =
+                    getFarmerStatus(
+                        farmer
+                    );
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                const farmerInitial =
+                    String(
+                        farmer.name ||
+                        "F"
+                    )
+                        .trim()
+                        .charAt(0)
+                        .toUpperCase();
+
+
+                const location =
+                    farmer.district
+                        ? `${farmer.district}${
+                            farmer.state
+                                ? `, ${farmer.state}`
+                                : ""
+                        }`
+                        : (
+                            farmer.state ||
+                            "—"
+                        );
+
+
+                row.innerHTML =
+                    `
+                    <td>
+                        <div class="farmer-identity">
+
+                            <div class="farmer-avatar">
+                                ${escapeHTML(
+                                    farmerInitial
+                                )}
+                            </div>
+
+                            <div>
+                                <div class="farmer-name">
+                                    ${escapeHTML(
+                                        farmer.name ||
+                                        "Unknown Farmer"
+                                    )}
+                                </div>
+
+                                <div class="farmer-phone">
+                                    ${escapeHTML(
+                                        farmer.phone ||
+                                        "Phone unavailable"
+                                    )}
+                                </div>
+                            </div>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="farmer-kcc">
+                            ${escapeHTML(
+                                farmer.kccNumber ||
+                                "—"
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="farmer-location">
+
+                            <strong>
+                                ${escapeHTML(
+                                    location
+                                )}
+                            </strong>
+
+                            <span>
+                                ${escapeHTML(
+                                    farmer.mandi ||
+                                    "Mandi not assigned"
+                                )}
+                            </span>
+
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="farmer-number">
+                            ${formatNumber(
+                                farmer.landHoldingAcres
+                            )}
+                            acres
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="farmer-number">
+                            ${formatNumber(
+                                farmer.totalBookings
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="farmer-number">
+                            ${formatNumber(
+                                farmer.totalProcuredQuintals
+                            )}
+                            qtl
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="farmer-number">
+                            ${formatCurrency(
+                                farmer.totalPayout
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="farmer-status-badge">
+                            <i class="fa-solid fa-circle"></i>
+                            ${escapeHTML(
+                                status.label
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        <button
+                            type="button"
+                            class="farmer-view-button"
+                            data-farmer-id="${escapeHTML(
+                                farmer.id ||
+                                farmer.farmerId ||
+                                ""
+                            )}"
+                        >
+                            <i class="fa-solid fa-eye"></i>
+                            View
+                        </button>
+                    </td>
+                    `;
+
+
+                farmerTableBody.appendChild(
+                    row
+                );
+            }
+        );
+
+
+        attachFarmerButtons();
+    }
+
+
+    // ================================================================
+    // FARMER DETAILS BUTTONS
+    // ================================================================
+
+    function attachFarmerButtons() {
+
+        const buttons =
+            document.querySelectorAll(
+                ".farmer-view-button"
+            );
+
+
+        buttons.forEach(
+            function (
+                button
+            ) {
+
+                if (
+                    button.dataset.bound ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
+
+                button.dataset.bound =
+                    "true";
+
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const farmerId =
+                            button.dataset.farmerId;
+
+
+                        const farmer =
+                            allFarmers.find(
+                                function (
+                                    item
+                                ) {
+
+                                    return (
+                                        String(
+                                            item.id ||
+                                            item.farmerId
+                                        ) ===
+                                        String(
+                                            farmerId
+                                        )
+                                    );
+                                }
+                            );
+
+
+                        if (
+                            farmer
+                        ) {
+
+                            openFarmerDetails(
+                                farmer
+                            );
+                        }
+                    }
+                );
+            }
+        );
+    }
+
+
+    // ================================================================
+    // FARMER DETAILS MODAL
+    // ================================================================
+
+    function openFarmerDetails(
+        farmer
+    ) {
+
+        const modal =
+            document.getElementById(
+                "farmer-details-modal"
+            );
+
+
+        if (!modal) {
+            return;
+        }
+
+
+        setText(
+            document.getElementById(
+                "modal-farmer-name"
+            ),
+            farmer.name ||
+            "Farmer Details"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-kcc"
+            ),
+            farmer.kccNumber ||
+            "—"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-phone"
+            ),
+            farmer.phone ||
+            "—"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-state"
+            ),
+            farmer.state ||
+            "—"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-district"
+            ),
+            farmer.district ||
+            "—"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-mandi"
+            ),
+            farmer.mandi ||
+            "—"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-land"
+            ),
+            `${formatNumber(
+                farmer.landHoldingAcres
+            )} acres`
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-bank"
+            ),
+            farmer.verifiedBank ||
+            "—"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-crops"
+            ),
+            Array.isArray(
+                farmer.crops
+            )
+                ? farmer.crops.join(
+                    ", "
+                )
+                : "—"
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-bookings"
+            ),
+            formatNumber(
+                farmer.totalBookings
+            )
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-active-bookings"
+            ),
+            formatNumber(
+                farmer.activeBookings
+            )
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-procurement"
+            ),
+            `${formatNumber(
+                farmer.totalProcuredQuintals
+            )} qtl`
+        );
+
+
+        setText(
+            document.getElementById(
+                "modal-payout"
+            ),
+            formatCurrency(
+                farmer.totalPayout
+            )
+        );
+
+
+        renderLatestBooking(
+            farmer.latestBooking
+        );
+
+
+        renderLatestReceipt(
+            farmer.latestReceipt
+        );
+
+
+        modal.hidden =
+            false;
+
+        modal.style.display =
+            "block";
+
+        modal.classList.add(
+            "modal-open"
+        );
+    }
+
+
+    // ================================================================
+    // LATEST BOOKING
+    // ================================================================
+
+    function renderLatestBooking(
+        booking
+    ) {
+
+        const element =
+            document.getElementById(
+                "modal-latest-booking"
+            );
+
+
+        if (!element) {
+            return;
+        }
+
+
+        if (!booking) {
+
+            element.innerHTML =
+                `
+                <p>
+                    No booking history available.
+                </p>
+                `;
+
+            return;
+        }
+
+
+        element.innerHTML =
+            `
+            <div class="modal-record-grid">
+
+                <div class="modal-record-item">
+                    <span>Token</span>
+                    <strong>
+                        ${escapeHTML(
+                            booking.tokenId ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Booking ID</span>
+                    <strong>
+                        ${escapeHTML(
+                            booking.bookingId ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Date</span>
+                    <strong>
+                        ${formatDate(
+                            booking.date
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Time Slot</span>
+                    <strong>
+                        ${escapeHTML(
+                            booking.timeSlot ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Crop</span>
+                    <strong>
+                        ${escapeHTML(
+                            formatCrop(
+                                booking.cropType
+                            )
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Quantity</span>
+                    <strong>
+                        ${formatNumber(
+                            booking.quantityQuintals
+                        )}
+                        qtl
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Center</span>
+                    <strong>
+                        ${escapeHTML(
+                            booking.center ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Status</span>
+                    <strong>
+                        ${escapeHTML(
+                            booking.status ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+            </div>
+            `;
+    }
+
+
+    // ================================================================
+    // LATEST RECEIPT
+    // ================================================================
+
+    function renderLatestReceipt(
+        receipt
+    ) {
+
+        const element =
+            document.getElementById(
+                "modal-latest-receipt"
+            );
+
+
+        if (!element) {
+            return;
+        }
+
+
+        if (!receipt) {
+
+            element.innerHTML =
+                `
+                <p>
+                    No procurement receipt available.
+                </p>
+                `;
+
+            return;
+        }
+
+
+        element.innerHTML =
+            `
+            <div class="modal-record-grid">
+
+                <div class="modal-record-item">
+                    <span>Receipt ID</span>
+                    <strong>
+                        ${escapeHTML(
+                            receipt.receiptId ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Token</span>
+                    <strong>
+                        ${escapeHTML(
+                            receipt.tokenId ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Quantity</span>
+                    <strong>
+                        ${formatNumber(
+                            receipt.actualQuantityQuintals ||
+                            receipt.netWeightQuintals
+                        )}
+                        qtl
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Quality Grade</span>
+                    <strong>
+                        ${escapeHTML(
+                            receipt.qualityGrade ||
+                            "—"
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>MSP</span>
+                    <strong>
+                        ${formatCurrency(
+                            receipt.mspPricePerQuintal
+                        )}
+                        / qtl
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Payout</span>
+                    <strong>
+                        ${formatCurrency(
+                            receipt.totalPayoutAmount
+                        )}
+                    </strong>
+                </div>
+
+                <div class="modal-record-item">
+                    <span>Date</span>
+                    <strong>
+                        ${formatDate(
+                            receipt.timestamp
+                        )}
+                    </strong>
+                </div>
+
+            </div>
+            `;
+    }
+
+
+    // ================================================================
+    // CLOSE MODAL
+    // ================================================================
+
+    function closeFarmerDetails() {
+
+        const modal =
+            document.getElementById(
+                "farmer-details-modal"
+            );
+
+
+        if (!modal) {
+            return;
+        }
+
+
+        modal.classList.remove(
+            "modal-open"
+        );
+
+
+        modal.hidden =
+            true;
+
+
+        modal.style.display =
+            "none";
+    }
+
+
+    // ================================================================
+    // SEARCH
+    // ================================================================
+
+    function initializeSearch() {
+
+        if (
+            !farmerSearchInput
+        ) {
+            return;
+        }
+
+
+        farmerSearchInput.addEventListener(
+            "input",
+            function (
+                event
+            ) {
+
+                const search =
+                    event.target.value;
+
+
+                clearTimeout(
+                    searchTimeout
+                );
+
+
+                searchTimeout =
+                    setTimeout(
+                        function () {
+
+                            loadFarmers(
+                                search
+                            );
+
+                        },
+                        300
+                    );
+            }
+        );
+    }
+
+
+    // ================================================================
+    // MODAL EVENTS
+    // ================================================================
+
+    function initializeModal() {
+
+        const closeButton =
+            document.getElementById(
+                "close-farmer-modal"
+            );
+
+
+        if (closeButton) {
+
+            closeButton.addEventListener(
+                "click",
+                closeFarmerDetails
+            );
+        }
+
+
+        const modal =
+            document.getElementById(
+                "farmer-details-modal"
+            );
+
+
+        if (modal) {
+
+            const backdrop =
+                modal.querySelector(
+                    ".farmer-modal-backdrop"
+                );
+
+
+            if (backdrop) {
+
+                backdrop.addEventListener(
+                    "click",
+                    closeFarmerDetails
+                );
+            }
+
+
+            modal.addEventListener(
+                "click",
+                function (
+                    event
+                ) {
+
+                    if (
+                        event.target ===
+                        modal
+                    ) {
+
+                        closeFarmerDetails();
+                    }
+                }
+            );
+        }
+
+
+        document.addEventListener(
+            "keydown",
+            function (
+                event
+            ) {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    closeFarmerDetails();
+                }
+            }
+        );
+    }
+
+
+    // ================================================================
+    // INITIALIZATION
+    // ================================================================
+
+    function initializeFarmersPage() {
+
+        if (
+            farmersPageInitialized
+        ) {
+
+            return;
+        }
+
+
+        farmersPageInitialized =
+            true;
+
+
+        initializeSearch();
+
+        initializeModal();
+
+
+        loadFarmers();
+    }
+
+
+    // ================================================================
+    // EXPOSE
+    // ================================================================
+
+    window.loadFarmers =
+        loadFarmers;
+
+    window.closeFarmerDetails =
+        closeFarmerDetails;
+
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            initializeFarmersPage,
+            {
+                once:
+                    true
+            }
+        );
+
+    } else {
+
+        initializeFarmersPage();
+    }
+
+})();

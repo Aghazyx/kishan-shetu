@@ -139,64 +139,105 @@
     <a
       href="dashboard.html"
       class="admin-nav-item"
+      data-admin-page="dashboard"
     >
+
       <i class="fa-solid fa-chart-line"></i>
-      <span>Dashboard</span>
+
+      <span>
+        Dashboard
+      </span>
+
     </a>
 
 
     <a
       href="farmers.html"
       class="admin-nav-item"
+      data-admin-page="farmers"
     >
+
       <i class="fa-solid fa-users"></i>
-      <span>Farmers</span>
+
+      <span>
+        Farmers
+      </span>
+
     </a>
 
 
     <a
       href="mandi.html"
       class="admin-nav-item"
+      data-admin-page="mandi"
     >
+
       <i class="fa-solid fa-warehouse"></i>
-      <span>Mandi &amp; Slots</span>
+
+      <span>
+        Mandi &amp; Slots
+      </span>
+
     </a>
 
 
     <a
       href="queue.html"
       class="admin-nav-item"
+      data-admin-page="queue"
     >
+
       <i class="fa-solid fa-list-ol"></i>
-      <span>Live Queue</span>
+
+      <span>
+        Live Queue
+      </span>
+
     </a>
 
 
     <a
       href="payment.html"
       class="admin-nav-item"
+      data-admin-page="payments"
     >
+
       <i class="fa-solid fa-money-bill-transfer"></i>
-      <span>Payments</span>
+
+      <span>
+        Payments
+      </span>
+
     </a>
 
 
     <a
       href="reports.html"
-      class="admin-nav-item active"
-      aria-current="page"
+      class="admin-nav-item"
+      data-admin-page="reports"
     >
+
       <i class="fa-solid fa-chart-column"></i>
-      <span>Reports</span>
+
+      <span>
+        Reports
+      </span>
+
     </a>
 
 
     <a
-      href="../index.html"
+      href="../farmer/index.html"
       class="admin-nav-item admin-farmer-portal-button"
+      title="Open Farmer Portal"
     >
+
       <i class="fa-solid fa-arrow-up-right-from-square"></i>
-      <span>Farmer Portal</span>
+
+      <span>
+        Farmer Portal
+      </span>
+
     </a>
 
   </nav>
@@ -358,10 +399,6 @@
       <div class="reports-filter-grid">
 
 
-        <!-- ======================================================
-             REPORTING PERIOD
-             ====================================================== -->
-
         <div class="reports-filter-group">
 
           <label for="report-date-filter">
@@ -384,10 +421,6 @@
         </div>
 
 
-
-        <!-- ======================================================
-             MANDI CENTER
-             ====================================================== -->
 
         <div class="reports-filter-group">
 
@@ -416,10 +449,6 @@
 
 
 
-        <!-- ======================================================
-             CROP
-             ====================================================== -->
-
         <div class="reports-filter-group">
 
           <label for="report-crop-filter">
@@ -446,10 +475,6 @@
         </div>
 
 
-
-        <!-- ======================================================
-             REPORT TYPE
-             ====================================================== -->
 
         <div class="reports-filter-group">
 
@@ -497,8 +522,6 @@
     <section class="reports-summary-grid">
 
 
-      <!-- REGISTERED FARMERS -->
-
       <article class="reports-summary-card">
 
         <div class="reports-summary-icon">
@@ -527,8 +550,6 @@
       </article>
 
 
-
-      <!-- TOTAL PROCUREMENT -->
 
       <article class="reports-summary-card">
 
@@ -559,8 +580,6 @@
 
 
 
-      <!-- TOTAL TRANSACTIONS -->
-
       <article class="reports-summary-card">
 
         <div class="reports-summary-icon">
@@ -589,8 +608,6 @@
       </article>
 
 
-
-      <!-- TOTAL PAYMENT -->
 
       <article class="reports-summary-card">
 
@@ -629,10 +646,6 @@
 
     <section class="reports-analytics-grid">
 
-
-      <!-- ========================================================
-           CROP ANALYTICS
-           ======================================================== -->
 
       <article class="reports-panel reports-crop-panel">
 
@@ -684,10 +697,6 @@
       </article>
 
 
-
-      <!-- ========================================================
-           MANDI PERFORMANCE
-           ======================================================== -->
 
       <article class="reports-panel reports-center-panel">
 
@@ -748,10 +757,6 @@
 
     <section class="reports-analytics-grid">
 
-
-      <!-- ========================================================
-           PAYMENT ANALYTICS
-           ======================================================== -->
 
       <article class="reports-panel reports-payment-panel">
 
@@ -849,10 +854,6 @@
 
 
 
-      <!-- ========================================================
-           QUALITY ANALYTICS
-           ======================================================== -->
-
       <article class="reports-panel reports-quality-panel">
 
         <div class="reports-panel-header">
@@ -878,8 +879,6 @@
         <div class="reports-quality-grid">
 
 
-          <!-- GRADE A -->
-
           <div class="reports-quality-item">
 
             <span class="reports-quality-dot grade-a"></span>
@@ -901,8 +900,6 @@
 
 
 
-          <!-- GRADE B -->
-
           <div class="reports-quality-item">
 
             <span class="reports-quality-dot grade-b"></span>
@@ -923,8 +920,6 @@
           </div>
 
 
-
-          <!-- FAILED -->
 
           <div class="reports-quality-item">
 
@@ -1351,10 +1346,19 @@
 
 
   <!-- ============================================================
+       SHARED ADMIN NAVIGATION
+       ============================================================ -->
+
+  <script src="admin-navigation.js"></script>
+
+
+
+  <!-- ============================================================
        A7 JAVASCRIPT
        ============================================================ -->
 
   <script src="reports.js"></script>
+
 
 </body>
 

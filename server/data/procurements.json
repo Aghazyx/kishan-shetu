@@ -12,5 +12,33 @@
     "cropType": "paddy",
     "status": "QUALITY_COMPLETED",
     "createdAt": "2026-09-14T15:52:03.953Z"
+  },
+  {
+    "procurementId": "PROC-1789541637711-40AA3D",
+    "bookingId": "BOOK-1789541575519-147698",
+    "tokenId": "TKN-41575520-1D6F",
+    "farmerId": "FRM-1789333379008-6E02B3",
+    "kccNumber": "KCC-PB-2024-9102",
+    "grossWeightKg": 1500,
+    "tareWeightKg": 300,
+    "netWeightKg": 1200,
+    "actualQuantityQuintals": 12,
+    "cropType": "wheat",
+    "status": "QUALITY_COMPLETED",
+    "createdAt": "2026-09-16T06:53:57.711Z"
+  },
+  {
+    "procurementId": "PROC-1789558296948-E831B6",
+    "bookingId": "BOOK-1789558174438-C6B864",
+    "tokenId": "TKN-58174439-ACE8",
+    "farmerId": "FRM-DEMO-001",
+    "kccNumber": "KCC-PB-2024-8841",
+    "grossWeightKg": 1000,
+    "tareWeightKg": 300,
+    "netWeightKg": 700,
+    "actualQuantityQuintals": 7,
+    "cropType": "wheat",
+    "status": "QUALITY_COMPLETED",
+    "createdAt": "2026-09-16T11:31:36.948Z"
   }
 ]

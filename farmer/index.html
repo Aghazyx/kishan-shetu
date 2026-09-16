@@ -4,11 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DoCA Kisan Setu - End-to-End 7-Stage Procurement System</title>
-  
+
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  >
+
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Leaflet Map -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  >
 
   <style>
     /* ==================== GLOBAL THEME ==================== */
@@ -26,11 +40,16 @@
       --shadow-soft: 0 10px 30px rgba(63, 71, 50, 0.06);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
     body {
       background-color: var(--bg-olive);
-      background-image: 
+      background-image:
         radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.8) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(200, 205, 185, 0.5) 0px, transparent 50%);
       color: var(--text-main);
@@ -39,7 +58,6 @@
       flex-direction: column;
     }
 
-    /* Glassmorphism Reusable Classes */
     .glass-box {
       background: var(--card-bg);
       backdrop-filter: blur(16px);
@@ -56,7 +74,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
-    /* Top Glass Bar */
     .top-bar {
       background: #23291d;
       color: #e2e8d5;
@@ -68,7 +85,10 @@
       font-weight: 500;
     }
 
-    .top-bar-right { display: flex; gap: 8px; }
+    .top-bar-right {
+      display: flex;
+      gap: 8px;
+    }
 
     .top-btn {
       background: rgba(255, 255, 255, 0.12);
@@ -83,7 +103,6 @@
       gap: 6px;
     }
 
-    /* Header Navigation Panel */
     .header-container {
       margin: 16px 28px;
       padding: 16px 24px;
@@ -95,53 +114,162 @@
       gap: 16px;
     }
 
-    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
     .logo-circle {
-      width: 48px; height: 48px;
+      width: 48px;
+      height: 48px;
       background: var(--dark-olive);
       color: #fff;
       border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 22px;
     }
 
     .title-group .sub-header {
-      font-size: 10px; font-weight: 800; color: var(--text-muted);
-      letter-spacing: 0.8px; text-transform: uppercase; display: block; margin-bottom: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2px;
     }
 
-    .title-group h1 { font-size: 24px; font-weight: 800; color: var(--dark-olive); display: flex; align-items: center; gap: 10px; }
+    .title-group h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--dark-olive);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
     .badge-sub {
-      background: #e2e6d8; color: var(--dark-olive);
-      border: 1px solid rgba(63, 71, 50, 0.2); font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 700;
+      background: #e2e6d8;
+      color: var(--dark-olive);
+      border: 1px solid rgba(63, 71, 50, 0.2);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
     }
 
-    .header-right { display: flex; align-items: center; gap: 10px; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-    .helpline-box { display: flex; align-items: center; gap: 10px; padding: 6px 14px; color: var(--dark-olive); }
-    .helpline-box small { display: block; font-size: 9px; font-weight: 800; color: var(--text-muted); }
-    .helpline-box strong { font-size: 13px; font-weight: 700; }
+    .helpline-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      color: var(--dark-olive);
+    }
 
-    .tech-btn { padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--dark-olive); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .helpline-box small {
+      display: block;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
 
-    .user-pill { display: flex; align-items: center; gap: 10px; padding: 6px 12px; }
-    .user-info { text-align: right; }
-    .user-info strong { display: block; font-size: 12px; color: var(--dark-olive); }
-    .user-info small { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+    .helpline-box strong {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tech-btn {
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-olive);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-info strong {
+      display: block;
+      font-size: 12px;
+      color: var(--dark-olive);
+    }
+
+    .user-info small {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
 
     .avatar {
-      width: 32px; height: 32px; background: #c8d0bc; color: var(--dark-olive);
-      font-weight: 800; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px;
+      width: 32px;
+      height: 32px;
+      background: #c8d0bc;
+      color: var(--dark-olive);
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
     }
 
-    .icon-badge-btn { position: relative; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--dark-olive); cursor: pointer; }
-    .badge-count { position: absolute; top: 2px; right: 2px; background: var(--dark-olive); color: #fff; font-size: 9px; font-weight: 800; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .icon-badge-btn {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark-olive);
+      cursor: pointer;
+    }
 
-    .lang-dropdown { padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--dark-olive); outline: none; cursor: pointer; }
+    .badge-count {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--dark-olive);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-    /* Single 7-Stage Work Cycle Hero Banner */
+    .lang-dropdown {
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--dark-olive);
+      outline: none;
+      cursor: pointer;
+    }
+
     .work-cycle-hero-panel {
       margin: 0 28px 18px 28px;
       padding: 16px 24px;
@@ -178,10 +306,21 @@
       border-radius: 6px;
     }
 
-    .work-cycle-tagline { font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .work-cycle-tagline {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    /* Pipeline Banner */
-    .pipeline-section-container { margin: 0 28px 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+    .pipeline-section-container {
+      margin: 0 28px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
     .pipeline-header-card {
       background-color: #555e47;
@@ -197,1031 +336,4058 @@
     }
 
     .pill-badge-subtle {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 50px; padding: 5px 14px; font-size: 11px; font-weight: 600; color: #e2e8d5; margin-bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50px;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #e2e8d5;
+      margin-bottom: 12px;
     }
 
-    .pipeline-title { font-family: Georgia, 'Times New Roman', serif; font-size: 38px; font-weight: 700; margin-bottom: 12px; color: #ffffff; }
-    .pipeline-description { font-size: 14px; color: #dbe2d1; line-height: 1.55; }
+    .pipeline-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 38px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .pipeline-description {
+      font-size: 14px;
+      color: #dbe2d1;
+      line-height: 1.55;
+    }
 
     .btn-tech-stack-white {
-      background: #ffffff; color: #3f4732; border: none; border-radius: 50px; padding: 12px 22px;
-      font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer; white-space: nowrap;
+      background: #ffffff;
+      color: #3f4732;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 22px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
-    /* Stepper Bar */
-    .stepper-bar-card { border-radius: 20px; padding: 12px 20px; overflow-x: auto; }
-    .stepper-list { display: flex; align-items: center; gap: 12px; min-width: max-content; }
+    .stepper-bar-card {
+      border-radius: 20px;
+      padding: 12px 20px;
+      overflow-x: auto;
+    }
+
+    .stepper-list {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: max-content;
+    }
 
     .step-item {
-      display: flex; align-items: center; gap: 12px; padding: 10px 18px; border-radius: 14px; cursor: pointer; transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .step-num {
-      width: 28px; height: 28px; border-radius: 50%; background: #ffffff; color: #555e47;
-      font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(85, 94, 71, 0.2);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #555e47;
+      font-weight: 800;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(85, 94, 71, 0.2);
     }
 
-    .step-text strong { font-size: 13px; font-weight: 700; color: #3f4732; display: block; }
-    .step-text small { font-size: 10px; color: #727a65; display: block; }
-    .step-arrow { font-size: 10px; color: #b5bcab; }
+    .step-text strong {
+      font-size: 13px;
+      font-weight: 700;
+      color: #3f4732;
+      display: block;
+    }
 
-    .step-item.active { background-color: var(--dark-olive); color: #ffffff; box-shadow: 0 4px 12px rgba(85, 94, 71, 0.3); }
-    .step-item.active .step-num { background: #ffffff; color: var(--dark-olive); }
-    .step-item.active .step-text strong, .step-item.active .step-text small { color: #ffffff; }
+    .step-text small {
+      font-size: 10px;
+      color: #727a65;
+      display: block;
+    }
 
-    .step-item.completed { background-color: rgba(77, 91, 61, 0.12); }
-    .step-item.completed .step-num { background: #4d5b3d; color: #ffffff; border: none; }
+    .step-arrow {
+      font-size: 10px;
+      color: #b5bcab;
+    }
 
-    /* Dynamic Stage View Switcher */
-    .stage-view { display: none; }
-    .stage-view.active-view { display: block; }
+    .step-item.active {
+      background-color: var(--dark-olive);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(85, 94, 71, 0.3);
+    }
 
-    .main-wrapper { margin: 0 28px 40px 28px; padding: 32px; border-radius: 24px; }
+    .step-item.active .step-num {
+      background: #ffffff;
+      color: var(--dark-olive);
+    }
+
+    .step-item.active .step-text strong,
+    .step-item.active .step-text small {
+      color: #ffffff;
+    }
+
+    .step-item.completed {
+      background-color: rgba(77, 91, 61, 0.12);
+    }
+
+    .step-item.completed .step-num {
+      background: #4d5b3d;
+      color: #ffffff;
+      border: none;
+    }
+
+    .stage-view {
+      display: none;
+    }
+
+    .stage-view.active-view {
+      display: block;
+    }
+
+    .main-wrapper {
+      margin: 0 28px 40px 28px;
+      padding: 32px;
+      border-radius: 24px;
+    }
 
     .stage-sub-banner {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
-      padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
-    .stage-sub-left .stage-tag { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
-    .stage-sub-left h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 28px; font-weight: 700; color: var(--dark-olive); margin-bottom: 4px; }
-    .stage-sub-left p { font-size: 13px; color: var(--text-muted); }
+    .stage-sub-left .stage-tag {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .stage-sub-left h2 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark-olive);
+      margin-bottom: 4px;
+    }
+
+    .stage-sub-left p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
 
     .channel-toggle-group {
-      background: #e4e7dc; padding: 4px; border-radius: 50px; display: flex; gap: 4px; border: 1px solid rgba(63, 71, 50, 0.1);
+      background: #e4e7dc;
+      padding: 4px;
+      border-radius: 50px;
+      display: flex;
+      gap: 4px;
+      border: 1px solid rgba(63, 71, 50, 0.1);
     }
 
     .toggle-btn {
-      border: none; background: transparent; padding: 8px 18px; border-radius: 50px; font-size: 12px; font-weight: 700;
-      color: var(--dark-olive); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
+      border: none;
+      background: transparent;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-olive);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
     }
 
-    .toggle-btn.active { background: var(--dark-olive); color: #ffffff; box-shadow: 0 2px 8px rgba(63, 71, 50, 0.2); }
+    .toggle-btn.active {
+      background: var(--dark-olive);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(63, 71, 50, 0.2);
+    }
 
-    .channel-sub-view { display: none; }
-    .channel-sub-view.active-sub { display: grid; }
+    .channel-sub-view {
+      display: none;
+    }
 
-    .presets-container { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
+    .channel-sub-view.active-sub {
+      display: grid;
+    }
+
+    .presets-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
 
     .preset-pill {
-      background: #e3e7db; border: none; padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700;
-      color: var(--dark-olive); cursor: pointer; transition: all 0.2s ease;
+      background: #e3e7db;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-olive);
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .preset-pill.active, .preset-pill:hover { background: #d4dabf; }
-
-    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-    .card-panel { background: rgba(255, 255, 255, 0.65); border: 1px solid rgba(255, 255, 255, 0.9); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; }
-
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--dark-olive); margin-bottom: 6px; }
-    
-    .select-input, .text-input {
-      width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(63, 71, 50, 0.2);
-      background: #ffffff; font-size: 13.5px; font-weight: 600; color: var(--dark-olive); outline: none;
+    .preset-pill.active,
+    .preset-pill:hover {
+      background: #d4dabf;
     }
 
-    .time-slot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .card-panel {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-olive);
+      margin-bottom: 6px;
+    }
+
+    .select-input,
+    .text-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(63, 71, 50, 0.2);
+      background: #ffffff;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--dark-olive);
+      outline: none;
+    }
+
+    .time-slot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
     .time-slot-btn {
-      padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); background: #ffffff;
-      font-size: 12px; font-weight: 700; color: var(--dark-olive); cursor: pointer; text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-olive);
+      cursor: pointer;
+      text-align: center;
     }
-    .time-slot-btn.selected { background: var(--dark-olive); color: #ffffff; }
+
+    .time-slot-btn.selected {
+      background: var(--dark-olive);
+      color: #ffffff;
+    }
 
     .overflow-recommendation-box {
-      background: #fdfbe8; border: 1px solid #e8e3a2; border-radius: 16px; padding: 18px; margin-top: 16px;
+      background: #fdfbe8;
+      border: 1px solid #e8e3a2;
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 16px;
     }
 
     .btn-action-dark {
-      background: var(--dark-olive); color: #ffffff; border: none; padding: 14px 20px; border-radius: 12px;
-      font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-      box-shadow: 0 4px 14px rgba(63, 71, 50, 0.25); transition: all 0.2s ease; margin-top: 16px;
+      background: var(--dark-olive);
+      color: #ffffff;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(63, 71, 50, 0.25);
+      transition: all 0.2s ease;
+      margin-top: 16px;
     }
 
-    .btn-action-dark:hover { background: var(--medium-olive); }
+    .btn-action-dark:hover {
+      background: var(--medium-olive);
+    }
 
-    .btn-reroute { background: #8a6a27; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top: 8px; }
+    .btn-reroute {
+      background: #8a6a27;
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+    }
 
-    .farmer-info-box { padding: 18px; border-radius: 12px; margin-bottom: 20px; }
-    .info-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .tag-kcc { background: #e1e7d5; color: var(--dark-olive); border: 1px dashed var(--medium-olive); font-family: monospace; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+    .farmer-info-box {
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
 
-    .profile-sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-    .info-card { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 1); border-radius: 14px; padding: 16px; }
-    .info-card small { font-size: 10px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; display: block; margin-bottom: 4px; }
-    .info-card strong { font-size: 15px; font-weight: 800; color: var(--dark-olive); display: block; margin-bottom: 2px; }
-    .info-card p { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+    .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
 
-    .crop-cards-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .crop-card { background: #f1f3eb; border: 1px solid rgba(63, 71, 50, 0.12); border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center; }
-    .qty-tag { background: #ffffff; border: 1px solid rgba(63, 71, 50, 0.15); padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; color: var(--dark-olive); }
+    .tag-kcc {
+      background: #e1e7d5;
+      color: var(--dark-olive);
+      border: 1px dashed var(--medium-olive);
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
 
-    .badge-active-status { background: #dff2e1; color: #236835; border: 1px solid #bce3c3; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 6px; }
+    .profile-sub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
 
-    .capabilities-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
-    .capabilities-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; font-weight: 600; color: var(--dark-olive); line-height: 1.4; }
+    .info-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 14px;
+      padding: 16px;
+    }
 
-    /* Modals */
+    .info-card small {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .info-card strong {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--dark-olive);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .info-card p {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .crop-cards-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .crop-card {
+      background: #f1f3eb;
+      border: 1px solid rgba(63, 71, 50, 0.12);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .qty-tag {
+      background: #ffffff;
+      border: 1px solid rgba(63, 71, 50, 0.15);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--dark-olive);
+    }
+
+    .badge-active-status {
+      background: #dff2e1;
+      color: #236835;
+      border: 1px solid #bce3c3;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .capabilities-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .capabilities-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark-olive);
+      line-height: 1.4;
+    }
+
     .modal-backdrop {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(35, 41, 29, 0.65);
-      backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(35, 41, 29, 0.65);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
-    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
     .modal-dialog {
-      background: rgba(255, 255, 255, 0.98); border: 1px solid var(--glass-border); border-radius: 24px;
-      padding: 32px; max-width: 650px; width: 92%; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25); max-height: 90vh; overflow-y: auto;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 650px;
+      width: 92%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
-    /* Footer */
     .system-footer {
-      background: #3f4732; color: #e2e8d5; padding: 24px 36px; display: flex; justify-content: space-between;
-      align-items: center; margin-top: auto; flex-wrap: wrap; gap: 16px;
+      background: #3f4732;
+      color: #e2e8d5;
+      padding: 24px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      flex-wrap: wrap;
+      gap: 16px;
     }
+
     .active-indicator-pill {
-      background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 6px 14px; border-radius: 50px; font-size: 11px; font-weight: 800; color: #a8f5b4; display: flex; align-items: center; gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #a8f5b4;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .active-dot { width: 8px; height: 8px; background: #3cd070; border-radius: 50%; box-shadow: 0 0 8px #3cd070; }
+
+    .active-dot {
+      width: 8px;
+      height: 8px;
+      background: #3cd070;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #3cd070;
+    }
 
     @media (max-width: 992px) {
-      .content-grid { grid-template-columns: 1fr; }
-      .profile-sub-grid, .crop-cards-wrapper { grid-template-columns: 1fr; }
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-sub-grid,
+      .crop-cards-wrapper {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Top Glass Bar -->
+  <!-- ==================== TOP BAR ==================== -->
+
   <div class="top-bar">
-    <span>Kisan Setu - DoCA Smart Procurement & Queue System</span>
+
+    <span>
+      Kisan Setu - DoCA Smart Procurement & Queue System
+    </span>
+
     <div class="top-bar-right">
-      <button class="top-btn"><i class="fa-solid fa-code-branch"></i> Remix</button>
-      <button class="top-btn"><i class="fa-solid fa-mobile-screen"></i> Device</button>
+
+      <button class="top-btn">
+        <i class="fa-solid fa-code-branch"></i>
+        Remix
+      </button>
+
+      <button class="top-btn">
+        <i class="fa-solid fa-mobile-screen"></i>
+        Device
+      </button>
+
     </div>
+
   </div>
 
-  <!-- Header Navigation Panel -->
+
+  <!-- ==================== HEADER ==================== -->
+
   <header class="header-container glass-box">
+
     <div class="header-left">
-      <div class="logo-circle"><i class="fa-solid fa-wheat-awn"></i></div>
-      <div class="title-group">
-        <span class="sub-header">MINISTRY OF CONSUMER AFFAIRS, FOOD & PUBLIC DISTRIBUTION</span>
-        <h1>DoCA Kisan Setu <span class="badge-sub">SMART MANDI QUEUE ENGINE</span></h1>
+
+      <div class="logo-circle">
+        <i class="fa-solid fa-wheat-awn"></i>
       </div>
+
+      <div class="title-group">
+
+        <span class="sub-header">
+          MINISTRY OF CONSUMER AFFAIRS, FOOD & PUBLIC DISTRIBUTION
+        </span>
+
+        <h1>
+          DoCA Kisan Setu
+
+          <span class="badge-sub">
+            SMART MANDI QUEUE ENGINE
+          </span>
+        </h1>
+
+      </div>
+
     </div>
+
 
     <div class="header-right">
+
       <div class="helpline-box glass-pill">
+
         <i class="fa-solid fa-phone"></i>
+
         <div>
-          <small>TOLL-FREE HELPLINE</small>
-          <strong>1800-180-1551</strong>
+
+          <small>
+            TOLL-FREE HELPLINE
+          </small>
+
+          <strong>
+            1800-180-1551
+          </strong>
+
         </div>
+
       </div>
 
-      <div class="tech-btn glass-pill" id="header-tech-btn"><i class="fa-solid fa-layer-group"></i> Tech Stack & Postgres</div>
+
+      <div
+        class="tech-btn glass-pill"
+        id="header-tech-btn"
+      >
+
+        <i class="fa-solid fa-layer-group"></i>
+
+        Tech Stack & Postgres
+
+      </div>
+
 
       <div class="user-pill glass-pill">
+
         <div class="user-info">
-          <strong>Sardar Ramesh Singh <i class="fa-solid fa-key" style="font-size:10px;"></i></strong>
-          <small>OTP Verified • KCC</small>
+
+          <strong>
+            Sardar Ramesh Singh
+            <i
+              class="fa-solid fa-key"
+              style="font-size:10px;"
+            ></i>
+          </strong>
+
+          <small>
+            OTP Verified • KCC
+          </small>
+
         </div>
-        <div class="avatar">SR</div>
+
+        <div class="avatar">
+          SR
+        </div>
+
       </div>
 
-      <div class="icon-badge-btn glass-pill">
+
+      <div
+        class="icon-badge-btn glass-pill"
+        id="notification-button"
+      >
+
         <i class="fa-regular fa-bell"></i>
-        <span class="badge-count">3</span>
+
+        <span class="badge-count">
+          3
+        </span>
+
       </div>
+
 
       <select class="lang-dropdown glass-pill">
-        <option>🌐 English (English)</option>
-        <option>Hindi (हिन्दी)</option>
-        <option>Punjabi (ਪੰਜਾਬੀ)</option>
+
+        <option>
+          🌐 English (English)
+        </option>
+
+        <option>
+          Hindi (हिन्दी)
+        </option>
+
+        <option>
+          Punjabi (ਪੰਜਾਬੀ)
+        </option>
+
       </select>
+
     </div>
+
   </header>
 
-  <!-- SINGLE PROMINENT 7-STAGE WORK CYCLE PANEL -->
+
+  <!-- ==================== WORK CYCLE ==================== -->
+
   <div class="work-cycle-hero-panel">
+
     <div class="work-cycle-badge-large">
+
       <i class="fa-solid fa-arrows-spin"></i>
-      <span>7-Stage Work Cycle</span>
-      <span class="badge-new-gold">NEW</span>
+
+      <span>
+        7-Stage Work Cycle
+      </span>
+
+      <span class="badge-new-gold">
+        NEW
+      </span>
+
     </div>
+
+
     <div class="work-cycle-tagline">
-      <i class="fa-solid fa-shield-halved" style="color:var(--dark-olive);"></i>
-      <span>End-to-End Automated Grain Procurement, Geofenced Gate Entry, & Direct Benefit Transfer Engine</span>
+
+      <i
+        class="fa-solid fa-shield-halved"
+        style="color:var(--dark-olive);"
+      ></i>
+
+      <span>
+        End-to-End Automated Grain Procurement, Geofenced Gate Entry,
+        & Direct Benefit Transfer Engine
+      </span>
+
     </div>
+
   </div>
 
-  <!-- KISAN SETU LIVE PROCUREMENT PIPELINE BANNER -->
+
+  <!-- ==================== PIPELINE ==================== -->
+
   <section class="pipeline-section-container">
+
     <div class="pipeline-header-card">
+
       <div class="header-content-left">
+
         <div class="pill-badge-subtle">
+
           <i class="fa-solid fa-layer-group"></i>
-          <span>End-to-End 7-Stage Procurement Architecture</span>
+
+          <span>
+            End-to-End 7-Stage Procurement Architecture
+          </span>
+
         </div>
-        <h1 class="pipeline-title">Kisan Setu Live Procurement Pipeline</h1>
+
+        <h1 class="pipeline-title">
+          Kisan Setu Live Procurement Pipeline
+        </h1>
+
         <p class="pipeline-description">
-          Execute each step of the mandated government lifecycle: from multi-channel access and KCC registry validation to GPS geofenced check-in, digital weighbridge grading, and PFMS DBT bank disbursement.
+          Execute each step of the mandated government lifecycle:
+          from multi-channel access and KCC registry validation to GPS
+          geofenced check-in, digital weighbridge grading, and PFMS DBT
+          bank disbursement.
         </p>
+
       </div>
 
-      <button class="btn-tech-stack-white" id="btn-open-tech-stack">
+
+      <button
+        class="btn-tech-stack-white"
+        id="btn-open-tech-stack"
+      >
+
         <i class="fa-solid fa-layer-group"></i>
-        <span>Tech Stack & Postgres</span>
+
+        <span>
+          Tech Stack & Postgres
+        </span>
+
       </button>
+
     </div>
 
-    <!-- STEPPER PIPELINE BAR (STAGES 1 - 7) -->
+
     <div class="stepper-bar-card glass-box">
+
       <div class="stepper-list">
-        <div class="step-item active" data-stage="1" id="step-node-1">
-          <span class="step-num" id="step-num-1">1</span>
+
+        <div
+          class="step-item active"
+          data-stage="1"
+          id="step-node-1"
+        >
+
+          <span
+            class="step-num"
+            id="step-num-1"
+          >
+            1
+          </span>
+
           <div class="step-text">
-            <strong>Landing & Access</strong>
-            <small>Smartphone PWA / IVR</small>
+
+            <strong>
+              Landing & Access
+            </strong>
+
+            <small>
+              Smartphone PWA / IVR
+            </small>
+
           </div>
+
         </div>
+
+
         <i class="fa-solid fa-chevron-right step-arrow"></i>
 
-        <div class="step-item" data-stage="2" id="step-node-2">
-          <span class="step-num" id="step-num-2">2</span>
+
+        <div
+          class="step-item"
+          data-stage="2"
+          id="step-node-2"
+        >
+
+          <span
+            class="step-num"
+            id="step-num-2"
+          >
+            2
+          </span>
+
           <div class="step-text">
-            <strong>Registration & Verification</strong>
-            <small>KCC & Aadhaar Fetch</small>
+
+            <strong>
+              Registration & Verification
+            </strong>
+
+            <small>
+              KCC & Aadhaar Fetch
+            </small>
+
           </div>
+
         </div>
+
+
         <i class="fa-solid fa-chevron-right step-arrow"></i>
 
-        <div class="step-item" data-stage="3" id="step-node-3">
-          <span class="step-num" id="step-num-3">3</span>
+
+        <div
+          class="step-item"
+          data-stage="3"
+          id="step-node-3"
+        >
+
+          <span
+            class="step-num"
+            id="step-num-3"
+          >
+            3
+          </span>
+
           <div class="step-text">
-            <strong>Batch Slot Booking</strong>
-            <small>AI Overflow Routing</small>
+
+            <strong>
+              Batch Slot Booking
+            </strong>
+
+            <small>
+              AI Overflow Routing
+            </small>
+
           </div>
+
         </div>
+
+
         <i class="fa-solid fa-chevron-right step-arrow"></i>
 
-        <div class="step-item" data-stage="4" id="step-node-4">
-          <span class="step-num" id="step-num-4">4</span>
+
+        <div
+          class="step-item"
+          data-stage="4"
+          id="step-node-4"
+        >
+
+          <span
+            class="step-num"
+            id="step-num-4"
+          >
+            4
+          </span>
+
           <div class="step-text">
-            <strong>Digital Token & Queue</strong>
-            <small>Position & SMS Departure</small>
+
+            <strong>
+              Digital Token & Queue
+            </strong>
+
+            <small>
+              Position & SMS Departure
+            </small>
+
           </div>
+
         </div>
+
+
         <i class="fa-solid fa-chevron-right step-arrow"></i>
 
-        <div class="step-item" data-stage="5" id="step-node-5">
-          <span class="step-num" id="step-num-5">5</span>
+
+        <div
+          class="step-item"
+          data-stage="5"
+          id="step-node-5"
+        >
+
+          <span
+            class="step-num"
+            id="step-num-5"
+          >
+            5
+          </span>
+
           <div class="step-text">
-            <strong>Geofenced Arrival</strong>
-            <small>1 km Perimeter Check</small>
+
+            <strong>
+              Geofenced Arrival
+            </strong>
+
+            <small>
+              500 m Perimeter Check
+            </small>
+
           </div>
+
         </div>
+
+
         <i class="fa-solid fa-chevron-right step-arrow"></i>
 
-        <div class="step-item" data-stage="6" id="step-node-6">
-          <span class="step-num" id="step-num-6">6</span>
+
+        <div
+          class="step-item"
+          data-stage="6"
+          id="step-node-6"
+        >
+
+          <span
+            class="step-num"
+            id="step-num-6"
+          >
+            6
+          </span>
+
           <div class="step-text">
-            <strong>Weighment & Grading</strong>
-            <small>Moisture & Scale Entry</small>
+
+            <strong>
+              Weighment & Grading
+            </strong>
+
+            <small>
+              Moisture & Scale Entry
+            </small>
+
           </div>
+
         </div>
+
+
         <i class="fa-solid fa-chevron-right step-arrow"></i>
 
-        <div class="step-item" data-stage="7" id="step-node-7">
-          <span class="step-num" id="step-num-7">7</span>
+
+        <div
+          class="step-item"
+          data-stage="7"
+          id="step-node-7"
+        >
+
+          <span
+            class="step-num"
+            id="step-num-7"
+          >
+            7
+          </span>
+
           <div class="step-text">
-            <strong>PFMS DBT Payment</strong>
-            <small>Direct Bank Settlement</small>
+
+            <strong>
+              PFMS DBT Payment
+            </strong>
+
+            <small>
+              Direct Bank Settlement
+            </small>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- MAIN INTERACTIVE CONTAINER FOR STAGES 1 TO 7 -->
+
+  <!-- ==================== MAIN ==================== -->
+
   <main class="main-wrapper glass-box">
 
-    <!-- ==================== STAGE 1 VIEW ==================== -->
-    <div class="stage-view active-view" id="stage-view-1">
+
+    <!-- ==================== STAGE 1 ==================== -->
+
+    <div
+      class="stage-view active-view"
+      id="stage-view-1"
+    >
+
       <div class="stage-sub-banner">
+
         <div class="stage-sub-left">
-          <div class="stage-tag">STAGE 1 OF 7 • MULTI-CHANNEL ONBOARDING</div>
-          <h2>Landing & Access Page</h2>
-          <p>Accessible via modern Smartphone Web App / PWA or 100% Offline 2G Feature Phone IVR & SMS Channel.</p>
+
+          <div class="stage-tag">
+            STAGE 1 OF 7 • MULTI-CHANNEL ONBOARDING
+          </div>
+
+          <h2>
+            Landing & Access Page
+          </h2>
+
+          <p>
+            Accessible via modern Smartphone Web App / PWA or 100% Offline
+            2G Feature Phone IVR & SMS Channel.
+          </p>
+
         </div>
+
 
         <div class="channel-toggle-group">
-          <button class="toggle-btn active" id="btn-pwa">
-            <i class="fa-solid fa-mobile-screen"></i> Smartphone Web App / Portal
+
+          <button
+            class="toggle-btn active"
+            id="btn-pwa"
+          >
+
+            <i class="fa-solid fa-mobile-screen"></i>
+
+            Smartphone Web App / Portal
+
           </button>
-          <button class="toggle-btn" id="btn-ivr">
-            <i class="fa-solid fa-phone"></i> Offline IVR / SMS Channel
+
+
+          <button
+            class="toggle-btn"
+            id="btn-ivr"
+          >
+
+            <i class="fa-solid fa-phone"></i>
+
+            Offline IVR / SMS Channel
+
           </button>
+
         </div>
+
       </div>
 
-      <!-- Smartphone View -->
-      <div class="content-grid channel-sub-view active-sub" id="view-pwa-sub">
+
+      <div
+        class="content-grid channel-sub-view active-sub"
+        id="view-pwa-sub"
+      >
+
         <div class="card-panel">
+
           <div class="panel-header">
+
             <div class="panel-header-left">
+
               <i class="fa-solid fa-mobile-screen-button"></i>
-              <h3>Smartphone Web App / PWA Entrance</h3>
+
+              <h3>
+                Smartphone Web App / PWA Entrance
+              </h3>
+
             </div>
+
           </div>
+
+
           <p class="card-desc">
-            Farmers with 4G/5G smartphones access the Kisan Setu multilingual progressive web app. Zero password friction: instantaneous OTP authentication linked to land records and Aadhaar.
+            Farmers with 4G/5G smartphones access the Kisan Setu multilingual
+            progressive web app. Zero password friction: instantaneous OTP
+            authentication linked to land records and Aadhaar.
           </p>
 
+
           <div class="farmer-info-box glass-pill">
+
             <div class="info-header">
-              <span class="info-label" style="font-size:12px; font-weight:700;">Current Logged-in Farmer:</span>
-              <span class="tag-kcc">KCC-PB-2024-8841</span>
+
+              <span
+                class="info-label"
+                style="font-size:12px; font-weight:700;"
+              >
+                Current Logged-in Farmer:
+              </span>
+
+              <span class="tag-kcc">
+                KCC-PB-2024-8841
+              </span>
+
             </div>
-            <strong style="font-size:18px; color:var(--dark-olive);">Sardar Ramesh Singh</strong>
-            <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Bhadla Bet, Ludhiana, Punjab • Mobile: +91 98765-43210</p>
+
+
+            <strong
+              style="font-size:18px; color:var(--dark-olive);"
+            >
+              Sardar Ramesh Singh
+            </strong>
+
+
+            <p
+              style="font-size:12px; color:var(--text-muted); margin-top:4px;"
+            >
+              Bhadla Bet, Ludhiana, Punjab • Mobile: +91 98765-43210
+            </p>
+
           </div>
 
-          <button class="btn-action-dark" onclick="completeStageAndProceed(1, 2)">
-            Proceed to Registration & Land Verification <i class="fa-solid fa-arrow-right"></i>
+
+          <button
+            class="btn-action-dark"
+            onclick="completeStageAndProceed(1, 2)"
+          >
+
+            Proceed to Registration & Land Verification
+
+            <i class="fa-solid fa-arrow-right"></i>
+
           </button>
+
         </div>
 
+
         <div class="card-panel">
+
           <div class="panel-header">
-            <h3>Key Capabilities on Smartphone PWA</h3>
+
+            <h3>
+              Key Capabilities on Smartphone PWA
+            </h3>
+
           </div>
-          <ul class="capabilities-list" style="margin-top: 10px;">
-            <li><i class="fa-regular fa-circle-check"></i> <span>Real-time GPS geofencing & gate entry navigation</span></li>
-            <li><i class="fa-regular fa-circle-check"></i> <span>Interactive QR token pass for quick barrier optical scanning</span></li>
-            <li><i class="fa-regular fa-circle-check"></i> <span>Live multi-language AI Voice Assistant (Punjabi, Hindi, Telugu, Marathi, English)</span></li>
-            <li><i class="fa-regular fa-circle-check"></i> <span>Instant downloadable PDF thermal weighment receipts</span></li>
+
+
+          <ul
+            class="capabilities-list"
+            style="margin-top:10px;"
+          >
+
+            <li>
+              <i class="fa-regular fa-circle-check"></i>
+              <span>
+                Real-time GPS geofencing & gate entry navigation
+              </span>
+            </li>
+
+            <li>
+              <i class="fa-regular fa-circle-check"></i>
+              <span>
+                Interactive QR token pass for quick barrier optical scanning
+              </span>
+            </li>
+
+            <li>
+              <i class="fa-regular fa-circle-check"></i>
+              <span>
+                Live multi-language AI Voice Assistant
+                (Punjabi, Hindi, Telugu, Marathi, English)
+              </span>
+            </li>
+
+            <li>
+              <i class="fa-regular fa-circle-check"></i>
+              <span>
+                Instant downloadable PDF thermal weighment receipts
+              </span>
+            </li>
+
           </ul>
+
         </div>
+
       </div>
 
-      <!-- Offline IVR View -->
-      <div class="content-grid channel-sub-view" id="view-ivr-sub">
+
+      <div
+        class="content-grid channel-sub-view"
+        id="view-ivr-sub"
+      >
+
         <div class="card-panel">
+
           <div class="panel-header">
+
             <div class="panel-header-left">
+
               <i class="fa-solid fa-phone"></i>
-              <h3>Offline 2G Channel Simulator</h3>
+
+              <h3>
+                Offline 2G Channel Simulator
+              </h3>
+
             </div>
+
           </div>
+
+
           <div class="farmer-info-box glass-pill">
-            <span style="font-size:10px; font-weight:800; color:var(--text-muted);">TOLL-FREE KISAN IVR HELPLINE</span>
-            <div style="font-size:22px; font-weight:800; color:var(--dark-olive); margin:6px 0;">1800-180-1551</div>
-            <p style="font-size:12px; color:var(--text-muted);">Works on basic ₹800 feature phones without internet. Automated DTMF & ASR voice response.</p>
+
+            <span
+              style="font-size:10px; font-weight:800; color:var(--text-muted);"
+            >
+              TOLL-FREE KISAN IVR HELPLINE
+            </span>
+
+
+            <div
+              style="font-size:22px; font-weight:800; color:var(--dark-olive); margin:6px 0;"
+            >
+              1800-180-1551
+            </div>
+
+
+            <p
+              style="font-size:12px; color:var(--text-muted);"
+            >
+              Works on basic ₹800 feature phones without internet.
+              Automated DTMF & ASR voice response.
+            </p>
+
           </div>
-          <button class="btn-action-dark" onclick="completeStageAndProceed(1, 2)">
-            <i class="fa-solid fa-phone"></i> Simulate Call & Proceed to Verification
+
+
+          <button
+            class="btn-action-dark"
+            onclick="completeStageAndProceed(1, 2)"
+          >
+
+            <i class="fa-solid fa-phone"></i>
+
+            Simulate Call & Proceed to Verification
+
           </button>
+
         </div>
 
+
         <div class="card-panel">
+
           <div class="panel-header">
-            <h3>Inclusive Governance Reach</h3>
+
+            <h3>
+              Inclusive Governance Reach
+            </h3>
+
           </div>
-          <p class="card-desc" style="line-height:1.6;">
-            By keeping both Smartphone Web App and 2G IVR/SMS on the same PostgreSQL backend and token queue, no smallholder farmer is left behind.
+
+
+          <p
+            class="card-desc"
+            style="line-height:1.6;"
+          >
+            By keeping both Smartphone Web App and 2G IVR/SMS on the same
+            PostgreSQL backend and token queue, no smallholder farmer is left behind.
           </p>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- ==================== STAGE 2 VIEW ==================== -->
-    <div class="stage-view" id="stage-view-2">
+
+    <!-- ==================== STAGE 2 ==================== -->
+
+    <div
+      class="stage-view"
+      id="stage-view-2"
+    >
+
       <div class="stage-sub-banner">
+
         <div class="stage-sub-left">
-          <div class="stage-tag">STAGE 2 OF 7 • SECURE FARMER IDENTITY</div>
-          <h2>Registration & Verification Page</h2>
-          <p>Inputs: KCC Number / Aadhaar Verification (Redacted for Security) &rarr; Auto-fetches crop profiles, land holding size, and verified bank credentials.</p>
+
+          <div class="stage-tag">
+            STAGE 2 OF 7 • SECURE FARMER IDENTITY
+          </div>
+
+          <h2>
+            Registration & Verification Page
+          </h2>
+
+          <p>
+            Inputs: KCC Number / Aadhaar Verification (Redacted for Security)
+            &rarr; Auto-fetches crop profiles, land holding size, and verified
+            bank credentials.
+          </p>
+
         </div>
+
 
         <div class="presets-container">
-          <span>Quick Presets:</span>
-          <button class="preset-pill active" onclick="loadPreset('ramesh', event)">Ramesh</button>
-          <button class="preset-pill" onclick="loadPreset('kaur', event)">Kaur</button>
-          <button class="preset-pill" onclick="loadPreset('kumar', event)">Kumar</button>
+
+          <span>
+            Quick Presets:
+          </span>
+
+          <button
+            class="preset-pill active"
+            onclick="loadPreset('ramesh', event)"
+          >
+            Ramesh
+          </button>
+
+          <button
+            class="preset-pill"
+            onclick="loadPreset('kaur', event)"
+          >
+            Kaur
+          </button>
+
+          <button
+            class="preset-pill"
+            onclick="loadPreset('kumar', event)"
+          >
+            Kumar
+          </button>
+
         </div>
+
       </div>
 
+
       <div class="content-grid">
+
         <div class="card-panel">
+
           <div class="panel-header">
+
             <div class="panel-header-left">
+
               <i class="fa-regular fa-user"></i>
-              <h3>Verification Inputs</h3>
+
+              <h3>
+                Verification Inputs
+              </h3>
+
             </div>
+
           </div>
 
-          <div class="form-group">
-            <label>Kisan Credit Card (KCC) Number</label>
-            <input type="text" id="kcc-input" class="text-input" value="KCC-PB-2024-8841">
-          </div>
 
           <div class="form-group">
-            <label>Aadhaar Number (Redacted for Security)</label>
+
+            <label>
+              Kisan Credit Card (KCC) Number
+            </label>
+
+            <input
+              type="text"
+              id="kcc-input"
+              class="text-input"
+              value="KCC-PB-2024-8841"
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Aadhaar Number (Redacted for Security)
+            </label>
+
             <div style="position:relative;">
-              <span style="position:absolute; right:12px; top:-22px; font-size:10px; font-weight:800; color:#2b7a4b;">UIDAI Compliant</span>
-              <input type="text" id="aadhaar-input" class="text-input" value="XXXX-XXXX-4912">
+
+              <span
+                style="position:absolute; right:12px; top:-22px; font-size:10px; font-weight:800; color:#2b7a4b;"
+              >
+                UIDAI Compliant
+              </span>
+
+              <input
+                type="text"
+                id="aadhaar-input"
+                class="text-input"
+                value="XXXX-XXXX-4912"
+              >
+
             </div>
+
           </div>
 
-<button class="btn-action-dark" id="btn-fetch">
-  <i class="fa-solid fa-shield-halved"></i> Auto-Fetch Verified Land & Bank Data
-</button>
+
+          <button
+            class="btn-action-dark"
+            id="btn-fetch"
+          >
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            Auto-Fetch Verified Land & Bank Data
+
+          </button>
+
         </div>
 
+
         <div class="card-panel">
+
           <div class="panel-header">
+
             <div class="panel-header-left">
-              <span style="width: 8px; height: 8px; background: #3cd070; border-radius: 50%; display: inline-block;"></span>
-              <h3>System Auto-Fetched Profile</h3>
+
+              <span
+                style="width:8px; height:8px; background:#3cd070; border-radius:50%; display:inline-block;"
+              ></span>
+
+              <h3>
+                System Auto-Fetched Profile
+              </h3>
+
             </div>
-            <span class="badge-active-status">PFMS & Bhoomi Active</span>
+
+
+            <span class="badge-active-status">
+              PFMS & Bhoomi Active
+            </span>
+
           </div>
 
-        <div class="profile-sub-grid">
-  <div class="info-card">
-    <small>VERIFIED FARMER NAME</small>
-    <strong id="farmer-name-val">Not fetched</strong>
-    <p id="farmer-phone-val">Awaiting verification</p>
-  </div>
 
-  <div class="info-card">
-    <small>LAND HOLDING SIZE</small>
-    <strong id="land-size-val">Not fetched</strong>
-    <p id="land-khasra-val">Awaiting land record verification</p>
-  </div>
+          <div class="profile-sub-grid">
 
-  <div class="info-card">
-    <small>LOCATION (TEHSIL / MANDI)</small>
-    <strong id="loc-mandi-val">Not fetched</strong>
-    <p id="loc-state-val">Awaiting location verification</p>
-  </div>
+            <div class="info-card">
 
-  <div class="info-card">
-    <small>BANK & DBT CREDENTIALS</small>
-    <strong id="bank-name-val">Not fetched</strong>
-    <p id="bank-acc-val">Awaiting bank verification</p>
-  </div>
-</div>
+              <small>
+                VERIFIED FARMER NAME
+              </small>
 
-          <div style="font-size:12px; font-weight:700; color:var(--dark-olive); margin-bottom:12px;">Permitted Crop Profiles & Maximum Procurement Cap:</div>
+              <strong id="farmer-name-val">
+                Not fetched
+              </strong>
+
+              <p id="farmer-phone-val">
+                Awaiting verification
+              </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+              <small>
+                LAND HOLDING SIZE
+              </small>
+
+              <strong id="land-size-val">
+                Not fetched
+              </strong>
+
+              <p id="land-khasra-val">
+                Awaiting land record verification
+              </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+              <small>
+                LOCATION (TEHSIL / MANDI)
+              </small>
+
+              <strong id="loc-mandi-val">
+                Not fetched
+              </strong>
+
+              <p id="loc-state-val">
+                Awaiting location verification
+              </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+              <small>
+                BANK & DBT CREDENTIALS
+              </small>
+
+              <strong id="bank-name-val">
+                Not fetched
+              </strong>
+
+              <p id="bank-acc-val">
+                Awaiting bank verification
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            style="font-size:12px; font-weight:700; color:var(--dark-olive); margin-bottom:12px;"
+          >
+            Permitted Crop Profiles & Maximum Procurement Cap:
+          </div>
+
 
           <div class="crop-cards-wrapper">
-            <div class="crop-card">
-              <div>
-                <strong>Wheat (ਕਣਕ / Wheat)</strong><br>
-                <small style="font-size:10px; color:var(--text-muted);">Rabi 2025-26</small>
-              </div>
-<span class="qty-tag" id="wheat-cap">Not fetched</span>
-            </div>
 
             <div class="crop-card">
+
               <div>
-                <strong>Paddy Grade A (ਝੋਨਾ)</strong><br>
-                <small style="font-size:10px; color:var(--text-muted);">Kharif 2025-26</small>
+
+                <strong>
+                  Wheat (ਕਣਕ / Wheat)
+                </strong>
+
+                <br>
+
+                <small
+                  style="font-size:10px; color:var(--text-muted);"
+                >
+                  Rabi 2025-26
+                </small>
+
               </div>
-<span class="qty-tag" id="paddy-cap">Not fetched</span>
+
+              <span
+                class="qty-tag"
+                id="wheat-cap"
+              >
+                Not fetched
+              </span>
+
             </div>
+
+
+            <div class="crop-card">
+
+              <div>
+
+                <strong>
+                  Paddy Grade A (ਝੋਨਾ)
+                </strong>
+
+                <br>
+
+                <small
+                  style="font-size:10px; color:var(--text-muted);"
+                >
+                  Kharif 2025-26
+                </small>
+
+              </div>
+
+              <span
+                class="qty-tag"
+                id="paddy-cap"
+              >
+                Not fetched
+              </span>
+
+            </div>
+
           </div>
 
-          <button class="btn-action-dark" onclick="completeStageAndProceed(2, 3)">
-            Proceed to Stage 3: Batch Slot Booking <i class="fa-solid fa-arrow-right"></i>
+
+          <button
+            class="btn-action-dark"
+            id="btn-proceed-stage-2"
+            onclick="completeStageAndProceed(2, 3)"
+          >
+
+            Proceed to Stage 3: Batch Slot Booking
+
+            <i class="fa-solid fa-arrow-right"></i>
+
           </button>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- ==================== STAGE 3 VIEW ==================== -->
-    <div class="stage-view" id="stage-view-3">
+
+    <!-- ==================== STAGE 3 ==================== -->
+
+    <div
+      class="stage-view"
+      id="stage-view-3"
+    >
+
       <div class="stage-sub-banner">
+
         <div class="stage-sub-left">
-          <div class="stage-tag">STAGE 3 OF 7 • CAPACITY MANAGEMENT</div>
-          <h2>Batch Slot Booking & AI Overflow Engine</h2>
-          <p>Schedule dispatch time windows to prevent gate gridlock and access real-time overflow rerouting recommendations.</p>
+
+          <div class="stage-tag">
+            STAGE 3 OF 7 • CAPACITY MANAGEMENT
+          </div>
+
+          <h2>
+            Batch Slot Booking & AI Overflow Engine
+          </h2>
+
+          <p>
+            Schedule dispatch time windows to prevent gate gridlock and access
+            real-time overflow rerouting recommendations.
+          </p>
+
         </div>
+
       </div>
 
+
       <div class="content-grid">
+
         <div class="card-panel">
+
           <div class="form-group">
-            <label>Crop Type</label>
-            <select class="select-input" id="crop-select" onchange="updateMandiStatus()">
-              <option value="wheat">Wheat (ਗੇਹੁੰ / ਕਣਕ) (MSP: ₹2275/q)</option>
-              <option value="paddy">Paddy Grade A (ਝੋਨਾ) (MSP: ₹2203/q)</option>
+
+            <label>
+              Crop Type
+            </label>
+
+            <select
+              class="select-input"
+              id="crop-select"
+              onchange="updateMandiStatus()"
+            >
+
+              <option value="wheat">
+                Wheat (ਗੇਹੁੰ / ਕਣਕ) (MSP: ₹2585/q)
+              </option>
+
+              <option value="paddy">
+                Paddy Grade A (ਝੋਨਾ) (MSP: ₹2441/q)
+              </option>
+
             </select>
+
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+
+          <div
+            style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"
+          >
+
             <div class="form-group">
-              <label>Estimated Quantity (Quintals)</label>
-              <input type="number" class="text-input" id="qty-input" value="45" oninput="updateMandiStatus()">
+
+              <label>
+                Estimated Quantity (Quintals)
+              </label>
+
+              <input
+                type="number"
+                class="text-input"
+                id="qty-input"
+                value="45"
+                min="1"
+                max="500"
+                step="1"
+                oninput="updateMandiStatus()"
+              >
+
             </div>
+
+
             <div class="form-group">
-              <label>Preferred Date</label>
-              <input type="date" class="text-input" value="2026-09-11">
+
+              <label>
+                Preferred Date
+              </label>
+
+              <input
+                type="date"
+                class="text-input"
+                id="booking-date-input"
+              >
+
             </div>
+
           </div>
+
 
           <div class="form-group">
-            <label>Vehicle Plate Number</label>
-            <input type="text" class="text-input" id="vehicle-input" value="PB 10 Z 9921">
+
+            <label>
+              Vehicle Plate Number
+            </label>
+
+            <input
+              type="text"
+              class="text-input"
+              id="vehicle-input"
+              value="PB 10 Z 9921"
+            >
+
           </div>
 
-          <label style="font-size:12px; font-weight:700; color:var(--dark-olive);">Recommended Arrival Time Windows (Congestion-Smoothed):</label>
+
+          <label
+            style="font-size:12px; font-weight:700; color:var(--dark-olive);"
+          >
+            Recommended Arrival Time Windows (Congestion-Smoothed):
+          </label>
+
+
           <div class="time-slot-grid">
-            <div class="time-slot-btn" onclick="selectSlot(this)">07:00 AM - 09:00 AM</div>
-            <div class="time-slot-btn selected" onclick="selectSlot(this)">09:00 AM - 11:00 AM</div>
-            <div class="time-slot-btn" onclick="selectSlot(this)">11:00 AM - 01:00 PM</div>
-            <div class="time-slot-btn" onclick="selectSlot(this)">02:00 PM - 04:00 PM</div>
+
+            <div
+              class="time-slot-btn"
+              data-time-slot="07:00 AM - 09:00 AM"
+              onclick="selectSlot(this)"
+            >
+              07:00 AM - 09:00 AM
+            </div>
+
+
+            <div
+              class="time-slot-btn selected"
+              data-time-slot="09:00 AM - 11:00 AM"
+              onclick="selectSlot(this)"
+            >
+              09:00 AM - 11:00 AM
+            </div>
+
+
+            <div
+              class="time-slot-btn"
+              data-time-slot="11:00 AM - 01:00 PM"
+              onclick="selectSlot(this)"
+            >
+              11:00 AM - 01:00 PM
+            </div>
+
+
+            <div
+              class="time-slot-btn"
+              data-time-slot="02:00 PM - 04:00 PM"
+              onclick="selectSlot(this)"
+            >
+              02:00 PM - 04:00 PM
+            </div>
+
           </div>
 
-          <button class="btn-action-dark" onclick="submitSlotBooking()">
-            <i class="fa-solid fa-circle-check"></i> Confirm Slot & Generate Digital Token
+
+          <button
+            class="btn-action-dark"
+            onclick="submitSlotBooking()"
+          >
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            Confirm Slot & Generate Digital Token
+
           </button>
+
         </div>
+
 
         <div class="card-panel">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <h3 id="target-mandi-title">Khanna Grain Market (Asia's Largest)</h3>
-            <span class="badge-active-status" id="mandi-status-badge" style="background:#fef3c7; color:#92400e; border-color:#fde68a;">MODERATE CONGESTION</span>
+
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"
+          >
+
+            <h3 id="target-mandi-title">
+              Khanna Grain Market (Asia's Largest)
+            </h3>
+
+
+            <span
+              class="badge-active-status"
+              id="mandi-status-badge"
+              style="background:#fef3c7; color:#92400e; border-color:#fde68a;"
+            >
+              MODERATE CONGESTION
+            </span>
+
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center; margin-bottom:16px;">
-            <div class="glass-pill" style="padding:10px;">
-              <small style="font-size:9px; color:var(--text-muted);">Daily Capacity</small>
-              <strong style="display:block; font-size:13px; color:var(--dark-olive);" id="daily-cap-val">18000 Qtl</strong>
+
+          <div
+            style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center; margin-bottom:16px;"
+          >
+
+            <div
+              class="glass-pill"
+              style="padding:10px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                Daily Capacity
+              </small>
+
+              <strong
+                style="display:block; font-size:13px; color:var(--dark-olive);"
+                id="daily-cap-val"
+              >
+                18000 Qtl
+              </strong>
+
             </div>
-            <div class="glass-pill" style="padding:10px;">
-              <small style="font-size:9px; color:var(--text-muted);">Active Queue</small>
-              <strong style="display:block; font-size:13px; color:var(--dark-olive);" id="active-queue-val">12 Trucks</strong>
+
+
+            <div
+              class="glass-pill"
+              style="padding:10px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                Active Queue
+              </small>
+
+              <strong
+                style="display:block; font-size:13px; color:var(--dark-olive);"
+                id="active-queue-val"
+              >
+                12 Trucks
+              </strong>
+
             </div>
-            <div class="glass-pill" style="padding:10px;">
-              <small style="font-size:9px; color:var(--text-muted);">Est. Wait</small>
-              <strong style="display:block; font-size:13px; color:var(--dark-olive);" id="est-wait-val">38 min</strong>
+
+
+            <div
+              class="glass-pill"
+              style="padding:10px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                Est. Wait
+              </small>
+
+              <strong
+                style="display:block; font-size:13px; color:var(--dark-olive);"
+                id="est-wait-val"
+              >
+                38 min
+              </strong>
+
             </div>
+
           </div>
 
-          <div class="overflow-recommendation-box" id="overflow-box">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <strong style="font-size:12px; color:#854d0e;"><i class="fa-solid fa-compass"></i> Auto-Overflow Recommendation</strong>
-              <span style="background:#fef08a; color:#713f12; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;">Nearby Alternative</span>
+
+          <div
+            class="overflow-recommendation-box"
+            id="overflow-box"
+          >
+
+            <div
+              style="display:flex; justify-content:space-between; align-items:center;"
+            >
+
+              <strong
+                style="font-size:12px; color:#854d0e;"
+              >
+
+                <i class="fa-solid fa-compass"></i>
+
+                Auto-Overflow Recommendation
+
+              </strong>
+
+
+              <span
+                style="background:#fef08a; color:#713f12; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;"
+              >
+                Nearby Alternative
+              </span>
+
             </div>
-            <p style="font-size:11.5px; color:#713f12; margin-top:6px; line-height:1.4;" id="overflow-desc">
-              If Khanna Mandi peaks during morning delivery hours (09:00 - 11:00 AM), our queue load-balancer automatically suggests <strong>Karnal Central Krishi Mandi</strong> (Wait: 22 min) with a 20-minute turnaround guarantee!
+
+
+            <p
+              style="font-size:11.5px; color:#713f12; margin-top:6px; line-height:1.4;"
+              id="overflow-desc"
+            >
+              If Khanna Mandi peaks during morning delivery hours
+              (09:00 - 11:00 AM), our queue load-balancer automatically
+              suggests <strong>Karnal Central Krishi Mandi</strong>
+              (Wait: 22 min) with a 20-minute turnaround guarantee!
             </p>
-            <button class="btn-reroute" onclick="applyReroute()">Reroute to Low-Wait Alternative</button>
+
+
+            <button
+              class="btn-reroute"
+              onclick="applyReroute()"
+            >
+              Reroute to Low-Wait Alternative
+            </button>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- ==================== STAGE 4 VIEW ==================== -->
-    <div class="stage-view" id="stage-view-4">
+
+    <!-- ==================== STAGE 4 ==================== -->
+
+    <div
+      class="stage-view"
+      id="stage-view-4"
+    >
+
       <div class="stage-sub-banner">
+
         <div class="stage-sub-left">
-          <div class="stage-tag">STAGE 4 OF 7 • LIVE QUEUE TELEMETRY</div>
-          <h2>Digital Token & Live Queue Tracker</h2>
-          <p>Real-time queue positioning, gate entry time estimates, and multi-channel departure alert dispatching.</p>
+
+          <div class="stage-tag">
+            STAGE 4 OF 7 • LIVE QUEUE TELEMETRY
+          </div>
+
+          <h2>
+            Digital Token & Live Queue Tracker
+          </h2>
+
+          <p>
+            Real-time queue positioning, gate entry time estimates,
+            and multi-channel departure alert dispatching.
+          </p>
+
         </div>
-        <button class="btn-action-dark" style="margin-top:0;" onclick="triggerSimulatedSMS()">
-          <i class="fa-solid fa-paper-plane"></i> Simulate Automated Departure Alert
+
+
+        <button
+          class="btn-action-dark"
+          style="margin-top:0;"
+          onclick="triggerSimulatedSMS()"
+        >
+
+          <i class="fa-solid fa-paper-plane"></i>
+
+          Simulate Automated Departure Alert
+
         </button>
+
       </div>
+
 
       <div class="content-grid">
-        <div class="card-panel" style="border:2px dashed var(--medium-olive);">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <small style="font-size:10px; font-weight:800; color:var(--text-muted);">MANDI DIGITAL ENTRY TOKEN</small>
-            <span class="badge-active-status">VALID FOR ENTRY</span>
+
+        <div
+          class="card-panel"
+          style="border:2px dashed var(--medium-olive);"
+        >
+
+          <div
+            style="display:flex; justify-content:space-between; align-items:center;"
+          >
+
+            <small
+              style="font-size:10px; font-weight:800; color:var(--text-muted);"
+            >
+              MANDI DIGITAL ENTRY TOKEN
+            </small>
+
+
+            <span
+              class="badge-active-status"
+              id="token-validity-status"
+            >
+              VALID FOR ENTRY
+            </span>
+
           </div>
 
-          <div style="text-align:center; margin:20px 0;">
-            <small style="font-size:10px; font-weight:800; color:var(--text-muted);">TOKEN NUMBER</small>
-            <h1 style="font-size:32px; font-weight:800; color:var(--dark-olive);" id="token-display-id">DOCA-2026-PB-1296</h1>
-            <p style="font-size:12px; color:var(--text-muted);" id="token-farmer-desc">Sardar Ramesh Singh • Wheat (ਗੇਹੁੰ / ਕਣਕ)</p>
+
+          <div
+            style="text-align:center; margin:20px 0;"
+          >
+
+            <small
+              style="font-size:10px; font-weight:800; color:var(--text-muted);"
+            >
+              TOKEN NUMBER
+            </small>
+
+
+            <h1
+              style="font-size:32px; font-weight:800; color:var(--dark-olive);"
+              id="token-display-id"
+            >
+              DOCA-2026-PB-1296
+            </h1>
+
+
+            <p
+              style="font-size:12px; color:var(--text-muted);"
+              id="token-farmer-desc"
+            >
+              Sardar Ramesh Singh • Wheat (ਗੇਹੁੰ / ਕਣਕ)
+            </p>
+
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div class="glass-pill" style="padding:10px;">
-              <small style="font-size:9px; color:var(--text-muted);">Gate Entry Window</small>
-              <strong style="font-size:12px; color:var(--dark-olive);">09:00 AM - 11:00 AM</strong>
+
+          <div
+            style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"
+          >
+
+            <div
+              class="glass-pill"
+              style="padding:10px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                Gate Entry Window
+              </small>
+
+              <strong
+                style="font-size:12px; color:var(--dark-olive);"
+                id="token-time-slot"
+              >
+                09:00 AM - 11:00 AM
+              </strong>
+
             </div>
-            <div class="glass-pill" style="padding:10px;">
-              <small style="font-size:9px; color:var(--text-muted);">Assigned Bay</small>
-              <strong style="font-size:12px; color:var(--dark-olive);">Bay-03</strong>
+
+
+            <div
+              class="glass-pill"
+              style="padding:10px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                Assigned Bay
+              </small>
+
+              <strong
+                style="font-size:12px; color:var(--dark-olive);"
+                id="token-assigned-bay"
+              >
+                Bay-03
+              </strong>
+
             </div>
+
           </div>
 
-          <div style="display:flex; gap:10px; margin-top:16px;">
-            <button class="btn-action-dark" style="flex:1; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);" onclick="openQRSlipModal()">
-              <i class="fa-solid fa-qrcode"></i> Print Token Slip
+
+          <div
+            style="display:flex; gap:10px; margin-top:16px;"
+          >
+
+            <button
+              class="btn-action-dark"
+              style="flex:1; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);"
+              onclick="openQRSlipModal()"
+            >
+
+              <i class="fa-solid fa-qrcode"></i>
+
+              Print Token Slip
+
             </button>
-            <button class="btn-action-dark" style="flex:1; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);" onclick="alert('Hyperledger Audit Hash: 0x71cb89a2f1b0...block#10429')">
-              <i class="fa-solid fa-cube"></i> Audit Hash
+
+
+            <button
+              class="btn-action-dark"
+              style="flex:1; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);"
+              onclick="showAuditHash()"
+            >
+
+              <i class="fa-solid fa-cube"></i>
+
+              Audit Hash
+
             </button>
+
           </div>
+
         </div>
+
 
         <div class="card-panel">
-          <h3><i class="fa-solid fa-tower-broadcast"></i> Real-Time Queue Telemetry</h3>
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center; margin:16px 0;">
-            <div class="glass-pill" style="padding:12px;">
-              <small style="font-size:9px; color:var(--text-muted);">CURRENT POSITION</small>
-              <h2 style="color:var(--dark-olive);">#3</h2>
-              <small style="font-size:9px; color:#2563eb;">in line at Gate 2</small>
+
+          <h3>
+
+            <i class="fa-solid fa-tower-broadcast"></i>
+
+            Real-Time Queue Telemetry
+
+          </h3>
+
+
+          <div
+            style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center; margin:16px 0;"
+          >
+
+            <div
+              class="glass-pill"
+              style="padding:12px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                CURRENT POSITION
+              </small>
+
+              <h2
+                style="color:var(--dark-olive);"
+                id="queue-position"
+              >
+                Awaiting Queue
+              </h2>
+
+              <small
+                style="font-size:9px; color:#2563eb;"
+                id="queue-gate-label"
+              >
+                in line at Gate 2
+              </small>
+
             </div>
-            <div class="glass-pill" style="padding:12px;">
-              <small style="font-size:9px; color:var(--text-muted);">EST. GATE ENTRY</small>
-              <h2 style="color:var(--dark-olive);">10:15 AM</h2>
-              <small style="font-size:9px; color:var(--text-muted);">Turn in ~22 mins</small>
+
+
+            <div
+              class="glass-pill"
+              style="padding:12px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                EST. GATE ENTRY
+              </small>
+
+              <h2
+                style="color:var(--dark-olive);"
+                id="queue-entry-time"
+              >
+                Calculating...
+              </h2>
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+                id="queue-wait-text"
+              >
+                Queue telemetry
+              </small>
+
             </div>
-            <div class="glass-pill" style="padding:12px;">
-              <small style="font-size:9px; color:var(--text-muted);">STATUS</small>
-              <h2 style="color:#d97706; font-size:16px; margin-top:6px;">BOOKED</h2>
+
+
+            <div
+              class="glass-pill"
+              style="padding:12px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                STATUS
+              </small>
+
+              <h2
+                style="color:#d97706; font-size:16px; margin-top:6px;"
+                id="queue-status"
+              >
+                BOOKED
+              </h2>
+
             </div>
+
           </div>
 
-          <div class="overflow-recommendation-box" style="background:#f0fdf4; border-color:#bbf7d0;">
-            <strong style="font-size:12px; color:#166534;"><i class="fa-solid fa-circle-check"></i> Multi-Channel Departure Dispatch Active</strong>
-            <p style="font-size:11.5px; color:#15803d; margin-top:4px;" id="dispatch-status-text">
-              "Vehicle PB 10 Z 9921, your estimated gate entry is in ~25 mins. Current gate processing rate is 14 trucks/hr."
+
+          <div
+            class="overflow-recommendation-box"
+            style="background:#f0fdf4; border-color:#bbf7d0;"
+          >
+
+            <strong
+              style="font-size:12px; color:#166534;"
+            >
+
+              <i class="fa-solid fa-circle-check"></i>
+
+              Multi-Channel Departure Dispatch Active
+
+            </strong>
+
+
+            <p
+              style="font-size:11.5px; color:#15803d; margin-top:4px;"
+              id="dispatch-status-text"
+            >
+              "Vehicle PB 10 Z 9921, your estimated gate entry is being tracked.
+              Current gate processing is simulated for this prototype."
             </p>
+
           </div>
 
-          <button class="btn-action-dark" onclick="completeStageAndProceed(4, 5)">
-            Proceed to Stage 5: Geofenced Arrival & Gate Check-In <i class="fa-solid fa-arrow-right"></i>
+
+          <button
+            class="btn-action-dark"
+            onclick="completeStageAndProceed(4, 5)"
+          >
+
+            Proceed to Stage 5:
+            Geofenced Arrival & Gate Check-In
+
+            <i class="fa-solid fa-arrow-right"></i>
+
           </button>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- ==================== STAGE 5 VIEW ==================== -->
-    <div class="stage-view" id="stage-view-5">
+
+    <!-- ==================== STAGE 5 ==================== -->
+
+    <div
+      class="stage-view"
+      id="stage-view-5"
+    >
+
       <div class="stage-sub-banner">
+
         <div class="stage-sub-left">
-          <div class="stage-tag">STAGE 5 OF 7 • AUTOMATED GPS ARRIVAL VERIFICATION</div>
-          <h2>Geofenced Arrival & Check-In Gate</h2>
-          <p>GPS / Gate Scan verifies vehicle is within 1 km perimeter threshold &rarr; Token flips from "Scheduled" to "Active Gate Queue".</p>
+
+          <div class="stage-tag">
+            STAGE 5 OF 7 • AUTOMATED GPS ARRIVAL VERIFICATION
+          </div>
+
+          <h2>
+            Geofenced Arrival & Check-In Gate
+          </h2>
+
+          <p>
+            GPS / Gate Scan verifies vehicle is within 500 m perimeter threshold
+            &rarr; Token flips from "Scheduled" to "Active Gate Queue".
+          </p>
+
         </div>
+
       </div>
+
 
       <div class="content-grid">
+
+
+        <!-- ==========================================
+             GPS TELEMATICS PANEL
+             ========================================== -->
+
         <div class="card-panel">
-          <h3><i class="fa-solid fa-location-crosshairs"></i> Vehicle GPS Telematics & Geofence Perimeter</h3>
-          <div class="farmer-info-box glass-pill" style="margin:16px 0;">
-            <div style="display:flex; justify-content:space-between;">
-              <span style="font-size:12px; font-weight:700;">Current Vehicle Distance:</span>
-              <strong style="font-size:16px; color:var(--dark-olive);" id="current-distance-text">0.7 km</strong>
+
+          <h3>
+
+            <i class="fa-solid fa-location-crosshairs"></i>
+
+            Vehicle GPS Telematics & Geofence Perimeter
+
+          </h3>
+
+
+          <div
+            class="farmer-info-box glass-pill"
+            style="margin:16px 0;"
+          >
+
+            <div
+              style="display:flex; justify-content:space-between; align-items:center;"
+            >
+
+              <span
+                style="font-size:12px; font-weight:700;"
+              >
+                Current Vehicle Distance:
+              </span>
+
+
+              <strong
+                style="font-size:16px; color:var(--dark-olive);"
+                id="current-distance-text"
+              >
+                Awaiting GPS
+              </strong>
+
             </div>
-            <input type="range" min="0.1" max="3.0" step="0.1" value="0.7" id="geofence-range-slider" style="width:100%; margin:12px 0;" oninput="updateGeofenceDistance(this.value)">
-            <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); font-weight:700;">
-              <span>0.1 km (At Barrier)</span>
-              <span style="color:#b91c1c;">1.0 km Geofence Threshold</span>
-              <span>3.0 km (Away)</span>
+
+
+            <input
+              type="range"
+              min="0.1"
+              max="3.0"
+              step="0.1"
+              value="0.7"
+              id="geofence-range-slider"
+              style="width:100%; margin:12px 0;"
+              aria-label="Geofence distance display"
+              disabled
+            >
+
+
+            <div
+              style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); font-weight:700;"
+            >
+
+              <span>
+                0.1 km
+              </span>
+
+              <span style="color:#b91c1c;">
+                0.5 km Geofence Threshold
+              </span>
+
+              <span>
+                3.0 km
+              </span>
+
             </div>
+
           </div>
 
-          <div style="font-size:12px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
-            <div>Target Mandi: <strong style="color:var(--dark-olive);" id="geofence-mandi-name">Karnal Central Krishi Mandi</strong></div>
-            <div>Vehicle Number: <strong style="color:var(--dark-olive);" id="geofence-vehicle-num">PB 10 Z 9921</strong></div>
-            <div>Geofence Radius: <strong style="color:var(--dark-olive);">1.0 km (Perimeter Locked)</strong></div>
+
+          <!-- GPS TELEMETRY CARDS -->
+
+          <div
+            class="profile-sub-grid"
+            style="margin-bottom:16px;"
+          >
+
+            <div class="info-card">
+
+              <small>
+                GPS TELEMETRY
+              </small>
+
+              <strong id="gps-telemetry-status">
+                Awaiting GPS
+              </strong>
+
+              <p id="gps-telemetry-detail">
+                Waiting for vehicle location
+              </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+              <small>
+                GPS ACCURACY
+              </small>
+
+              <strong id="gps-accuracy-value">
+                --
+              </strong>
+
+              <p>
+                Browser / vehicle location
+              </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+              <small>
+                DISTANCE FROM MANDI
+              </small>
+
+              <strong id="map-distance-value">
+                --
+              </strong>
+
+              <p>
+                Live geofence calculation
+              </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+              <small>
+                GEOFENCE STATUS
+              </small>
+
+              <strong id="map-geofence-status">
+                Waiting
+              </strong>
+
+              <p>
+                500 m perimeter
+              </p>
+
+            </div>
+
           </div>
 
-          <button class="btn-action-dark" id="btn-verify-geofence" onclick="verifyGeofenceCheckIn()">
-            <i class="fa-solid fa-location-dot"></i> Verify Geofence & Check-In Vehicle
+
+          <!-- MANDI INFORMATION -->
+
+          <div
+            style="font-size:12px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;"
+          >
+
+            <div>
+
+              Target Mandi:
+
+              <strong
+                style="color:var(--dark-olive);"
+                id="geofence-mandi-name"
+              >
+                Karnal Central Krishi Mandi
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              Vehicle Number:
+
+              <strong
+                style="color:var(--dark-olive);"
+                id="geofence-vehicle-num"
+              >
+                PB 10 Z 9921
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              Geofence Radius:
+
+              <strong
+                style="color:var(--dark-olive);"
+                id="geofence-radius-text"
+              >
+                0.5 km (Perimeter Locked)
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="btn-action-dark"
+            id="btn-verify-geofence"
+            onclick="verifyGeofenceCheckIn()"
+          >
+
+            <i class="fa-solid fa-location-dot"></i>
+
+            Verify Geofence & Check-In Vehicle
+
           </button>
+
         </div>
 
-        <div class="card-panel" style="justify-content:center; text-align:center;">
-          <div class="glass-pill" style="padding:24px;" id="geofence-status-card">
-            <i class="fa-solid fa-tower-cell" style="font-size:32px; color:var(--medium-olive); margin-bottom:10px;"></i>
-            <h3 style="color:var(--dark-olive);" id="geofence-status-title">Waiting for GPS Geofence Verification</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-top:6px;" id="geofence-status-desc">
-              Vehicle distance must be within 1.0 km threshold of target Mandi to trigger automatic barrier clearance.
+
+        <!-- ==========================================
+             LIVE MAP PANEL
+             ========================================== -->
+
+        <div
+          class="card-panel"
+          style="padding:16px;"
+        >
+
+          <div
+            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"
+          >
+
+            <div>
+
+              <h3>
+
+                <i class="fa-solid fa-map-location-dot"></i>
+
+                Live Mandi Geofence Map
+
+              </h3>
+
+              <p
+                style="font-size:10.5px; color:var(--text-muted); margin-top:4px;"
+              >
+                Mandi perimeter, vehicle location and arrival eligibility
+              </p>
+
+            </div>
+
+
+            <span
+              class="badge-active-status"
+              id="map-live-badge"
+            >
+              GPS READY
+            </span>
+
+          </div>
+
+
+          <!-- LEAFLET MAP -->
+
+          <div
+            id="geofence-map"
+            style="
+              width:100%;
+              height:380px;
+              border-radius:16px;
+              overflow:hidden;
+              border:1px solid rgba(63,71,50,0.15);
+              background:#e5e7df;
+            "
+            aria-label="Live vehicle geofence map"
+          ></div>
+
+
+          <!-- MAP LEGEND -->
+
+          <div
+            style="
+              display:flex;
+              flex-wrap:wrap;
+              gap:12px;
+              margin-top:12px;
+              font-size:10px;
+              font-weight:700;
+              color:var(--text-muted);
+            "
+          >
+
+            <span>
+
+              <i
+                class="fa-solid fa-location-dot"
+                style="color:#2563eb;"
+              ></i>
+
+              Vehicle GPS
+
+            </span>
+
+
+            <span>
+
+              <i
+                class="fa-solid fa-location-dot"
+                style="color:#dc2626;"
+              ></i>
+
+              Target Mandi
+
+            </span>
+
+
+            <span>
+
+              <i
+                class="fa-regular fa-circle"
+                style="color:#535d43;"
+              ></i>
+
+              500 m Geofence
+
+            </span>
+
+
+            <span>
+
+              <i
+                class="fa-solid fa-circle-check"
+                style="color:#236835;"
+              ></i>
+
+              Eligible for Check-In
+
+            </span>
+
+          </div>
+
+
+          <!-- GEOFENCE STATUS -->
+
+          <div
+            class="glass-pill"
+            style="padding:20px; margin-top:14px; text-align:center;"
+            id="geofence-status-card"
+          >
+
+            <i
+              class="fa-solid fa-tower-cell"
+              style="font-size:30px; color:var(--medium-olive); margin-bottom:8px;"
+            ></i>
+
+
+            <h3
+              style="color:var(--dark-olive);"
+              id="geofence-status-title"
+            >
+              Waiting for GPS Geofence Verification
+            </h3>
+
+
+            <p
+              style="font-size:12px; color:var(--text-muted); margin-top:6px;"
+              id="geofence-status-desc"
+            >
+              Vehicle distance must be within 500 m threshold of target Mandi
+              to trigger automatic barrier clearance.
             </p>
+
           </div>
 
-          <button class="btn-action-dark" onclick="completeStageAndProceed(5, 6)">
-            Proceed to Stage 6: Procurement & Quality Logging <i class="fa-solid fa-arrow-right"></i>
+
+          <button
+            class="btn-action-dark"
+            id="btn-proceed-stage-5"
+            onclick="completeStageAndProceed(5, 6)"
+          >
+
+            Proceed to Stage 6:
+            Procurement & Quality Logging
+
+            <i class="fa-solid fa-arrow-right"></i>
+
           </button>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- ==================== STAGE 6 VIEW ==================== -->
-    <div class="stage-view" id="stage-view-6">
-      <div class="stage-sub-banner">
-        <div class="stage-sub-left">
-          <div class="stage-tag">STAGE 6 OF 7 • WEIGHMENT & QUALITY ASSURANCE</div>
-          <h2>On-Site Procurement & Quality Logging Page</h2>
-          <p>Digital weighbridge entry, grain moisture %, and quality grading &rarr; Instant generation of thermal receipt & PFMS invoice.</p>
-        </div>
-      </div>
 
-      <div class="content-grid">
-        <div class="card-panel">
-          <h3><i class="fa-solid fa-scale-balanced"></i> 1. Digital Weighbridge Gross & Tare Entry</h3>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
-            <div class="form-group">
-              <label>Gross Weight (Vehicle + Crop) kg</label>
-     <input type="number" class="text-input" id="gross-weight-input" value="" min="0" max="100000" step="1" oninput="calculateNetProcured()">
-            </div>       
-            <div class="form-group">
-              <label>Tare Weight (Empty Vehicle) kg</label>
-<input type="number" class="text-input" id="tare-weight-input" value="" min="0" max="10000" step="1" oninput="calculateNetProcured()">
-            </div>
+    <!-- ==================== STAGE 6 ==================== -->
+
+    <div
+      class="stage-view"
+      id="stage-view-6"
+    >
+
+      <div class="stage-sub-banner">
+
+        <div class="stage-sub-left">
+
+          <div class="stage-tag">
+            STAGE 6 OF 7 • WEIGHMENT & QUALITY ASSURANCE
           </div>
 
-<div class="farmer-info-box glass-pill" style="margin-top:8px;">
-    <small style="font-size:10px; font-weight:800; color:var(--text-muted);">NET GRAIN PROCURED</small>
-    <h1 style="font-size:28px; color:var(--dark-olive);" id="net-grain-value">Enter Weights</h1>
-    <p style="font-size:11px; color:var(--text-muted);" id="net-kg-display">Enter gross and tare weights</p>
-</div>
+          <h2>
+            On-Site Procurement & Quality Logging Page
+          </h2>
 
-          <p style="font-size:10.5px; color:var(--text-muted); font-family:monospace; margin-top:4px;">
+          <p>
+            Digital weighbridge entry, grain moisture %, and quality grading
+            &rarr; Instant generation of thermal receipt & PFMS invoice.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="content-grid">
+
+        <div class="card-panel">
+
+          <h3>
+
+            <i class="fa-solid fa-scale-balanced"></i>
+
+            1. Digital Weighbridge Gross & Tare Entry
+
+          </h3>
+
+
+          <div
+            style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;"
+          >
+
+            <div class="form-group">
+
+              <label>
+                Gross Weight (Vehicle + Crop) kg
+              </label>
+
+              <input
+                type="number"
+                class="text-input"
+                id="gross-weight-input"
+                value=""
+                min="0"
+                max="100000"
+                step="1"
+                oninput="calculateNetProcured()"
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>
+                Tare Weight (Empty Vehicle) kg
+              </label>
+
+              <input
+                type="number"
+                class="text-input"
+                id="tare-weight-input"
+                value=""
+                min="0"
+                max="10000"
+                step="1"
+                oninput="calculateNetProcured()"
+              >
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="farmer-info-box glass-pill"
+            style="margin-top:8px;"
+          >
+
+            <small
+              style="font-size:10px; font-weight:800; color:var(--text-muted);"
+            >
+              NET GRAIN PROCURED
+            </small>
+
+
+            <h1
+              style="font-size:28px; color:var(--dark-olive);"
+              id="net-grain-value"
+            >
+              Enter Weights
+            </h1>
+
+
+            <p
+              style="font-size:11px; color:var(--text-muted);"
+              id="net-kg-display"
+            >
+              Enter gross and tare weights
+            </p>
+
+          </div>
+
+
+          <p
+            style="font-size:10.5px; color:var(--text-muted); font-family:monospace; margin-top:4px;"
+          >
             Operator ID: OP-WB-101 • Scale Calibrated: Certified Legal Metrology
           </p>
+
         </div>
+
 
         <div class="card-panel">
-          <h3><i class="fa-solid fa-microscope"></i> 2. Grain Quality Assay (FAQ Standards)</h3>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;">
+
+          <h3>
+
+            <i class="fa-solid fa-microscope"></i>
+
+            2. Grain Quality Assay (FAQ Standards)
+
+          </h3>
+
+
+          <div
+            style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;"
+          >
+
             <div class="form-group">
-              <label>Grain Moisture %</label>
-              <input type="number" step="0.1" class="text-input" value="11.4">
-              <small style="font-size:9px; color:var(--text-muted);">FAQ ceiling: ≤14.0% | Grade A target: ≤12.0%</small>
+
+              <label>
+                Grain Moisture %
+              </label>
+
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+                class="text-input"
+                id="moisture-input"
+                value="11.4"
+                oninput="evaluateQuality()"
+              >
+
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                FAQ ceiling: ≤14.0% | Grade A target: ≤12.0%
+              </small>
+
             </div>
+
+
             <div class="form-group">
-              <label>Foreign Matter %</label>
-              <input type="number" step="0.1" class="text-input" value="0.6">
-              <small style="font-size:9px; color:var(--text-muted);">FAQ maximum: ≤0.75% | Grade A target: ≤0.50%</small>
+
+              <label>
+                Foreign Matter %
+              </label>
+
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+                class="text-input"
+                id="foreign-matter-input"
+                value="0.6"
+                oninput="evaluateQuality()"
+              >
+
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                FAQ maximum: ≤0.75% | Grade A target: ≤0.50%
+              </small>
+
             </div>
+
           </div>
 
-      <div class="overflow-recommendation-box" style="background:#f0fdf4; border-color:#bbf7d0; display:flex; justify-content:space-between; align-items:center;">
-    <div>
-        <small style="font-size:9px; font-weight:800; color:#166534;">AUTOMATED FAQ RESULT</small>
-        <strong style="display:block; font-size:14px; color:#15803d;" id="quality-result-text">Awaiting Quality Test</strong>
-    </div>
-    <span class="badge-active-status" id="quality-grade-badge">PENDING</span>
-</div>
 
-          <button class="btn-action-dark" onclick="completeStageAndProceed(6, 7)">
-            <i class="fa-solid fa-floppy-disk"></i> Save Quality Assay & Issue Digital Receipt
+          <div
+            class="overflow-recommendation-box"
+            style="background:#f0fdf4; border-color:#bbf7d0; display:flex; justify-content:space-between; align-items:center;"
+          >
+
+            <div>
+
+              <small
+                style="font-size:9px; font-weight:800; color:#166534;"
+              >
+                AUTOMATED FAQ RESULT
+              </small>
+
+
+              <strong
+                style="display:block; font-size:14px; color:#15803d;"
+                id="quality-result-text"
+              >
+                Awaiting Quality Test
+              </strong>
+
+            </div>
+
+
+            <span
+              class="badge-active-status"
+              id="quality-grade-badge"
+            >
+              PENDING
+            </span>
+
+          </div>
+
+
+          <button
+            class="btn-action-dark"
+            id="btn-submit-quality"
+            onclick="submitQualityLog()"
+          >
+
+            <i class="fa-solid fa-floppy-disk"></i>
+
+            Save Quality Assay & Issue Digital Receipt
+
           </button>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- ==================== STAGE 7 VIEW ==================== -->
-    <div class="stage-view" id="stage-view-7">
+
+    <!-- ==================== STAGE 7 ==================== -->
+
+    <div
+      class="stage-view"
+      id="stage-view-7"
+    >
+
       <div class="stage-sub-banner">
+
         <div class="stage-sub-left">
-          <div class="stage-tag">STAGE 7 OF 7 • REAL-TIME DBT SETTLEMENT</div>
-          <h2>Payment & Disbursement Tracker Dashboard</h2>
-          <p>Status Pipeline: Quality Approved &rarr; Invoice Generated &rarr; PFMS e-Kuber Batched &rarr; DBT Payout Dispatched.</p>
+
+          <div class="stage-tag">
+            STAGE 7 OF 7 • REAL-TIME DBT SETTLEMENT
+          </div>
+
+          <h2>
+            Payment & Disbursement Tracker Dashboard
+          </h2>
+
+          <p>
+            Status Pipeline: Quality Approved &rarr; Invoice Generated
+            &rarr; PFMS e-Kuber Batched &rarr; DBT Payout Dispatched.
+          </p>
+
         </div>
-        <button class="btn-action-dark" style="margin-top:0; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);" onclick="openQRSlipModal()">
-          <i class="fa-solid fa-receipt"></i> Thermal Receipt
+
+
+        <button
+          class="btn-action-dark"
+          style="margin-top:0; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);"
+          onclick="openQRSlipModal()"
+        >
+
+          <i class="fa-solid fa-receipt"></i>
+
+          Thermal Receipt
+
         </button>
+
       </div>
 
-      <div class="card-panel" style="margin-bottom:20px;">
-        <small style="font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom:10px; display:block;">DBT SETTLEMENT PIPELINE (DIRECT LINKAGE WITH PFMS E-KUBER)</small>
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;">
-          <div class="glass-pill" style="padding:10px; border-left:4px solid #22c55e;">
-            <small style="font-size:9px; color:var(--text-muted);">1. Quality Approved</small>
-            <strong style="font-size:11px; color:var(--dark-olive); display:block;">FAQ Assay Passed</strong>
+
+      <div
+        class="card-panel"
+        style="margin-bottom:20px;"
+      >
+
+        <small
+          style="font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom:10px; display:block;"
+        >
+          DBT SETTLEMENT PIPELINE (DIRECT LINKAGE WITH PFMS E-KUBER)
+        </small>
+
+
+        <div
+          style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;"
+        >
+
+          <div
+            class="glass-pill"
+            style="padding:10px; border-left:4px solid #22c55e;"
+          >
+
+            <small
+              style="font-size:9px; color:var(--text-muted);"
+            >
+              1. Quality Approved
+            </small>
+
+            <strong
+              style="font-size:11px; color:var(--dark-olive); display:block;"
+              id="payment-quality-status"
+            >
+              FAQ Assay Passed
+            </strong>
+
           </div>
-          <div class="glass-pill" style="padding:10px; border-left:4px solid #22c55e;">
-            <small style="font-size:9px; color:var(--text-muted);">2. Invoice Generated</small>
-            <strong style="font-size:11px; color:var(--dark-olive); display:block;">Slip #DOCA-2026-PB-1296</strong>
+
+
+          <div
+            class="glass-pill"
+            style="padding:10px; border-left:4px solid #22c55e;"
+          >
+
+            <small
+              style="font-size:9px; color:var(--text-muted);"
+            >
+              2. Invoice Generated
+            </small>
+
+            <strong
+              style="font-size:11px; color:var(--dark-olive); display:block;"
+              id="payment-receipt-status"
+            >
+              Slip Pending
+            </strong>
+
           </div>
-          <div class="glass-pill" style="padding:10px; border-left:4px solid #22c55e;">
-            <small style="font-size:9px; color:var(--text-muted);">3. PFMS Batched</small>
-            <strong style="font-size:11px; color:var(--dark-olive); display:block;">e-Kuber Ready</strong>
+
+
+          <div
+            class="glass-pill"
+            style="padding:10px; border-left:4px solid #22c55e;"
+          >
+
+            <small
+              style="font-size:9px; color:var(--text-muted);"
+            >
+              3. PFMS Batched
+            </small>
+
+            <strong
+              style="font-size:11px; color:var(--dark-olive); display:block;"
+              id="payment-pfms-status"
+            >
+              e-Kuber Ready
+            </strong>
+
           </div>
-          <div class="glass-pill" style="padding:10px; border-left:4px solid #3b82f6;">
-            <small style="font-size:9px; color:var(--text-muted);">4. DBT Dispatched</small>
-            <strong style="font-size:11px; color:var(--dark-olive); display:block;" id="dbt-status-stage-text">Pending Trigger</strong>
+
+
+          <div
+            class="glass-pill"
+            style="padding:10px; border-left:4px solid #3b82f6;"
+          >
+
+            <small
+              style="font-size:9px; color:var(--text-muted);"
+            >
+              4. DBT Dispatched
+            </small>
+
+            <strong
+              style="font-size:11px; color:var(--dark-olive); display:block;"
+              id="dbt-status-stage-text"
+            >
+              Pending Trigger
+            </strong>
+
           </div>
+
         </div>
+
       </div>
+
 
       <div class="content-grid">
+
         <div class="card-panel">
-          <h3>Procurement Financial Breakdown</h3>
-          <div style="display:flex; justify-content:space-between; margin-top:14px; font-size:13px;">
-            <span style="color:var(--text-muted);">Procured Produce:</span>
-            <strong style="color:var(--dark-olive);" id="final-crop-name">Wheat (ਗੇਹੁੰ / ਕਣਕ)</strong>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px;">
-            <span style="color:var(--text-muted);">Net Quantity Weighed:</span>
-            <strong style="color:var(--dark-olive);" id="final-qty-val">45 Quintals</strong>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px;">
-            <span style="color:var(--text-muted);">Cabinet-Approved MSP:</span>
-            <strong style="color:var(--dark-olive);">₹2275 / Quintal</strong>
+
+          <h3>
+            Procurement Financial Breakdown
+          </h3>
+
+
+          <div
+            style="display:flex; justify-content:space-between; margin-top:14px; font-size:13px;"
+          >
+
+            <span style="color:var(--text-muted);">
+              Procured Produce:
+            </span>
+
+            <strong
+              style="color:var(--dark-olive);"
+              id="final-crop-name"
+            >
+              Wheat (ਗੇਹੁੰ / ਕਣક)
+            </strong>
+
           </div>
 
-          <div class="farmer-info-box glass-pill" style="margin-top:16px; background:#f4f7ee;">
-            <small style="font-size:10px; font-weight:800; color:var(--text-muted);">TOTAL DIRECT BANK TRANSFER (DBT):</small>
-            <h1 style="font-size:32px; color:var(--dark-olive);" id="final-dbt-amount">₹1,02,375</h1>
+
+          <div
+            style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px;"
+          >
+
+            <span style="color:var(--text-muted);">
+              Net Quantity Weighed:
+            </span>
+
+            <strong
+              style="color:var(--dark-olive);"
+              id="final-qty-val"
+            >
+              0 Quintals
+            </strong>
+
           </div>
 
-          <div style="font-size:11.5px; color:var(--text-muted); margin:12px 0;">
-            VERIFIED BENEFICIARY ACCOUNT:<br>
-            <strong style="color:var(--dark-olive);" id="dbt-beneficiary-name">Sardar Ramesh Singh (State Bank of India)</strong><br>
-            Account Masked: XXXX-XXXX-3312 • IFSC: SBIN0001234
+
+          <div
+            style="display:flex; justify-content:space-between; margin-top:8px; font-size:13px;"
+          >
+
+            <span style="color:var(--text-muted);">
+              Cabinet-Approved MSP:
+            </span>
+
+            <strong
+              style="color:var(--dark-olive);"
+              id="final-msp-val"
+            >
+              ₹2,585 / Quintal
+            </strong>
+
           </div>
 
-          <button class="btn-action-dark" id="btn-dispatch-dbt" onclick="dispatchDBTPayout()">
-            <i class="fa-solid fa-money-bill-transfer"></i> Dispatch Direct Benefit Transfer (DBT)
+
+          <div
+            class="farmer-info-box glass-pill"
+            style="margin-top:16px; background:#f4f7ee;"
+          >
+
+            <small
+              style="font-size:10px; font-weight:800; color:var(--text-muted);"
+            >
+              TOTAL DIRECT BANK TRANSFER (DBT):
+            </small>
+
+
+            <h1
+              style="font-size:32px; color:var(--dark-olive);"
+              id="final-dbt-amount"
+            >
+              ₹0
+            </h1>
+
+          </div>
+
+
+          <div
+            style="font-size:11.5px; color:var(--text-muted); margin:12px 0;"
+          >
+
+            VERIFIED BENEFICIARY ACCOUNT:
+
+            <br>
+
+            <strong
+              style="color:var(--dark-olive);"
+              id="dbt-beneficiary-name"
+            >
+              Sardar Ramesh Singh (State Bank of India)
+            </strong>
+
+            <br>
+
+            Account Masked:
+            <span id="dbt-account-display">
+              XXXX-XXXX-3312
+            </span>
+
+            • IFSC:
+
+            <span id="dbt-ifsc-display">
+              SBIN0001234
+            </span>
+
+          </div>
+
+
+          <button
+            class="btn-action-dark"
+            id="btn-dispatch-dbt"
+            onclick="dispatchDBTPayout()"
+          >
+
+            <i class="fa-solid fa-money-bill-transfer"></i>
+
+            Dispatch Direct Benefit Transfer (DBT)
+
           </button>
+
         </div>
+
 
         <div class="card-panel">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3>Bank Gateway Linkage</h3>
-            <span class="badge-active-status">RBI Direct Settlement</span>
+
+          <div
+            style="display:flex; justify-content:space-between; align-items:center;"
+          >
+
+            <h3>
+              Bank Gateway Linkage
+            </h3>
+
+            <span class="badge-active-status">
+              RBI Direct Settlement
+            </span>
+
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:10px; margin:16px 0;">
-            <div class="glass-pill" style="padding:12px;">
-              <small style="font-size:9px; color:var(--text-muted);">PFMS REFERENCE NUMBER</small>
-              <strong style="display:block; font-size:12px; color:var(--dark-olive); font-family:monospace;">PFMS-2026-981240</strong>
+
+          <div
+            style="display:flex; flex-direction:column; gap:10px; margin:16px 0;"
+          >
+
+            <div
+              class="glass-pill"
+              style="padding:12px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                PFMS REFERENCE NUMBER
+              </small>
+
+              <strong
+                style="display:block; font-size:12px; color:var(--dark-olive); font-family:monospace;"
+                id="pfms-reference-display"
+              >
+                Pending
+              </strong>
+
             </div>
-            <div class="glass-pill" style="padding:12px;">
-              <small style="font-size:9px; color:var(--text-muted);">RBI UTR NUMBER</small>
-              <strong style="display:block; font-size:12px; color:var(--dark-olive); font-family:monospace;" id="utr-number-display">RBI-UTR-88219401</strong>
+
+
+            <div
+              class="glass-pill"
+              style="padding:12px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                RBI UTR NUMBER
+              </small>
+
+              <strong
+                style="display:block; font-size:12px; color:var(--dark-olive); font-family:monospace;"
+                id="utr-number-display"
+              >
+                Pending
+              </strong>
+
             </div>
-            <div class="glass-pill" style="padding:12px;">
-              <small style="font-size:9px; color:var(--text-muted);">BLOCKCHAIN AUDIT HASH</small>
-              <strong style="display:block; font-size:11px; color:var(--dark-olive); font-family:monospace;">0x71cb89a2f1b0...block#10429</strong>
+
+
+            <div
+              class="glass-pill"
+              style="padding:12px;"
+            >
+
+              <small
+                style="font-size:9px; color:var(--text-muted);"
+              >
+                BLOCKCHAIN AUDIT HASH
+              </small>
+
+              <strong
+                style="display:block; font-size:11px; color:var(--dark-olive); font-family:monospace;"
+                id="blockchain-audit-hash"
+              >
+                Pending
+              </strong>
+
             </div>
+
           </div>
 
-          <p style="font-size:11px; color:var(--text-muted); line-height:1.4;">
-            Real-time synchronization with Public Financial Management System (PFMS) ensures 0 intermediaries. Credit confirmation is transmitted instantaneously via SMS Gateway, FCM push, and WhatsApp.
+
+          <p
+            style="font-size:11px; color:var(--text-muted); line-height:1.4;"
+          >
+            Real-time synchronization with Public Financial Management System
+            (PFMS) ensures 0 intermediaries. Credit confirmation is transmitted
+            instantaneously via SMS Gateway, FCM push, and WhatsApp.
           </p>
-<button class="btn-action-dark" style="margin-top:auto; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);" onclick="verifyLedgerBlock()">
-  <i class="fa-solid fa-cubes"></i> Verify Block on Immutable Ledger
-</button>
+
+
+          <button
+            class="btn-action-dark"
+            style="margin-top:auto; background:#ffffff; color:var(--dark-olive); border:1px solid var(--border-subtle);"
+            onclick="verifyLedgerBlock()"
+          >
+
+            <i class="fa-solid fa-cubes"></i>
+
+            Verify Block on Immutable Ledger
+
+          </button>
+
         </div>
+
       </div>
+
     </div>
 
   </main>
 
+
   <!-- ==================== NOTIFICATION MODAL ==================== -->
-  <div class="modal-backdrop" id="notification-fanout-modal">
+
+  <div
+    class="modal-backdrop"
+    id="notification-fanout-modal"
+  >
+
     <div class="modal-dialog">
-      <div style="background:#555e47; color:#fff; padding:16px; border-radius:16px; margin:-32px -32px 20px -32px; display:flex; justify-content:space-between; align-items:center;">
+
+      <div
+        style="background:#555e47; color:#fff; padding:16px; border-radius:16px; margin:-32px -32px 20px -32px; display:flex; justify-content:space-between; align-items:center;"
+      >
+
         <div>
-          <div style="display:flex; align-items:center; gap:8px;">
+
+          <div
+            style="display:flex; align-items:center; gap:8px;"
+          >
+
             <i class="fa-solid fa-wifi"></i>
-            <strong style="font-size:14px;">Multi-Channel Notification Fan-Out Service</strong>
-            <span style="background:#d4cf48; color:#3f4732; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;">Active Dispatcher</span>
+
+            <strong style="font-size:14px;">
+              Multi-Channel Notification Fan-Out Service
+            </strong>
+
+            <span
+              style="background:#d4cf48; color:#3f4732; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;"
+            >
+              Active Dispatcher
+            </span>
+
           </div>
-          <p style="font-size:10.5px; color:#e2e8d5; margin-top:2px;">Internal notification bus fanning out simultaneously to FCM Push, SMS Gateway, & WhatsApp Business</p>
+
+
+          <p
+            style="font-size:10.5px; color:#e2e8d5; margin-top:2px;"
+          >
+            Internal notification bus fanning out simultaneously to FCM Push,
+            SMS Gateway, & WhatsApp Business
+          </p>
+
         </div>
-        <button onclick="closeNotificationModal()" style="background:transparent; border:none; color:#fff; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+
+
+        <button
+          onclick="closeNotificationModal()"
+          style="background:transparent; border:none; color:#fff; font-size:18px; cursor:pointer;"
+        >
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px;">
-        <div class="glass-pill" style="padding:10px; font-size:11px;">
-          <i class="fa-solid fa-bell" style="color:var(--dark-olive);"></i> <strong>Firebase FCM Push</strong>
-          <p style="font-size:9.5px; color:var(--text-muted);">Smartphones • Avg ~42ms</p>
+
+      <div
+        style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px;"
+      >
+
+        <div
+          class="glass-pill"
+          style="padding:10px; font-size:11px;"
+        >
+
+          <i
+            class="fa-solid fa-bell"
+            style="color:var(--dark-olive);"
+          ></i>
+
+          <strong>
+            Firebase FCM Push
+          </strong>
+
+          <p
+            style="font-size:9.5px; color:var(--text-muted);"
+          >
+            Smartphones • Avg ~42ms
+          </p>
+
         </div>
-        <div class="glass-pill" style="padding:10px; font-size:11px;">
-          <i class="fa-solid fa-comment-sms" style="color:var(--dark-olive);"></i> <strong>SMS Gateway (DLT)</strong>
-          <p style="font-size:9.5px; color:var(--text-muted);">Feature Phones • 100% Reach</p>
+
+
+        <div
+          class="glass-pill"
+          style="padding:10px; font-size:11px;"
+        >
+
+          <i
+            class="fa-solid fa-comment-sms"
+            style="color:var(--dark-olive);"
+          ></i>
+
+          <strong>
+            SMS Gateway (DLT)
+          </strong>
+
+          <p
+            style="font-size:9.5px; color:var(--text-muted);"
+          >
+            Feature Phones • 100% Reach
+          </p>
+
         </div>
-        <div class="glass-pill" style="padding:10px; font-size:11px;">
-          <i class="fa-brands fa-whatsapp" style="color:var(--dark-olive);"></i> <strong>WhatsApp Business</strong>
-          <p style="font-size:9.5px; color:var(--text-muted);">Gupshup API • Media PDFs</p>
+
+
+        <div
+          class="glass-pill"
+          style="padding:10px; font-size:11px;"
+        >
+
+          <i
+            class="fa-brands fa-whatsapp"
+            style="color:var(--dark-olive);"
+          ></i>
+
+          <strong>
+            WhatsApp Business
+          </strong>
+
+          <p
+            style="font-size:9.5px; color:var(--text-muted);"
+          >
+            Gupshup API • Media PDFs
+          </p>
+
         </div>
+
       </div>
 
-      <div class="card-panel" style="background:#fcfdfa;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <strong style="font-size:13px; color:var(--dark-olive);">Slot Confirmed & Token Generated</strong>
-          <span class="tag-kcc" id="modal-token-tag">DOCA-2026-PB-1296</span>
+
+      <div
+        class="card-panel"
+        style="background:#fcfdfa;"
+      >
+
+        <div
+          style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"
+        >
+
+          <strong
+            style="font-size:13px; color:var(--dark-olive);"
+          >
+            Slot Confirmed & Token Generated
+          </strong>
+
+
+          <span
+            class="tag-kcc"
+            id="modal-token-tag"
+          >
+            DOCA-2026-PB-1296
+          </span>
+
         </div>
 
-        <div style="background:#f3f5ee; border:1px solid rgba(63,71,50,0.12); border-radius:10px; padding:12px; font-size:12px; color:var(--dark-olive); margin-bottom:12px;" id="modal-alert-text">
-          DoCA Alert: Slot confirmed for Sardar Ramesh Singh. Token: DOCA-2026-PB-1296 for Wheat (45 qtl) on 2026-09-11 (09:00 AM - 11:00 AM) at Karnal Central Krishi Mandi.
+
+        <div
+          style="background:#f3f5ee; border:1px solid rgba(63,71,50,0.12); border-radius:10px; padding:12px; font-size:12px; color:var(--dark-olive); margin-bottom:12px;"
+          id="modal-alert-text"
+        >
+          DoCA Alert: Slot confirmation will appear here after successful backend booking.
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; font-size:10px;">
-          <div style="background:#eef7ee; padding:8px; border-radius:8px; color:#166534;"><i class="fa-regular fa-circle-check"></i> FCM App Push<br><small>Delivered ~51ms</small></div>
-          <div style="background:#fefce8; padding:8px; border-radius:8px; color:#854d0e;"><i class="fa-regular fa-clock"></i> SMS Gateway<br><small>GovDLT-DOCA-110716</small></div>
-          <div style="background:#eef7ee; padding:8px; border-radius:8px; color:#166534;"><i class="fa-regular fa-circle-check"></i> WhatsApp Business<br><small>Gupshup Delivered</small></div>
+
+        <div
+          style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; font-size:10px;"
+        >
+
+          <div
+            style="background:#eef7ee; padding:8px; border-radius:8px; color:#166534;"
+          >
+
+            <i class="fa-regular fa-circle-check"></i>
+
+            FCM App Push
+
+            <br>
+
+            <small>
+              Dispatcher Ready
+            </small>
+
+          </div>
+
+
+          <div
+            style="background:#fefce8; padding:8px; border-radius:8px; color:#854d0e;"
+          >
+
+            <i class="fa-regular fa-clock"></i>
+
+            SMS Gateway
+
+            <br>
+
+            <small>
+              GovDLT Ready
+            </small>
+
+          </div>
+
+
+          <div
+            style="background:#eef7ee; padding:8px; border-radius:8px; color:#166534;"
+          >
+
+            <i class="fa-regular fa-circle-check"></i>
+
+            WhatsApp Business
+
+            <br>
+
+            <small>
+              Gupshup Ready
+            </small>
+
+          </div>
+
         </div>
+
       </div>
 
-      <button class="btn-action-dark" style="width:100%; margin-top:16px;" onclick="closeNotificationModalAndShowQR()">
-        Done <i class="fa-solid fa-arrow-right"></i>
+
+      <button
+        class="btn-action-dark"
+        style="width:100%; margin-top:16px;"
+        onclick="closeNotificationModalAndShowQR()"
+      >
+
+        Done
+
+        <i class="fa-solid fa-arrow-right"></i>
+
       </button>
+
     </div>
+
   </div>
+
 
   <!-- ==================== QR SLIP PRINT MODAL ==================== -->
-  <div class="modal-backdrop" id="qr-slip-modal">
-    <div class="modal-dialog" style="max-width:480px; text-align:center;">
-      <div style="display:flex; justify-content:flex-end;">
-        <button onclick="closeQRModal()" style="background:transparent; border:none; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+
+  <div
+    class="modal-backdrop"
+    id="qr-slip-modal"
+  >
+
+    <div
+      class="modal-dialog"
+      style="max-width:480px; text-align:center;"
+    >
+
+      <div
+        style="display:flex; justify-content:flex-end;"
+      >
+
+        <button
+          onclick="closeQRModal()"
+          style="background:transparent; border:none; font-size:18px; cursor:pointer;"
+        >
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
       </div>
 
-      <div style="background:#fff; border:2px solid var(--dark-olive); border-radius:16px; padding:20px; display:inline-block; margin-bottom:12px;">
-        <i class="fa-solid fa-qrcode" style="font-size:140px; color:var(--dark-olive);"></i>
-        <small style="display:block; font-size:9px; font-weight:800; color:var(--text-muted); margin-top:4px;">SCAN AT WEIGHBRIDGE / GATE SENSOR</small>
+
+      <div
+        style="background:#fff; border:2px solid var(--dark-olive); border-radius:16px; padding:20px; display:inline-block; margin-bottom:12px;"
+      >
+
+        <i
+          class="fa-solid fa-qrcode"
+          style="font-size:140px; color:var(--dark-olive);"
+        ></i>
+
+
+        <small
+          style="display:block; font-size:9px; font-weight:800; color:var(--text-muted); margin-top:4px;"
+        >
+          SCAN AT WEIGHBRIDGE / GATE SENSOR
+        </small>
+
       </div>
 
-      <div style="text-align:left; font-size:12px; color:var(--dark-olive); display:flex; flex-direction:column; gap:8px; background:#f4f6ee; padding:16px; border-radius:12px;">
-        <div style="display:flex; justify-content:space-between;"><span>Farmer:</span><strong id="qr-farmer-name">Sardar Ramesh Singh</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span>Aadhaar / ID:</span><strong>XXXX-XXXX-4912</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span>Mobile:</span><strong>+91 98765-43210</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span>Crop:</span><strong id="qr-crop-type">Wheat (ਗੇਹੁੰ / ਕਣਕ)</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span>Booked Qty:</span><strong id="qr-booked-qty">45 Quintals</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span>Centre:</span><strong id="qr-mandi-centre">Karnal Central Krishi Mandi</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span>Date & Slot:</span><strong>2026-09-11 (09:00 AM - 11:00 AM)</strong></div>
-        <div style="display:flex; justify-content:space-between;"><span>Vehicle:</span><strong id="qr-vehicle-plate">PB 10 Z 9921 (Tractor Trolley)</strong></div>
+
+      <div
+        style="text-align:left; font-size:12px; color:var(--dark-olive); display:flex; flex-direction:column; gap:8px; background:#f4f6ee; padding:16px; border-radius:12px;"
+      >
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Farmer:
+          </span>
+
+          <strong id="qr-farmer-name">
+            Sardar Ramesh Singh
+          </strong>
+
+        </div>
+
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Aadhaar / ID:
+          </span>
+
+          <strong id="qr-aadhaar-id">
+            XXXX-XXXX-4912
+          </strong>
+
+        </div>
+
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Mobile:
+          </span>
+
+          <strong id="qr-mobile-number">
+            +91 98765-43210
+          </strong>
+
+        </div>
+
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Crop:
+          </span>
+
+          <strong id="qr-crop-type">
+            Wheat (ਗੇਹੁੰ / ਕਣਕ)
+          </strong>
+
+        </div>
+
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Booked Qty:
+          </span>
+
+          <strong id="qr-booked-qty">
+            45 Quintals
+          </strong>
+
+        </div>
+
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Centre:
+          </span>
+
+          <strong id="qr-mandi-centre">
+            Karnal Central Krishi Mandi
+          </strong>
+
+        </div>
+
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Date & Slot:
+          </span>
+
+          <strong id="qr-date-slot">
+            Pending Booking
+          </strong>
+
+        </div>
+
+
+        <div
+          style="display:flex; justify-content:space-between;"
+        >
+
+          <span>
+            Vehicle:
+          </span>
+
+          <strong id="qr-vehicle-plate">
+            PB 10 Z 9921 (Tractor Trolley)
+          </strong>
+
+        </div>
+
       </div>
 
-      <button class="btn-action-dark" style="width:100%; margin-top:16px;" onclick="window.print()">
-        <i class="fa-solid fa-print"></i> Print Token Slip
+
+      <button
+        class="btn-action-dark"
+        style="width:100%; margin-top:16px;"
+        onclick="printTokenSlip()"
+      >
+
+        <i class="fa-solid fa-print"></i>
+
+        Print Token Slip
+
       </button>
+
     </div>
+
   </div>
 
-  <!-- ==================== TECH STACK ARCHITECTURE MODAL ==================== -->
-  <div class="modal-backdrop" id="tech-modal">
+
+  <!-- ==================== TECH STACK MODAL ==================== -->
+
+  <div
+    class="modal-backdrop"
+    id="tech-modal"
+  >
+
     <div class="modal-dialog">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);">
-        <h3 style="color:var(--dark-olive); font-size:18px;"><i class="fa-solid fa-layer-group"></i> DoCA Kisan Setu Tech Stack Architecture</h3>
-        <button onclick="closeTechModal()" style="background:transparent; border:none; font-size:18px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+
+      <div
+        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border-subtle);"
+      >
+
+        <h3
+          style="color:var(--dark-olive); font-size:18px;"
+        >
+
+          <i class="fa-solid fa-layer-group"></i>
+
+          DoCA Kisan Setu Tech Stack Architecture
+
+        </h3>
+
+
+        <button
+          onclick="closeTechModal()"
+          style="background:transparent; border:none; font-size:18px; cursor:pointer;"
+        >
+
+          <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
       </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-        <div style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;">
-          <strong style="color:var(--dark-olive); display:block; margin-bottom:4px;">Database & Concurrency</strong>
-          <p style="color:var(--text-muted); font-size:11px;">PostgreSQL 16 + PostGIS for spatial geofence queries and row-level locking for token reservation.</p>
+
+
+      <div
+        style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"
+      >
+
+        <div
+          style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;"
+        >
+
+          <strong
+            style="color:var(--dark-olive); display:block; margin-bottom:4px;"
+          >
+            Database & Concurrency
+          </strong>
+
+          <p
+            style="color:var(--text-muted); font-size:11px;"
+          >
+            PostgreSQL 16 + PostGIS for spatial geofence queries and
+            row-level locking for token reservation.
+          </p>
+
         </div>
-        <div style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;">
-          <strong style="color:var(--dark-olive); display:block; margin-bottom:4px;">Backend Integration</strong>
-          <p style="color:var(--text-muted); font-size:11px;">Node.js microservices interfaced with Bhoomi land registry APIs & UIDAI Aadhaar verification.</p>
+
+
+        <div
+          style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;"
+        >
+
+          <strong
+            style="color:var(--dark-olive); display:block; margin-bottom:4px;"
+          >
+            Backend Integration
+          </strong>
+
+          <p
+            style="color:var(--text-muted); font-size:11px;"
+          >
+            Node.js microservices interfaced with Bhoomi land registry
+            APIs & UIDAI Aadhaar verification.
+          </p>
+
         </div>
-        <div style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;">
-          <strong style="color:var(--dark-olive); display:block; margin-bottom:4px;">Payment Gateway</strong>
-          <p style="color:var(--text-muted); font-size:11px;">PFMS e-Kuber host-to-host direct settlement gateway for instantaneous bank transfers.</p>
+
+
+        <div
+          style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;"
+        >
+
+          <strong
+            style="color:var(--dark-olive); display:block; margin-bottom:4px;"
+          >
+            Payment Gateway
+          </strong>
+
+          <p
+            style="color:var(--text-muted); font-size:11px;"
+          >
+            PFMS e-Kuber host-to-host direct settlement gateway for
+            instantaneous bank transfers.
+          </p>
+
         </div>
-        <div style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;">
-          <strong style="color:var(--dark-olive); display:block; margin-bottom:4px;">Audit & Security</strong>
-          <p style="color:var(--text-muted); font-size:11px;">Hyperledger Fabric permissioned blockchain layer for unalterable procurement record-keeping.</p>
+
+
+        <div
+          style="background:#f2f4ec; padding:14px; border-radius:12px; font-size:12px;"
+        >
+
+          <strong
+            style="color:var(--dark-olive); display:block; margin-bottom:4px;"
+          >
+            Audit & Security
+          </strong>
+
+          <p
+            style="color:var(--text-muted); font-size:11px;"
+          >
+            Hyperledger Fabric permissioned blockchain layer for
+            unalterable procurement record-keeping.
+          </p>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
 
-  <!-- System Active Footer -->
+
+  <!-- ==================== FOOTER ==================== -->
+
   <footer class="system-footer">
-    <div style="font-size:11px; color:#b3bda5;">
-      <h4 style="color:#fff; font-size:14px; margin-bottom:4px;">Kisan Setu • Department of Consumer Affairs (DoCA)</h4>
-      MINISTRY OF CONSUMER AFFAIRS, FOOD & PUBLIC DISTRIBUTION • NATIONAL INFORMATICS CENTRE
+
+    <div
+      style="font-size:11px; color:#b3bda5;"
+    >
+
+      <h4
+        style="color:#fff; font-size:14px; margin-bottom:4px;"
+      >
+        Kisan Setu • Department of Consumer Affairs (DoCA)
+      </h4>
+
+      MINISTRY OF CONSUMER AFFAIRS, FOOD & PUBLIC DISTRIBUTION
+      • NATIONAL INFORMATICS CENTRE
+
     </div>
+
+
     <div class="footer-right">
+
       <div class="active-indicator-pill">
+
         <span class="active-dot"></span>
-        <span>SYSTEM ACTIVE</span>
+
+        <span>
+          SYSTEM ACTIVE
+        </span>
+
       </div>
+
     </div>
+
   </footer>
 
- <!-- KISAN SETU JAVASCRIPT -->
-<script src="lifestyle.js"></script>
-<script src="navbar.js"></script>
-<script src="stage-toggle.js"></script>
-<script src="verification.js"></script>
-<script src="stage3.js"></script>
-<script src="stage4.js"></script>
-<script src="stage5.js"></script>
-<script src="stage6.js"></script>
-<script src="stage7.js"></script>
-<script src="main.js"></script>
- 
+
+  <!-- ==================== EXTERNAL LIBRARIES ==================== -->
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    crossorigin=""
+  ></script>
+
+
+  <!-- ==================== KISAN SETU JAVASCRIPT ==================== -->
+
+  <script src="lifestyle.js"></script>
+  <script src="navbar.js"></script>
+  <script src="stage-toggle.js"></script>
+  <script src="verification.js"></script>
+  <script src="stage3.js"></script>
+  <script src="stage4.js"></script>
+  <script src="stage5.js"></script>
+  <script src="stage6.js"></script>
+  <script src="stage7.js"></script>
+  <script src="main.js"></script>
+
+
+  <!-- ==================== FRONTEND INTEGRATION ==================== -->
+
+  <script>
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+        // ==========================================
+        // BOOKING DATE
+        // ==========================================
+
+        const bookingDateInput =
+          document.getElementById(
+            "booking-date-input"
+          );
+
+
+        if (bookingDateInput) {
+
+          const now =
+            new Date();
+
+
+          const localDate =
+            new Date(
+              now.getTime() -
+              now.getTimezoneOffset() * 60000
+            )
+              .toISOString()
+              .split("T")[0];
+
+
+          if (!bookingDateInput.value) {
+
+            bookingDateInput.value =
+              localDate;
+          }
+
+
+          bookingDateInput.min =
+            localDate;
+        }
+
+
+        // ==========================================
+        // STAGE 2 GUARD
+        // ==========================================
+
+        const stage2ProceedButton =
+          document.getElementById(
+            "btn-proceed-stage-2"
+          );
+
+
+        if (stage2ProceedButton) {
+
+          stage2ProceedButton.addEventListener(
+            "click",
+            function (event) {
+
+              const verified =
+                sessionStorage.getItem(
+                  "verifiedFarmer"
+                ) === "true" ||
+
+                sessionStorage.getItem(
+                  "farmerVerified"
+                ) === "true";
+
+
+              if (!verified) {
+
+                event.preventDefault();
+
+                alert(
+                  "Complete farmer verification before proceeding to Stage 3."
+                );
+              }
+
+            }
+          );
+        }
+
+
+        // ==========================================
+        // STAGE 5 GUARD
+        // ==========================================
+
+        const stage5ProceedButton =
+          document.getElementById(
+            "btn-proceed-stage-5"
+          );
+
+
+        if (stage5ProceedButton) {
+
+          stage5ProceedButton.addEventListener(
+            "click",
+            function (event) {
+
+              const geofenceVerified =
+                sessionStorage.getItem(
+                  "geofenceVerified"
+                ) === "true";
+
+
+              if (!geofenceVerified) {
+
+                event.preventDefault();
+
+                alert(
+                  "Complete GPS geofence verification before proceeding to Stage 6."
+                );
+              }
+
+            }
+          );
+        }
+
+
+        // ==========================================
+        // INITIAL QUALITY EVALUATION
+        // ==========================================
+
+        if (
+          typeof evaluateQuality ===
+          "function"
+        ) {
+
+          evaluateQuality();
+        }
+
+      }
+    );
+  </script>
+
 </body>
 </html>

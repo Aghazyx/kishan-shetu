@@ -9,8 +9,10 @@
 
 
     /* =====================================================
-       PAGE MAP
-       ===================================================== */
+       CONFIGURATION
+    ===================================================== */
+
+    const API_BASE_URL = "http://localhost:5050";
 
     const ADMIN_PAGES = {
         dashboard: "dashboard.html",
@@ -21,10 +23,12 @@
         reports: "reports.html"
     };
 
+    const FARMER_PORTAL_PATH = "../farmer/index.html";
+
 
     /* =====================================================
        AUTHENTICATION
-       ===================================================== */
+    ===================================================== */
 
     function isAdminAuthenticated() {
 
@@ -38,7 +42,10 @@
                 "kisanSetuAdminSession"
             );
 
-        return authenticated === "true" && !!session;
+        return (
+            authenticated === "true" &&
+            !!session
+        );
     }
 
 
@@ -57,7 +64,7 @@
 
     /* =====================================================
        CURRENT PAGE
-       ===================================================== */
+    ===================================================== */
 
     function getCurrentPage() {
 
@@ -67,21 +74,26 @@
                 .pop()
                 .toLowerCase();
 
+
         if (currentFile === "dashboard.html") {
             return "dashboard";
         }
+
 
         if (currentFile === "farmers.html") {
             return "farmers";
         }
 
+
         if (currentFile === "mandi.html") {
             return "mandi";
         }
 
+
         if (currentFile === "queue.html") {
             return "queue";
         }
+
 
         if (
             currentFile === "payment.html" ||
@@ -90,9 +102,11 @@
             return "payments";
         }
 
+
         if (currentFile === "reports.html") {
             return "reports";
         }
+
 
         return "";
     }
@@ -100,7 +114,7 @@
 
     /* =====================================================
        NAVIGATION
-       ===================================================== */
+    ===================================================== */
 
     function navigateTo(page) {
 
@@ -115,7 +129,7 @@
 
     /* =====================================================
        ADMIN LOGOUT
-       ===================================================== */
+    ===================================================== */
 
     async function logoutAdmin() {
 
@@ -124,10 +138,11 @@
                 "kisanSetuAdminSession"
             );
 
+
         try {
 
             await fetch(
-                "http://localhost:5050/api/admin/logout",
+                `${API_BASE_URL}/api/admin/logout`,
                 {
                     method: "POST",
 
@@ -142,11 +157,6 @@
             );
 
         } catch (error) {
-
-            /*
-             * Local logout must still happen even if
-             * the backend is unavailable.
-             */
 
             console.warn(
                 "Admin logout request failed:",
@@ -168,13 +178,14 @@
         );
 
 
-        window.location.href = "admin.html";
+        window.location.href =
+            "admin.html";
     }
 
 
     /* =====================================================
        ADMIN USER
-       ===================================================== */
+    ===================================================== */
 
     function getAdminUsername() {
 
@@ -183,9 +194,11 @@
                 "kisanSetuAdminUser"
             );
 
+
         if (!storedUser) {
             return "Administrator";
         }
+
 
         try {
 
@@ -201,7 +214,10 @@
 
         } catch (error) {
 
-            return storedUser || "Administrator";
+            return (
+                storedUser ||
+                "Administrator"
+            );
         }
     }
 
@@ -213,8 +229,10 @@
                 "#admin-user-name, .admin-user-name"
             );
 
+
         const username =
             getAdminUsername();
+
 
         elements.forEach(function (element) {
 
@@ -226,18 +244,20 @@
 
 
     /* =====================================================
-       ACTIVE NAV ITEM
-       ===================================================== */
+       ACTIVE NAVIGATION
+    ===================================================== */
 
     function setActiveNavigation() {
 
         const currentPage =
             getCurrentPage();
 
+
         const navLinks =
             document.querySelectorAll(
                 "[data-admin-page]"
             );
+
 
         navLinks.forEach(function (link) {
 
@@ -245,6 +265,7 @@
                 link.getAttribute(
                     "data-admin-page"
                 );
+
 
             if (
                 targetPage === currentPage
@@ -275,8 +296,8 @@
 
 
     /* =====================================================
-       EVENT LISTENERS
-       ===================================================== */
+       ADMIN NAVIGATION LINKS
+    ===================================================== */
 
     function bindNavigation() {
 
@@ -284,6 +305,7 @@
             document.querySelectorAll(
                 "[data-admin-page]"
             );
+
 
         navLinks.forEach(function (link) {
 
@@ -293,22 +315,33 @@
 
                     event.preventDefault();
 
+
                     const page =
                         link.getAttribute(
                             "data-admin-page"
                         );
 
+
                     navigateTo(page);
+
                 }
             );
 
         });
+    }
 
+
+    /* =====================================================
+       LOGOUT BUTTONS
+    ===================================================== */
+
+    function bindLogoutButtons() {
 
         const logoutButtons =
             document.querySelectorAll(
                 "#admin-logout-button, .admin-logout-button"
             );
+
 
         logoutButtons.forEach(function (button) {
 
@@ -324,13 +357,12 @@
             );
 
         });
-
     }
 
 
     /* =====================================================
        FARMER PORTAL SWITCH
-       ===================================================== */
+    ===================================================== */
 
     function bindFarmerPortalSwitch() {
 
@@ -339,14 +371,29 @@
                 ".admin-farmer-portal-button"
             );
 
+
         buttons.forEach(function (button) {
+
+            /*
+             * Always point directly to the real
+             * farmer portal. This prevents stale
+             * ../index.html links from breaking.
+             */
+
+            button.setAttribute(
+                "href",
+                FARMER_PORTAL_PATH
+            );
+
 
             button.addEventListener(
                 "click",
-                function () {
+                function (event) {
+
+                    event.preventDefault();
 
                     window.location.href =
-                        "../index.html";
+                        FARMER_PORTAL_PATH;
 
                 }
             );
@@ -357,7 +404,7 @@
 
     /* =====================================================
        INITIALIZATION
-       ===================================================== */
+    ===================================================== */
 
     function initializeAdminNavigation() {
 
@@ -366,26 +413,27 @@
 
 
         /*
-         * admin.html is the login page.
-         * It must remain accessible without
-         * an existing admin session.
+         * Login page must remain accessible
+         * without an existing admin session.
          */
 
-        if (
-            currentPage !== "" &&
-            currentPage !== "login" &&
+        const isLoginPage =
             window.location.pathname
                 .toLowerCase()
-                .endsWith("/admin/admin.html")
-        ) {
+                .endsWith(
+                    "/admin/admin.html"
+                );
+
+
+        if (isLoginPage) {
 
             return;
         }
 
 
         /*
-         * All authenticated admin pages
-         * require a valid session.
+         * Every authenticated admin page
+         * requires a valid admin session.
          */
 
         if (
@@ -406,26 +454,30 @@
 
         bindNavigation();
 
+        bindLogoutButtons();
+
         bindFarmerPortalSwitch();
     }
 
 
     /* =====================================================
        GLOBAL API
-       ===================================================== */
+    ===================================================== */
 
     window.kisanSetuAdminNavigation = {
 
         navigateTo,
         logoutAdmin,
         isAdminAuthenticated,
-        getAdminUsername
+        requireAdminAuthentication,
+        getAdminUsername,
+        getCurrentPage
     };
 
 
     /* =====================================================
        START
-       ===================================================== */
+    ===================================================== */
 
     if (
         document.readyState ===

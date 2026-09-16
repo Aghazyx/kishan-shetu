@@ -1,28 +1,31 @@
 // ==========================================
-// STAGE / PROGRESS TOGGLE
+// KISAN SETU - STAGE / PROGRESS TOGGLE
 // ==========================================
 
-document.addEventListener('DOMContentLoaded', () => {
+(function () {
+    "use strict";
 
-  const stepItems =
-    document.querySelectorAll('.step-item');
+    /*
+     * Stage navigation is controlled centrally
+     * by main.js.
+     *
+     * This file intentionally does not attach
+     * another click handler to the stepper.
+     *
+     * Keeping a single navigation controller
+     * prevents conflicting active/completed
+     * states between scripts.
+     */
 
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-  stepItems.forEach(item => {
+            console.log(
+                "[Stage Toggle] Navigation delegated to main.js."
+            );
 
-    item.addEventListener('click', (event) => {
+        }
+    );
 
-      // Remove active state from all stages
-      stepItems.forEach(step => {
-        step.classList.remove('active');
-      });
-
-
-      // Activate the selected stage
-      event.currentTarget.classList.add('active');
-
-    });
-
-  });
-
-});
+})();

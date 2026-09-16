@@ -1,45 +1,77 @@
 // ==========================================
-// LIFESTYLE / TAB SWITCHING
+// KISAN SETU - LIFESTYLE / TAB SWITCHING
 // ==========================================
 
-document.addEventListener('DOMContentLoaded', () => {
+(function () {
+    "use strict";
 
-  const tabs =
-    document.querySelectorAll('.tab-item');
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-
-  // ========================================
-  // TAB CLICK HANDLING
-  // ========================================
-
-  tabs.forEach(tab => {
-
-    tab.addEventListener('click', function () {
-
-      // Remove active state from all tabs
-      tabs.forEach(item => {
-        item.classList.remove('active');
-      });
+            const tabs =
+                document.querySelectorAll(
+                    ".tab-item"
+                );
 
 
-      // Activate selected tab
-      this.classList.add('active');
+            // ======================================
+            // TAB CLICK HANDLING
+            // ======================================
+
+            tabs.forEach(
+                function (tab) {
+
+                    tab.addEventListener(
+                        "click",
+                        function () {
+
+                            // Remove active state
+                            // from all tabs
+                            tabs.forEach(
+                                function (item) {
+
+                                    item.classList.remove(
+                                        "active"
+                                    );
+
+                                }
+                            );
 
 
-      // Get selected tab identifier
-      const targetTab =
-        this.getAttribute('data-tab');
+                            // Activate selected tab
+                            tab.classList.add(
+                                "active"
+                            );
 
 
-      // Useful during development
-      if (targetTab) {
-        console.log(
-          `Switched to tab: ${targetTab}`
-        );
-      }
+                            // Get selected tab identifier
+                            const targetTab =
+                                tab.getAttribute(
+                                    "data-tab"
+                                );
 
-    });
 
-  });
+                            if (targetTab) {
 
-});
+                                console.log(
+                                    `[Lifestyle] Switched to tab: ${targetTab}`
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+            console.log(
+                "[Lifestyle] Tab navigation initialized."
+            );
+
+        }
+    );
+
+})();

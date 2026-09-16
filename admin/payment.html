@@ -66,12 +66,19 @@
 
   <header class="admin-navbar">
 
+
+    <!-- ==========================================================
+         LEFT SIDE
+         ========================================================== -->
+
     <div class="admin-navbar-left">
 
       <div class="admin-brand">
 
         <div class="admin-brand-icon">
+
           <i class="fa-solid fa-seedling"></i>
+
         </div>
 
         <span class="admin-brand-name">
@@ -90,6 +97,11 @@
 
     </div>
 
+
+
+    <!-- ==========================================================
+         RIGHT SIDE
+         ========================================================== -->
 
     <div class="admin-navbar-right">
 
@@ -121,6 +133,132 @@
     </div>
 
   </header>
+
+
+
+  <!-- ============================================================
+       ADMIN NAVIGATION
+       ============================================================ -->
+
+  <nav
+    class="admin-navigation"
+    aria-label="Admin Portal Navigation"
+  >
+
+
+    <!-- Dashboard -->
+
+    <a
+      href="dashboard.html"
+      class="admin-nav-item"
+      data-admin-page="dashboard"
+    >
+
+      <i class="fa-solid fa-chart-line"></i>
+
+      Dashboard
+
+    </a>
+
+
+
+    <!-- Farmers -->
+
+    <a
+      href="farmers.html"
+      class="admin-nav-item"
+      data-admin-page="farmers"
+    >
+
+      <i class="fa-solid fa-users"></i>
+
+      Farmers
+
+    </a>
+
+
+
+    <!-- Mandi -->
+
+    <a
+      href="mandi.html"
+      class="admin-nav-item"
+      data-admin-page="mandi"
+    >
+
+      <i class="fa-solid fa-warehouse"></i>
+
+      Mandi & Slots
+
+    </a>
+
+
+
+    <!-- Queue -->
+
+    <a
+      href="queue.html"
+      class="admin-nav-item"
+      data-admin-page="queue"
+    >
+
+      <i class="fa-solid fa-list-ol"></i>
+
+      Live Queue
+
+    </a>
+
+
+
+    <!-- Payments -->
+
+    <a
+      href="payment.html"
+      class="admin-nav-item active"
+      data-admin-page="payments"
+    >
+
+      <i class="fa-solid fa-money-bill-transfer"></i>
+
+      Payments
+
+    </a>
+
+
+
+    <!-- Reports -->
+
+    <a
+      href="reports.html"
+      class="admin-nav-item"
+      data-admin-page="reports"
+    >
+
+      <i class="fa-solid fa-file-chart-column"></i>
+
+      Reports
+
+    </a>
+
+
+
+    <!-- Farmer Portal -->
+
+    <a
+      href="../farmer/index.html"
+      class="admin-nav-item admin-farmer-portal-button"
+      title="Open Farmer Portal"
+    >
+
+      <i class="fa-solid fa-user"></i>
+
+      Farmer Portal
+
+      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+    </a>
+
+  </nav>
 
 
 
@@ -234,8 +372,6 @@
     <section class="payment-summary-grid">
 
 
-      <!-- TOTAL PAYMENT VALUE -->
-
       <article class="payment-summary-card">
 
         <div class="payment-summary-icon">
@@ -263,8 +399,6 @@
       </article>
 
 
-
-      <!-- PENDING PAYMENTS -->
 
       <article class="payment-summary-card">
 
@@ -294,8 +428,6 @@
 
 
 
-      <!-- PFMS BATCHED -->
-
       <article class="payment-summary-card">
 
         <div class="payment-summary-icon">
@@ -323,8 +455,6 @@
       </article>
 
 
-
-      <!-- DBT DISPATCHED -->
 
       <article class="payment-summary-card">
 
@@ -363,8 +493,6 @@
     <section class="payment-monitoring-panel">
 
 
-      <!-- PANEL HEADER -->
-
       <div class="payment-panel-header">
 
         <div>
@@ -400,13 +528,9 @@
       <div class="payment-filter-toolbar">
 
 
-        <!-- SEARCH -->
-
         <div class="payment-filter-group payment-search-group">
 
-          <label
-            for="payment-search"
-          >
+          <label for="payment-search">
             Search
           </label>
 
@@ -429,20 +553,14 @@
 
 
 
-        <!-- CENTER -->
-
         <div class="payment-filter-group">
 
-          <label
-            for="payment-center-filter"
-          >
+          <label for="payment-center-filter">
             Mandi Center
           </label>
 
 
-          <select
-            id="payment-center-filter"
-          >
+          <select id="payment-center-filter">
 
             <option value="all">
               All Centers
@@ -462,20 +580,14 @@
 
 
 
-        <!-- PAYMENT STATUS -->
-
         <div class="payment-filter-group">
 
-          <label
-            for="payment-status-filter"
-          >
+          <label for="payment-status-filter">
             Payment Status
           </label>
 
 
-          <select
-            id="payment-status-filter"
-          >
+          <select id="payment-status-filter">
 
             <option value="all">
               All Statuses
@@ -503,20 +615,14 @@
 
 
 
-        <!-- DATE -->
-
         <div class="payment-filter-group">
 
-          <label
-            for="payment-date-filter"
-          >
+          <label for="payment-date-filter">
             Date
           </label>
 
 
-          <select
-            id="payment-date-filter"
-          >
+          <select id="payment-date-filter">
 
             <option value="all">
               All Dates
@@ -845,10 +951,18 @@
 
 
   <!-- ============================================================
+       SHARED ADMIN NAVIGATION
+       ============================================================ -->
+
+  <script src="admin-navigation.js"></script>
+
+
+  <!-- ============================================================
        A6 JAVASCRIPT
        ============================================================ -->
 
   <script src="payment.js"></script>
+
 
 </body>
 

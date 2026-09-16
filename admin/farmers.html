@@ -10,9 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Kisan Setu | Farmer Management
-    </title>
+    <title>Kisan Setu | Farmer Management</title>
 
 
     <!-- =========================================================
@@ -59,6 +57,17 @@
         href="admin_navbar.css"
     >
 
+    <!--
+        Dashboard navbar styling is loaded here so that
+        the Farmers page uses the same top-level navbar
+        structure as the Dashboard page.
+    -->
+
+    <link
+        rel="stylesheet"
+        href="dashboard.css"
+    >
+
 
     <!-- =========================================================
          FONT AWESOME
@@ -77,143 +86,132 @@
 
     <!-- =========================================================
          ADMIN HEADER
+         Matches the Dashboard admin header structure
     ========================================================== -->
 
-    <header class="admin-header">
+    <header class="navbar">
 
-        <div class="admin-brand">
 
-            <div class="admin-brand-icon">
+        <!-- =====================================================
+             LEFT SIDE
+        ====================================================== -->
 
-                <i class="fa-solid fa-seedling"></i>
+        <div class="navbar-left">
+
+
+            <!-- Brand -->
+
+            <div class="brand">
+
+                <div class="brand-icon">
+
+                    <i class="fa-solid fa-seedling"></i>
+
+                </div>
+
+
+                <div class="brand-text">
+
+                    <div class="brand-name">
+                        Kisan Setu
+                    </div>
+
+                    <div class="brand-subtitle">
+                        Administration Portal
+                    </div>
+
+                </div>
 
             </div>
 
 
-            <div>
+            <!-- =================================================
+                 ADMIN NAVIGATION
+            ================================================== -->
 
-                <div class="admin-brand-title">
-                    Kisan Setu
-                </div>
+            <nav
+                class="admin-navigation"
+                aria-label="Admin Portal Navigation"
+            >
 
-                <div class="admin-brand-subtitle">
-                    Administration Portal
-                </div>
+                <a
+                    href="dashboard.html"
+                    class="admin-nav-item"
+                    data-admin-page="dashboard"
+                >
+                    Dashboard
+                </a>
 
-            </div>
+
+                <a
+                    href="farmers.html"
+                    class="admin-nav-item active"
+                    data-admin-page="farmers"
+                >
+                    Farmers
+                </a>
+
+
+                <a
+                    href="mandi.html"
+                    class="admin-nav-item"
+                    data-admin-page="mandi"
+                >
+                    Mandi
+                </a>
+
+
+                <a
+                    href="queue.html"
+                    class="admin-nav-item"
+                    data-admin-page="queue"
+                >
+                    Queue
+                </a>
+
+
+                <a
+                    href="payment.html"
+                    class="admin-nav-item"
+                    data-admin-page="payments"
+                >
+                    Payments
+                </a>
+
+
+                <a
+                    href="reports.html"
+                    class="admin-nav-item"
+                    data-admin-page="reports"
+                >
+                    Reports
+                </a>
+
+            </nav>
 
         </div>
 
 
-        <!-- =====================================================
-             ADMIN NAVIGATION
-        ====================================================== -->
-
-        <nav
-            class="admin-navigation"
-            aria-label="Admin Portal Navigation"
-        >
-
-            <a
-                href="dashboard.html"
-                class="admin-nav-item"
-                data-admin-page="dashboard"
-            >
-
-                <i class="fa-solid fa-chart-line"></i>
-
-                Dashboard
-
-            </a>
-
-
-            <a
-                href="farmers.html"
-                class="admin-nav-item active"
-                data-admin-page="farmers"
-            >
-
-                <i class="fa-solid fa-users"></i>
-
-                Farmers
-
-            </a>
-
-
-            <a
-                href="mandi.html"
-                class="admin-nav-item"
-                data-admin-page="mandi"
-            >
-
-                <i class="fa-solid fa-warehouse"></i>
-
-                Mandi & Slots
-
-            </a>
-
-
-            <a
-                href="queue.html"
-                class="admin-nav-item"
-                data-admin-page="queue"
-            >
-
-                <i class="fa-solid fa-list-ol"></i>
-
-                Live Queue
-
-            </a>
-
-
-            <a
-                href="payment.html"
-                class="admin-nav-item"
-                data-admin-page="payments"
-            >
-
-                <i class="fa-solid fa-money-bill-transfer"></i>
-
-                Payments
-
-            </a>
-
-
-            <a
-                href="reports.html"
-                class="admin-nav-item"
-                data-admin-page="reports"
-            >
-
-                <i class="fa-solid fa-file-chart-column"></i>
-
-                Reports
-
-            </a>
-
-        </nav>
-
 
         <!-- =====================================================
-             ADMIN ACCOUNT / PORTAL SWITCH
+             RIGHT SIDE
         ====================================================== -->
 
-        <div class="admin-header-right">
+        <div class="navbar-right">
 
 
-            <!-- Farmer Portal Switch -->
+            <!-- Farmer Portal -->
 
             <a
-                href="../index.html"
+                href="../farmer/index.html"
+                id="admin-farmer-portal-link"
                 class="admin-farmer-portal-button"
                 title="Open Farmer Portal"
             >
 
-                <i class="fa-solid fa-user"></i>
-
                 Farmer Portal
 
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <i class="fa-solid fa-arrow-right"></i>
 
             </a>
 
@@ -238,8 +236,6 @@
                 id="admin-logout-button"
                 class="admin-logout-button"
             >
-
-                <i class="fa-solid fa-right-from-bracket"></i>
 
                 Logout
 
@@ -328,6 +324,7 @@
             </article>
 
 
+
             <!-- Active Bookings -->
 
             <article class="farmer-summary-card">
@@ -353,6 +350,7 @@
             </article>
 
 
+
             <!-- Total Procurement -->
 
             <article class="farmer-summary-card">
@@ -376,6 +374,7 @@
                 </div>
 
             </article>
+
 
 
             <!-- Total Payout -->
@@ -563,9 +562,7 @@
                     </thead>
 
 
-                    <tbody id="farmer-table-body">
-
-                    </tbody>
+                    <tbody id="farmer-table-body"></tbody>
 
                 </table>
 
