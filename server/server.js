@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -6033,7 +6034,139 @@ app.get(
       }
     })
 );
+/* ============================================================
+   OPENWEATHERMAP WEATHER API
+   ============================================================ */
 
+app.get(
+  '/api/weather',
+  async (req, res) => {
+
+    try {
+
+      const city =
+        String(
+          req.query.city || 'Ludhiana'
+        ).trim();
+
+      const apiKey =
+        process.env.WEATHER_API_KEY;
+
+      if (!apiKey) {
+
+        return res.status(500).json({
+          success: false,
+
+          message:
+            'Weather API key is not configured on the server.'
+        });
+
+      }
+
+      if (!city) {
+
+        return res.status(400).json({
+          success: false,
+
+          message:
+            'City is required.'
+        });
+
+      }
+
+      const weatherUrl =
+        `https://api.openweathermap.org/data/2.5/weather` +
+        `?q=${encodeURIComponent(city)}` +
+        `&appid=${encodeURIComponent(apiKey)}` +
+        `&units=metric`;
+
+      const response =
+        await fetch(weatherUrl);
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        console.error(
+          '[Weather API Error]',
+          data
+        );
+
+        return res.status(
+          response.status
+        ).json({
+          success: false,
+
+          message:
+            data?.message ||
+            'Unable to fetch weather data.'
+        });
+
+      }
+
+      return res.json({
+
+        success: true,
+
+        weather: {
+
+          city:
+            data.name,
+
+          country:
+            data.sys?.country || '',
+
+          temperature:
+            data.main?.temp ?? null,
+
+          feelsLike:
+            data.main?.feels_like ?? null,
+
+          humidity:
+            data.main?.humidity ?? null,
+
+          pressure:
+            data.main?.pressure ?? null,
+
+          windSpeed:
+            data.wind?.speed ?? null,
+
+          weather:
+            data.weather?.[0]?.main || '',
+
+          description:
+            data.weather?.[0]?.description || '',
+
+          icon:
+            data.weather?.[0]?.icon || '',
+
+          visibility:
+            data.visibility ?? null
+
+        }
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        '[Weather Server Error]',
+        error
+      );
+
+      return res.status(500).json({
+
+        success: false,
+
+        message:
+          'Failed to connect to the weather service.'
+      });
+
+    }
+
+  }
+);
 /* ============================================================
    404 API HANDLER
    ============================================================ */

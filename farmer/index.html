@@ -859,6 +859,16 @@
       box-shadow: 0 0 8px #3cd070;
     }
 
+    @media (max-width: 650px) {
+      #osrm-route-summary {
+        grid-template-columns: 1fr !important;
+      }
+
+      #osrm-route-map {
+        height: 390px !important;
+      }
+    }
+
     @media (max-width: 992px) {
       .content-grid {
         grid-template-columns: 1fr;
@@ -869,6 +879,370 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ==================== LIVE MANDI PRICES UI ==================== */
+
+    .mandi-launch-card {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(63, 71, 50, 0.98), rgba(82, 94, 67, 0.96));
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 10px 26px rgba(63, 71, 50, 0.14);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .mandi-launch-copy {
+      min-width: 0;
+      flex: 1 1 520px;
+    }
+
+    .mandi-launch-kicker {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.9px;
+      color: #dfe7d5;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mandi-launch-card h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0 0 5px 0;
+      color: #ffffff;
+    }
+
+    .mandi-launch-card p {
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #e7ecdf;
+      margin: 0;
+      max-width: 700px;
+    }
+
+    .mandi-launch-meta {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .mandi-launch-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f4f6ef;
+      font-size: 9.5px;
+      font-weight: 700;
+    }
+
+    .mandi-launch-meta .mandi-demo-pill {
+      background: #fff7ed;
+      color: #9a3412;
+      border-color: #fed7aa;
+    }
+
+    .mandi-launch-button {
+      flex: 0 0 auto;
+      border: none;
+      border-radius: 11px;
+      background: #ffffff;
+      color: var(--dark-olive);
+      padding: 12px 17px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      white-space: nowrap;
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.14);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .mandi-launch-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+    }
+
+    .mandi-launch-button:active {
+      transform: translateY(0);
+    }
+
+    .mandi-modal-dialog {
+      max-width: 1200px;
+      width: 96%;
+      max-height: 94vh;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .mandi-modal-header {
+      background: linear-gradient(135deg, #3f4732, #535d43);
+      color: #ffffff;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .mandi-modal-header-kicker {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.9px;
+      color: #dbe4d0;
+      margin-bottom: 4px;
+    }
+
+    .mandi-modal-header h3 {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .mandi-modal-header p {
+      font-size: 10.5px;
+      color: #e4eadc;
+      line-height: 1.45;
+      margin: 5px 0 0;
+    }
+
+    .mandi-modal-close {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.10);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mandi-modal-close:hover {
+      background: rgba(255, 255, 255, 0.17);
+    }
+
+    .mandi-modal-body {
+      padding: 16px 20px 14px;
+      overflow-y: auto;
+      max-height: calc(94vh - 78px);
+      background: #ffffff;
+    }
+
+    .mandi-demo-notice {
+      padding: 10px 12px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      border-radius: 9px;
+      font-size: 10.5px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .mandi-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .mandi-summary-card {
+      background: #f3f5ee;
+      border: 1px solid rgba(63, 71, 50, 0.10);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .mandi-summary-card small {
+      display: block;
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .mandi-summary-card strong {
+      display: block;
+      font-size: 17px;
+      color: var(--dark-olive);
+      font-weight: 800;
+    }
+
+    .mandi-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .mandi-search-wrap {
+      position: relative;
+      flex: 1 1 330px;
+      min-width: 220px;
+    }
+
+    .mandi-search-wrap i {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--light-olive);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .mandi-search-input,
+    .mandi-state-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid rgba(63, 71, 50, 0.16);
+      border-radius: 9px;
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 11.5px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .mandi-search-input {
+      padding-left: 33px;
+    }
+
+    .mandi-search-input:focus,
+    .mandi-state-select:focus {
+      border-color: var(--light-olive);
+      box-shadow: 0 0 0 3px rgba(138, 150, 116, 0.12);
+    }
+
+    .mandi-state-wrap {
+      flex: 0 0 190px;
+    }
+
+    .mandi-result-count {
+      margin-left: auto;
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .mandi-table-shell {
+      overflow: auto;
+      border: 1px solid rgba(63, 71, 50, 0.10);
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .mandi-data-table {
+      width: 100%;
+      min-width: 1040px;
+      border-collapse: collapse;
+      font-size: 10.5px;
+    }
+
+    .mandi-data-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 10px 9px;
+      background: #eff3e9;
+      color: var(--dark-olive);
+      font-size: 9.5px;
+      font-weight: 800;
+      text-align: left;
+      border-bottom: 1px solid rgba(63, 71, 50, 0.12);
+      white-space: nowrap;
+    }
+
+    .mandi-data-table tbody td {
+      padding: 9px;
+      border-bottom: 1px solid rgba(63, 71, 50, 0.07);
+      color: #4a5142;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .mandi-data-table tbody tr:nth-child(even) {
+      background: #fafbf8;
+    }
+
+    .mandi-data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mandi-data-table .crop-name {
+      color: var(--dark-olive);
+      font-weight: 800;
+    }
+
+    .mandi-data-table .modal-price {
+      color: #1b5e20;
+      font-weight: 800;
+    }
+
+    .mandi-data-table .price-cell,
+    .mandi-data-table .arrival-cell {
+      text-align: right;
+    }
+
+    .mandi-empty-row td {
+      text-align: center;
+      padding: 28px 12px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .mandi-modal-footer {
+      margin-top: 10px;
+      font-size: 9.5px;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 760px) {
+      .mandi-summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .mandi-state-wrap {
+        flex: 1 1 180px;
+      }
+
+      .mandi-result-count {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .mandi-launch-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* ==================== END LIVE MANDI PRICES UI ==================== */
+
   </style>
 </head>
 
@@ -1834,33 +2208,68 @@
           </div>
 
 
-          <div class="crop-card">
-    <div class="crop-header">
-        <div>
-            <h4>Wheat (ਕਣਕ / Wheat)</h4>
-            <span class="crop-season">Rabi 2025–26</span>
-        </div>
-        <span class="cap-badge" id="wheat-cap">Not fetched</span>
-    </div>
-    <div class="mandi-price-tag" style="margin-top: 10px; padding: 6px 10px; background: rgba(46, 125, 50, 0.08); border-radius: 6px; border: 1px solid rgba(46, 125, 50, 0.2); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
-        <span style="color: #2e7d32; font-weight: 600;">🌾 Live Mandi Rate:</span>
-        <strong style="color: #1b5e20;">₹2,610 / quintal</strong>
-    </div>
-</div>
+<!-- ==================== LIVE MANDI PRICES FEATURE ==================== -->
 
-<div class="crop-card">
-    <div class="crop-header">
-        <div>
-            <h4>Paddy Grade A (ਝੋਨਾ)</h4>
-            <span class="crop-season">Kharif 2025–26</span>
-        </div>
-        <span class="cap-badge" id="paddy-cap">Not fetched</span>
-    </div>
-    <div class="mandi-price-tag" style="margin-top: 10px; padding: 6px 10px; background: rgba(46, 125, 50, 0.08); border-radius: 6px; border: 1px solid rgba(46, 125, 50, 0.2); display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
-        <span style="color: #2e7d32; font-weight: 600;">🌾 Live Mandi Rate:</span>
-        <strong style="color: #1b5e20;">₹2,485 / quintal</strong>
-    </div>
-</div>
+          <div
+            class="mandi-launch-card"
+            id="mandi-launch-card"
+          >
+
+            <div class="mandi-launch-copy">
+
+              <div class="mandi-launch-kicker">
+                <i class="fa-solid fa-chart-line"></i>
+                MARKET INTELLIGENCE
+              </div>
+
+              <h3>
+                🌾 Live Mandi Prices
+              </h3>
+
+              <p>
+                Explore crop-wise mandi rates, market ranges, mandi locations,
+                and estimated arrivals in a single dashboard.
+              </p>
+
+              <div class="mandi-launch-meta">
+
+                <span>
+                  <i class="fa-solid fa-seedling"></i>
+                  51 demo market records
+                </span>
+
+                <span>
+                  <i class="fa-solid fa-location-dot"></i>
+                  Multiple states & mandis
+                </span>
+
+                <span class="mandi-demo-pill">
+                  DEMO DATA
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="mandi-launch-button"
+              id="btn-open-mandi-prices"
+              onclick="openMandiPricesModal()"
+            >
+
+              <span>
+                View Mandi Prices
+              </span>
+
+              <i class="fa-solid fa-arrow-right"></i>
+
+            </button>
+
+          </div>
+
+          <!-- ==================== END LIVE MANDI PRICES FEATURE ==================== -->
 
 
           <button
@@ -2896,6 +3305,78 @@
               Eligible for Check-In
 
             </span>
+
+          </div>
+
+
+          <!-- OSRM ROUTE PLANNER -->
+
+          <div
+            class="glass-pill"
+            style="
+              margin-top:14px;
+              padding:14px;
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              gap:14px;
+              flex-wrap:wrap;
+            "
+          >
+
+            <div style="min-width:220px;">
+
+              <div
+                style="
+                  font-size:10px;
+                  font-weight:800;
+                  letter-spacing:.5px;
+                  color:var(--text-muted);
+                  text-transform:uppercase;
+                "
+              >
+                OpenStreetMap Route Engine
+              </div>
+
+              <strong
+                style="
+                  display:block;
+                  color:var(--dark-olive);
+                  font-size:13px;
+                  margin-top:3px;
+                "
+              >
+                🧭 Route to Target Mandi
+              </strong>
+
+              <p
+                style="
+                  font-size:10.5px;
+                  color:var(--text-muted);
+                  margin-top:4px;
+                  line-height:1.45;
+                "
+              >
+                Uses OpenStreetMap road data and the OSRM routing service
+                to calculate distance and estimated travel time.
+              </p>
+
+            </div>
+
+
+            <button
+              type="button"
+              class="btn-action-dark"
+              id="btn-open-osrm-route"
+              onclick="openOsrmRouteModal()"
+              style="margin-top:0; white-space:nowrap;"
+            >
+
+              <i class="fa-solid fa-route"></i>
+
+              Show Route & ETA
+
+            </button>
 
           </div>
 
@@ -4028,6 +4509,358 @@
   </div>
 
 
+  <!-- ==================== LIVE MANDI PRICES MODAL ==================== -->
+
+  <div
+    class="modal-backdrop"
+    id="mandi-prices-modal"
+    aria-hidden="true"
+  >
+
+    <div
+      class="modal-dialog mandi-modal-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mandi-prices-title"
+    >
+
+      <div class="mandi-modal-header">
+
+        <div>
+
+          <div class="mandi-modal-header-kicker">
+            KISAN SETU • MARKET INTELLIGENCE
+          </div>
+
+          <h3 id="mandi-prices-title">
+            🌾 Live Mandi Prices
+          </h3>
+
+          <p>
+            Crop-wise market price, market range and estimated mandi arrivals.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="mandi-modal-close"
+          id="btn-close-mandi-prices"
+          onclick="closeMandiPricesModal()"
+          aria-label="Close Live Mandi Prices"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+      </div>
+
+
+      <div class="mandi-modal-body">
+
+        <div class="mandi-demo-notice">
+          <strong>Prototype / demonstration dataset:</strong>
+          the records below are fabricated sample values created to demonstrate
+          the intended mandi-price interface. They are <strong>not live
+          Agmarknet prices</strong> and are not sourced from a live API.
+        </div>
+
+
+        <div class="mandi-summary-grid">
+
+          <div class="mandi-summary-card">
+            <small>Market records</small>
+            <strong id="mandi-summary-records">51</strong>
+          </div>
+
+          <div class="mandi-summary-card">
+            <small>Unique crops</small>
+            <strong id="mandi-summary-crops">0</strong>
+          </div>
+
+          <div class="mandi-summary-card">
+            <small>States covered</small>
+            <strong id="mandi-summary-states">0</strong>
+          </div>
+
+          <div class="mandi-summary-card">
+            <small>Markets / mandis</small>
+            <strong id="mandi-summary-markets">0</strong>
+          </div>
+
+        </div>
+
+
+        <div class="mandi-toolbar">
+
+          <div class="mandi-search-wrap">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+              type="search"
+              id="mandi-search-input"
+              class="mandi-search-input"
+              placeholder="Search crop, variety, mandi, district or state..."
+              autocomplete="off"
+              oninput="filterMandiPrices()"
+            >
+
+          </div>
+
+
+          <div class="mandi-state-wrap">
+
+            <select
+              id="mandi-state-filter"
+              class="mandi-state-select"
+              onchange="filterMandiPrices()"
+            >
+              <option value="">All States</option>
+            </select>
+
+          </div>
+
+
+          <span
+            id="mandi-result-count"
+            class="mandi-result-count"
+          >
+            50 records
+          </span>
+
+        </div>
+
+
+        <div class="mandi-table-shell">
+
+          <table class="mandi-data-table">
+
+            <thead>
+              <tr>
+
+                <th>#</th>
+                <th>Crop</th>
+                <th>Variety / Grade</th>
+                <th>Market / Mandi</th>
+                <th>District</th>
+                <th>State</th>
+                <th style="text-align:right;">Min ₹/q</th>
+                <th style="text-align:right;">Modal ₹/q</th>
+                <th style="text-align:right;">Max ₹/q</th>
+                <th style="text-align:right;">Arrival (q)</th>
+
+              </tr>
+            </thead>
+
+            <tbody id="mandi-price-table-body"></tbody>
+
+          </table>
+
+        </div>
+
+
+        <div class="mandi-modal-footer">
+          Prices are displayed in ₹ per quintal. Arrival figures are shown in
+          quintals. Min, Modal, Max and Arrival values are illustrative demo
+          records for this prototype.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==================== END LIVE MANDI PRICES MODAL ==================== -->
+
+  <!-- ==================== OSRM ROUTE MODAL ==================== -->
+
+  <div
+    class="modal-backdrop"
+    id="osrm-route-modal"
+    aria-hidden="true"
+  >
+
+    <div
+      class="modal-dialog"
+      style="max-width:1000px; width:94%; padding:22px;"
+    >
+
+      <div
+        style="
+          display:flex;
+          justify-content:space-between;
+          align-items:flex-start;
+          gap:14px;
+          margin-bottom:14px;
+          padding-bottom:12px;
+          border-bottom:1px solid var(--border-subtle);
+        "
+      >
+
+        <div>
+
+          <div
+            style="
+              font-size:10px;
+              font-weight:800;
+              letter-spacing:.6px;
+              color:var(--text-muted);
+            "
+          >
+            OPENSTREETMAP • OSRM
+          </div>
+
+          <h3
+            style="
+              color:var(--dark-olive);
+              font-size:20px;
+              margin-top:4px;
+            "
+          >
+            <i class="fa-solid fa-route"></i> Route to Target Mandi
+          </h3>
+
+          <p
+            style="
+              color:var(--text-muted);
+              font-size:11px;
+              margin-top:4px;
+            "
+            id="osrm-route-subtitle"
+          >
+            Calculating road route from your current location.
+          </p>
+
+        </div>
+
+
+        <button
+          type="button"
+          onclick="closeOsrmRouteModal()"
+          aria-label="Close route planner"
+          style="
+            background:transparent;
+            border:none;
+            font-size:18px;
+            cursor:pointer;
+            color:var(--dark-olive);
+            width:32px;
+            height:32px;
+          "
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+      </div>
+
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:repeat(3, 1fr);
+          gap:10px;
+          margin-bottom:12px;
+        "
+        id="osrm-route-summary"
+      >
+
+        <div class="glass-pill" style="padding:11px;">
+          <small style="display:block; font-size:9px; color:var(--text-muted);">FROM</small>
+          <strong id="osrm-from-label" style="display:block; margin-top:4px; font-size:12px; color:var(--dark-olive);">Awaiting GPS</strong>
+        </div>
+
+        <div class="glass-pill" style="padding:11px;">
+          <small style="display:block; font-size:9px; color:var(--text-muted);">ROAD DISTANCE</small>
+          <strong id="osrm-distance-label" style="display:block; margin-top:4px; font-size:15px; color:var(--dark-olive);">--</strong>
+        </div>
+
+        <div class="glass-pill" style="padding:11px;">
+          <small style="display:block; font-size:9px; color:var(--text-muted);">EST. DRIVE TIME</small>
+          <strong id="osrm-duration-label" style="display:block; margin-top:4px; font-size:15px; color:var(--dark-olive);">--</strong>
+        </div>
+
+      </div>
+
+
+      <div
+        id="osrm-route-map"
+        style="
+          width:100%;
+          height:470px;
+          border-radius:16px;
+          overflow:hidden;
+          border:1px solid rgba(63,71,50,.15);
+          background:#e5e7df;
+        "
+        aria-label="OpenStreetMap road route to target mandi"
+      ></div>
+
+
+      <div
+        style="
+          margin-top:10px;
+          padding:10px 12px;
+          border-radius:9px;
+          background:#f4f6ef;
+          color:var(--text-muted);
+          font-size:10px;
+          line-height:1.5;
+        "
+        id="osrm-route-status"
+      >
+        Route status: waiting for location.
+      </div>
+
+
+      <div
+        style="
+          margin-top:10px;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          gap:10px;
+          flex-wrap:wrap;
+        "
+      >
+
+        <span
+          style="
+            font-size:9.5px;
+            color:var(--text-muted);
+          "
+        >
+          OpenStreetMap map data • OSRM demo routing service
+        </span>
+
+        <button
+          type="button"
+          onclick="useOsrmDemoLocation()"
+          style="
+            border:1px solid rgba(63,71,50,.18);
+            background:#fff;
+            color:var(--dark-olive);
+            border-radius:8px;
+            padding:7px 10px;
+            font-size:10px;
+            font-weight:700;
+            cursor:pointer;
+          "
+        >
+          Use Demo Vehicle Location
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ==================== END OSRM ROUTE MODAL ==================== -->
+
   <!-- ==================== TECH STACK MODAL ==================== -->
 
   <div
@@ -4348,6 +5181,1333 @@
       }
     );
   </script>
+
+  <!-- ==================== OPENSTREETMAP / OSRM ROUTING JAVASCRIPT ==================== -->
+
+  <script>
+
+    /*
+     * This route planner is deliberately isolated from the existing
+     * Stage 5 geofence map. It creates its own Leaflet map in a modal,
+     * so the existing GPS/geofence implementation is left untouched.
+     */
+
+    const KISAN_SETU_OSRM_TARGET = {
+      name: "Khanna Grain Market",
+      latitude: 30.702877,
+      longitude: 76.220222
+    };
+
+    let kisanSetuOsrmMap = null;
+    let kisanSetuOsrmRouteLayer = null;
+    let kisanSetuOsrmVehicleMarker = null;
+    let kisanSetuOsrmMandiMarker = null;
+
+
+    function setOsrmRouteStatus(message) {
+      const status =
+        document.getElementById("osrm-route-status");
+
+      if (status) {
+        status.textContent = message;
+      }
+    }
+
+
+    function setOsrmRouteText(id, text) {
+      const element =
+        document.getElementById(id);
+
+      if (element) {
+        element.textContent = text;
+      }
+    }
+
+
+    function getOsrmDemoVehicleLocation() {
+      return {
+        latitude: 30.739800,
+        longitude: 76.205600
+      };
+    }
+
+
+    function getOsrmTargetFromStage5() {
+      const mandiName =
+        document.getElementById("geofence-mandi-name");
+
+      return {
+        name:
+          mandiName && mandiName.textContent.trim()
+            ? mandiName.textContent.trim()
+            : KISAN_SETU_OSRM_TARGET.name,
+        latitude:
+          KISAN_SETU_OSRM_TARGET.latitude,
+        longitude:
+          KISAN_SETU_OSRM_TARGET.longitude
+      };
+    }
+
+
+    function ensureOsrmMap() {
+      const container =
+        document.getElementById("osrm-route-map");
+
+      if (!container || typeof window.L === "undefined") {
+        return false;
+      }
+
+      if (!kisanSetuOsrmMap) {
+
+        kisanSetuOsrmMap =
+          window.L.map(container, {
+            zoomControl: true
+          });
+
+        window.L.tileLayer(
+          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+          }
+        ).addTo(kisanSetuOsrmMap);
+
+      }
+
+      window.setTimeout(function () {
+        if (kisanSetuOsrmMap) {
+          kisanSetuOsrmMap.invalidateSize(true);
+        }
+      }, 100);
+
+      return true;
+    }
+
+
+    function clearOsrmRouteLayer() {
+      if (
+        kisanSetuOsrmMap &&
+        kisanSetuOsrmRouteLayer
+      ) {
+        kisanSetuOsrmMap.removeLayer(
+          kisanSetuOsrmRouteLayer
+        );
+
+        kisanSetuOsrmRouteLayer = null;
+      }
+
+      if (
+        kisanSetuOsrmMap &&
+        kisanSetuOsrmVehicleMarker
+      ) {
+        kisanSetuOsrmMap.removeLayer(
+          kisanSetuOsrmVehicleMarker
+        );
+
+        kisanSetuOsrmVehicleMarker = null;
+      }
+
+      if (
+        kisanSetuOsrmMap &&
+        kisanSetuOsrmMandiMarker
+      ) {
+        kisanSetuOsrmMap.removeLayer(
+          kisanSetuOsrmMandiMarker
+        );
+
+        kisanSetuOsrmMandiMarker = null;
+      }
+    }
+
+
+    async function fetchOsrmRoute(
+      vehicle,
+      target,
+      isDemoLocation
+    ) {
+
+      if (!ensureOsrmMap()) {
+        setOsrmRouteStatus(
+          "Route map is not ready yet. Please try again."
+        );
+        return;
+      }
+
+      clearOsrmRouteLayer();
+
+      const routeUrl =
+        "https://router.project-osrm.org/route/v1/driving/" +
+        `${vehicle.longitude},${vehicle.latitude};` +
+        `${target.longitude},${target.latitude}` +
+        "?overview=full&geometries=geojson&steps=false";
+
+      setOsrmRouteStatus(
+        "Calculating the road route with OSRM..."
+      );
+
+      setOsrmRouteText(
+        "osrm-from-label",
+        isDemoLocation
+          ? "Demo vehicle position"
+          : "Current GPS position"
+      );
+
+      try {
+
+        const response =
+          await fetch(routeUrl);
+
+        const data =
+          await response.json();
+
+        if (
+          !response.ok ||
+          data.code !== "Ok" ||
+          !data.routes ||
+          !data.routes.length
+        ) {
+          throw new Error(
+            data.message ||
+            "No road route was returned."
+          );
+        }
+
+        const route =
+          data.routes[0];
+
+        const geometry =
+          route.geometry;
+
+        kisanSetuOsrmRouteLayer =
+          window.L.geoJSON(
+            geometry,
+            {
+              style: {
+                weight: 5,
+                opacity: 0.9
+              }
+            }
+          ).addTo(kisanSetuOsrmMap);
+
+        kisanSetuOsrmVehicleMarker =
+          window.L.marker([
+            vehicle.latitude,
+            vehicle.longitude
+          ])
+            .addTo(kisanSetuOsrmMap)
+            .bindPopup("Vehicle GPS Location")
+            .openPopup();
+
+        kisanSetuOsrmMandiMarker =
+          window.L.marker([
+            target.latitude,
+            target.longitude
+          ])
+            .addTo(kisanSetuOsrmMap)
+            .bindPopup(target.name);
+
+        const bounds =
+          kisanSetuOsrmRouteLayer.getBounds();
+
+        if (bounds.isValid()) {
+          kisanSetuOsrmMap.fitBounds(
+            bounds,
+            {
+              padding: [35, 35],
+              maxZoom: 15
+            }
+          );
+        }
+
+        const distanceKm =
+          Number(route.distance || 0) / 1000;
+
+        const durationMinutes =
+          Math.round(
+            Number(route.duration || 0) / 60
+          );
+
+        setOsrmRouteText(
+          "osrm-distance-label",
+          `${distanceKm.toFixed(1)} km`
+        );
+
+        setOsrmRouteText(
+          "osrm-duration-label",
+          durationMinutes < 60
+            ? `${durationMinutes} min`
+            : `${Math.floor(durationMinutes / 60)} hr ${durationMinutes % 60} min`
+        );
+
+        setOsrmRouteText(
+          "osrm-route-subtitle",
+          `Road route to ${target.name}`
+        );
+
+        setOsrmRouteStatus(
+          isDemoLocation
+            ? "Demo route loaded successfully. Switch back to the real GPS option on a device with location access."
+            : "Road route loaded successfully from the current browser GPS location."
+        );
+
+        window.setTimeout(function () {
+          if (kisanSetuOsrmMap) {
+            kisanSetuOsrmMap.invalidateSize(true);
+          }
+        }, 250);
+
+      } catch (error) {
+
+        console.error(
+          "[Kisan Setu] OSRM route error:",
+          error
+        );
+
+        setOsrmRouteText(
+          "osrm-distance-label",
+          "--"
+        );
+
+        setOsrmRouteText(
+          "osrm-duration-label",
+          "--"
+        );
+
+        setOsrmRouteStatus(
+          "Unable to load the road route. You can use the demo vehicle location and try again."
+        );
+
+      }
+    }
+
+
+    function loadOsrmRouteFromGPS() {
+
+      const target =
+        getOsrmTargetFromStage5();
+
+      if (!navigator.geolocation) {
+        useOsrmDemoLocation();
+        return;
+      }
+
+      setOsrmRouteStatus(
+        "Requesting your browser GPS location..."
+      );
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+
+          fetchOsrmRoute(
+            {
+              latitude:
+                position.coords.latitude,
+              longitude:
+                position.coords.longitude
+            },
+            target,
+            false
+          );
+
+        },
+        function (error) {
+
+          console.warn(
+            "[Kisan Setu] Route GPS unavailable:",
+            error
+          );
+
+          setOsrmRouteStatus(
+            "GPS permission/location is unavailable. Loading the demo route instead..."
+          );
+
+          useOsrmDemoLocation();
+
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    }
+
+
+    function useOsrmDemoLocation() {
+
+      const target =
+        getOsrmTargetFromStage5();
+
+      const demoLocation =
+        getOsrmDemoVehicleLocation();
+
+      fetchOsrmRoute(
+        demoLocation,
+        target,
+        true
+      );
+    }
+
+
+    function openOsrmRouteModal() {
+
+      const modal =
+        document.getElementById("osrm-route-modal");
+
+      if (!modal) {
+        return;
+      }
+
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+
+      document.body.style.overflow = "hidden";
+
+      setOsrmRouteText(
+        "osrm-distance-label",
+        "--"
+      );
+
+      setOsrmRouteText(
+        "osrm-duration-label",
+        "--"
+      );
+
+      setOsrmRouteText(
+        "osrm-from-label",
+        "Awaiting GPS"
+      );
+
+      setOsrmRouteStatus(
+        "Preparing route planner..."
+      );
+
+      if (typeof window.L === "undefined") {
+        setOsrmRouteStatus(
+          "Leaflet map library is not available."
+        );
+        return;
+      }
+
+      ensureOsrmMap();
+      loadOsrmRouteFromGPS();
+    }
+
+
+    function closeOsrmRouteModal() {
+
+      const modal =
+        document.getElementById("osrm-route-modal");
+
+      if (!modal) {
+        return;
+      }
+
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+
+      document.body.style.overflow = "";
+    }
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+        const modal =
+          document.getElementById("osrm-route-modal");
+
+        if (modal) {
+
+          modal.addEventListener(
+            "click",
+            function (event) {
+
+              if (event.target === modal) {
+                closeOsrmRouteModal();
+              }
+
+            }
+          );
+        }
+
+        document.addEventListener(
+          "keydown",
+          function (event) {
+
+            if (
+              event.key === "Escape" &&
+              modal &&
+              modal.classList.contains("open")
+            ) {
+              closeOsrmRouteModal();
+            }
+
+          }
+        );
+
+      }
+    );
+
+  </script>
+
+  <!-- ==================== END OPENSTREETMAP / OSRM ROUTING JAVASCRIPT ==================== -->
+
+  <!-- ==================== LIVE MANDI PRICES JAVASCRIPT ==================== -->
+
+  <script>
+    const KISAN_SETU_MANDI_DEMO_DATA = [
+  {
+    "crop": "Wheat",
+    "variety": "FAQ",
+    "mandi": "Khanna Grain Market",
+    "district": "Ludhiana",
+    "state": "Punjab",
+    "min": 2520,
+    "modal": 2610,
+    "max": 2690,
+    "arrivals": 1840
+  },
+  {
+    "crop": "Paddy",
+    "variety": "Grade A",
+    "mandi": "Karnal Central Mandi",
+    "district": "Karnal",
+    "state": "Haryana",
+    "min": 2390,
+    "modal": 2485,
+    "max": 2560,
+    "arrivals": 2420
+  },
+  {
+    "crop": "Maize",
+    "variety": "Yellow",
+    "mandi": "Gulabbagh Mandi",
+    "district": "Purnia",
+    "state": "Bihar",
+    "min": 2050,
+    "modal": 2140,
+    "max": 2220,
+    "arrivals": 1160
+  },
+  {
+    "crop": "Mustard",
+    "variety": "FAQ",
+    "mandi": "Bharatpur Mandi",
+    "district": "Bharatpur",
+    "state": "Rajasthan",
+    "min": 5180,
+    "modal": 5420,
+    "max": 5610,
+    "arrivals": 870
+  },
+  {
+    "crop": "Potato",
+    "variety": "Jyoti",
+    "mandi": "Arambagh Mandi",
+    "district": "Hooghly",
+    "state": "West Bengal",
+    "min": 1720,
+    "modal": 1950,
+    "max": 2140,
+    "arrivals": 2760
+  },
+  {
+    "crop": "Tomato",
+    "variety": "Hybrid",
+    "mandi": "Koley Market",
+    "district": "Kolkata",
+    "state": "West Bengal",
+    "min": 1900,
+    "modal": 2250,
+    "max": 2600,
+    "arrivals": 540
+  },
+  {
+    "crop": "Onion",
+    "variety": "Medium",
+    "mandi": "Lasalgaon Mandi",
+    "district": "Nashik",
+    "state": "Maharashtra",
+    "min": 2050,
+    "modal": 2280,
+    "max": 2520,
+    "arrivals": 3150
+  },
+  {
+    "crop": "Soybean",
+    "variety": "Yellow",
+    "mandi": "Indore Mandi",
+    "district": "Indore",
+    "state": "Madhya Pradesh",
+    "min": 4420,
+    "modal": 4680,
+    "max": 4920,
+    "arrivals": 1980
+  },
+  {
+    "crop": "Chickpea",
+    "variety": "Desi Chana",
+    "mandi": "Akola Mandi",
+    "district": "Akola",
+    "state": "Maharashtra",
+    "min": 5080,
+    "modal": 5260,
+    "max": 5430,
+    "arrivals": 720
+  },
+  {
+    "crop": "Groundnut",
+    "variety": "Bold",
+    "mandi": "Rajkot Mandi",
+    "district": "Rajkot",
+    "state": "Gujarat",
+    "min": 5350,
+    "modal": 5640,
+    "max": 5910,
+    "arrivals": 1120
+  },
+  {
+    "crop": "Cotton",
+    "variety": "Medium Staple",
+    "mandi": "Sirsa Mandi",
+    "district": "Sirsa",
+    "state": "Haryana",
+    "min": 6620,
+    "modal": 6870,
+    "max": 7080,
+    "arrivals": 640
+  },
+  {
+    "crop": "Sugarcane",
+    "variety": "Fresh Cane",
+    "mandi": "Muzaffarnagar Mandi",
+    "district": "Muzaffarnagar",
+    "state": "Uttar Pradesh",
+    "min": 3180,
+    "modal": 3320,
+    "max": 3450,
+    "arrivals": 2940
+  },
+  {
+    "crop": "Barley",
+    "variety": "FAQ",
+    "mandi": "Alwar Mandi",
+    "district": "Alwar",
+    "state": "Rajasthan",
+    "min": 1980,
+    "modal": 2080,
+    "max": 2180,
+    "arrivals": 580
+  },
+  {
+    "crop": "Lentil",
+    "variety": "Masur",
+    "mandi": "Lalganj Mandi",
+    "district": "Pratapgarh",
+    "state": "Uttar Pradesh",
+    "min": 5620,
+    "modal": 5840,
+    "max": 6020,
+    "arrivals": 690
+  },
+  {
+    "crop": "Jute",
+    "variety": "TD-5",
+    "mandi": "Cooch Behar Mandi",
+    "district": "Cooch Behar",
+    "state": "West Bengal",
+    "min": 5950,
+    "modal": 6180,
+    "max": 6420,
+    "arrivals": 460
+  },
+  {
+    "crop": "Green Gram",
+    "variety": "Moong",
+    "mandi": "Nagaur Mandi",
+    "district": "Nagaur",
+    "state": "Rajasthan",
+    "min": 6250,
+    "modal": 6480,
+    "max": 6720,
+    "arrivals": 430
+  },
+  {
+    "crop": "Turmeric",
+    "variety": "Finger",
+    "mandi": "Erode Mandi",
+    "district": "Erode",
+    "state": "Tamil Nadu",
+    "min": 11200,
+    "modal": 11650,
+    "max": 12150,
+    "arrivals": 390
+  },
+  {
+    "crop": "Cabbage",
+    "variety": "Fresh",
+    "mandi": "Koley Market",
+    "district": "Kolkata",
+    "state": "West Bengal",
+    "min": 820,
+    "modal": 980,
+    "max": 1180,
+    "arrivals": 340
+  },
+  {
+    "crop": "Cauliflower",
+    "variety": "Fresh",
+    "mandi": "Burdwan Mandi",
+    "district": "Purba Bardhaman",
+    "state": "West Bengal",
+    "min": 1100,
+    "modal": 1360,
+    "max": 1620,
+    "arrivals": 410
+  },
+  {
+    "crop": "Brinjal",
+    "variety": "Round",
+    "mandi": "Jangipur Mandi",
+    "district": "Murshidabad",
+    "state": "West Bengal",
+    "min": 1200,
+    "modal": 1480,
+    "max": 1760,
+    "arrivals": 280
+  },
+  {
+    "crop": "Green Chilli",
+    "variety": "Fresh",
+    "mandi": "Koley Market",
+    "district": "Kolkata",
+    "state": "West Bengal",
+    "min": 2400,
+    "modal": 2780,
+    "max": 3100,
+    "arrivals": 230
+  },
+  {
+    "crop": "Rice",
+    "variety": "Common",
+    "mandi": "Burdwan Rice Market",
+    "district": "Purba Bardhaman",
+    "state": "West Bengal",
+    "min": 3050,
+    "modal": 3260,
+    "max": 3480,
+    "arrivals": 1420
+  },
+  {
+    "crop": "Ragi",
+    "variety": "FAQ",
+    "mandi": "Mysuru Mandi",
+    "district": "Mysuru",
+    "state": "Karnataka",
+    "min": 3260,
+    "modal": 3480,
+    "max": 3690,
+    "arrivals": 520
+  },
+  {
+    "crop": "Tur / Arhar",
+    "variety": "FAQ",
+    "mandi": "Gulbarga Mandi",
+    "district": "Kalaburagi",
+    "state": "Karnataka",
+    "min": 7120,
+    "modal": 7360,
+    "max": 7620,
+    "arrivals": 620
+  },
+  {
+    "crop": "Urad",
+    "variety": "FAQ",
+    "mandi": "Guntur Mandi",
+    "district": "Guntur",
+    "state": "Andhra Pradesh",
+    "min": 6520,
+    "modal": 6780,
+    "max": 7040,
+    "arrivals": 480
+  },
+  {
+    "crop": "Sesame",
+    "variety": "White Sesame",
+    "mandi": "Khambhat Mandi",
+    "district": "Anand",
+    "state": "Gujarat",
+    "min": 7320,
+    "modal": 7650,
+    "max": 7980,
+    "arrivals": 360
+  },
+  {
+    "crop": "Sunflower",
+    "variety": "FAQ",
+    "mandi": "Haveri Mandi",
+    "district": "Haveri",
+    "state": "Karnataka",
+    "min": 5080,
+    "modal": 5320,
+    "max": 5580,
+    "arrivals": 290
+  },
+  {
+    "crop": "Sweet Corn",
+    "variety": "Fresh",
+    "mandi": "Bengaluru Rural Mandi",
+    "district": "Bengaluru Rural",
+    "state": "Karnataka",
+    "min": 2150,
+    "modal": 2380,
+    "max": 2620,
+    "arrivals": 210
+  },
+  {
+    "crop": "Black Pepper",
+    "variety": "FAQ",
+    "mandi": "Wayanad Market",
+    "district": "Wayanad",
+    "state": "Kerala",
+    "min": 52000,
+    "modal": 54500,
+    "max": 57000,
+    "arrivals": 120
+  },
+  {
+    "crop": "Chilli Dry",
+    "variety": "Teja",
+    "mandi": "Guntur Market",
+    "district": "Guntur",
+    "state": "Andhra Pradesh",
+    "min": 10800,
+    "modal": 11400,
+    "max": 12100,
+    "arrivals": 550
+  },
+  {
+    "crop": "Mango",
+    "variety": "Himsagar",
+    "mandi": "Malda Mango Mandi",
+    "district": "Malda",
+    "state": "West Bengal",
+    "min": 4200,
+    "modal": 4750,
+    "max": 5300,
+    "arrivals": 320
+  },
+  {
+    "crop": "Banana",
+    "variety": "G9",
+    "mandi": "Jalgaon Mandi",
+    "district": "Jalgaon",
+    "state": "Maharashtra",
+    "min": 1500,
+    "modal": 1720,
+    "max": 1940,
+    "arrivals": 760
+  },
+  {
+    "crop": "Papaya",
+    "variety": "Red Lady",
+    "mandi": "Kolar Mandi",
+    "district": "Kolar",
+    "state": "Karnataka",
+    "min": 1550,
+    "modal": 1820,
+    "max": 2080,
+    "arrivals": 210
+  },
+  {
+    "crop": "Ginger",
+    "variety": "Fresh",
+    "mandi": "Siliguri Mandi",
+    "district": "Darjeeling",
+    "state": "West Bengal",
+    "min": 5200,
+    "modal": 5660,
+    "max": 6120,
+    "arrivals": 340
+  },
+  {
+    "crop": "Garlic",
+    "variety": "New Crop",
+    "mandi": "Mandsaur Mandi",
+    "district": "Mandsaur",
+    "state": "Madhya Pradesh",
+    "min": 6200,
+    "modal": 6840,
+    "max": 7450,
+    "arrivals": 840
+  },
+  {
+    "crop": "Peas",
+    "variety": "Green",
+    "mandi": "Azadpur Market",
+    "district": "North Delhi",
+    "state": "Delhi",
+    "min": 3200,
+    "modal": 3650,
+    "max": 4100,
+    "arrivals": 510
+  },
+  {
+    "crop": "Carrot",
+    "variety": "Red",
+    "mandi": "Azadpur Market",
+    "district": "North Delhi",
+    "state": "Delhi",
+    "min": 1800,
+    "modal": 2140,
+    "max": 2460,
+    "arrivals": 390
+  },
+  {
+    "crop": "Spinach",
+    "variety": "Leafy",
+    "mandi": "Kolkata Wholesale Market",
+    "district": "Kolkata",
+    "state": "West Bengal",
+    "min": 700,
+    "modal": 920,
+    "max": 1160,
+    "arrivals": 180
+  },
+  {
+    "crop": "Okra",
+    "variety": "Tender",
+    "mandi": "Vijayawada Mandi",
+    "district": "NTR",
+    "state": "Andhra Pradesh",
+    "min": 2100,
+    "modal": 2460,
+    "max": 2790,
+    "arrivals": 250
+  },
+  {
+    "crop": "Coconut",
+    "variety": "Fresh",
+    "mandi": "Tiptur Market",
+    "district": "Tumakuru",
+    "state": "Karnataka",
+    "min": 2850,
+    "modal": 3150,
+    "max": 3450,
+    "arrivals": 430
+  },
+  {
+    "crop": "Cashew",
+    "variety": "Raw",
+    "mandi": "Kasaragod Market",
+    "district": "Kasaragod",
+    "state": "Kerala",
+    "min": 9800,
+    "modal": 10350,
+    "max": 11000,
+    "arrivals": 180
+  },
+  {
+    "crop": "Coffee",
+    "variety": "Arabica",
+    "mandi": "Chikmagalur Market",
+    "district": "Chikkamagaluru",
+    "state": "Karnataka",
+    "min": 17600,
+    "modal": 18500,
+    "max": 19400,
+    "arrivals": 140
+  },
+  {
+    "crop": "Cardamom",
+    "variety": "Small",
+    "mandi": "Kattappana Market",
+    "district": "Idukki",
+    "state": "Kerala",
+    "min": 92000,
+    "modal": 96500,
+    "max": 101000,
+    "arrivals": 85
+  },
+  {
+    "crop": "Cumin",
+    "variety": "FAQ",
+    "mandi": "Unjha Mandi",
+    "district": "Mehsana",
+    "state": "Gujarat",
+    "min": 28500,
+    "modal": 30200,
+    "max": 31800,
+    "arrivals": 260
+  },
+  {
+    "crop": "Coriander Seed",
+    "variety": "FAQ",
+    "mandi": "Ramganj Mandi",
+    "district": "Jhalawar",
+    "state": "Rajasthan",
+    "min": 6400,
+    "modal": 6720,
+    "max": 7050,
+    "arrivals": 510
+  },
+  {
+    "crop": "Fennel",
+    "variety": "FAQ",
+    "mandi": "Unjha Mandi",
+    "district": "Mehsana",
+    "state": "Gujarat",
+    "min": 5400,
+    "modal": 5750,
+    "max": 6120,
+    "arrivals": 230
+  },
+  {
+    "crop": "Millet",
+    "variety": "Pearl Millet",
+    "mandi": "Bikaner Mandi",
+    "district": "Bikaner",
+    "state": "Rajasthan",
+    "min": 2080,
+    "modal": 2240,
+    "max": 2400,
+    "arrivals": 620
+  },
+  {
+    "crop": "Sorghum",
+    "variety": "Jowar",
+    "mandi": "Solapur Mandi",
+    "district": "Solapur",
+    "state": "Maharashtra",
+    "min": 3000,
+    "modal": 3260,
+    "max": 3490,
+    "arrivals": 410
+  },
+  {
+    "crop": "Sesamum",
+    "variety": "Black Sesame",
+    "mandi": "Balasore Mandi",
+    "district": "Balasore",
+    "state": "Odisha",
+    "min": 6800,
+    "modal": 7200,
+    "max": 7550,
+    "arrivals": 270
+  },
+  {
+    "crop": "Mustard Seed",
+    "variety": "Yellow",
+    "mandi": "Bharatpur Mandi",
+    "district": "Bharatpur",
+    "state": "Rajasthan",
+    "min": 5050,
+    "modal": 5310,
+    "max": 5550,
+    "arrivals": 810
+  },
+  {
+    "crop": "Pigeon Pea",
+    "variety": "Tur Dal",
+    "mandi": "Latur Mandi",
+    "district": "Latur",
+    "state": "Maharashtra",
+    "min": 6900,
+    "modal": 7220,
+    "max": 7530,
+    "arrivals": 560
+  }
+];
+
+
+    function renderMandiPrices(data) {
+      const tableBody = document.getElementById("mandi-price-table-body");
+      const resultCount = document.getElementById("mandi-result-count");
+
+      if (!tableBody) {
+        return;
+      }
+
+      if (!data.length) {
+        tableBody.innerHTML = `
+          <tr class="mandi-empty-row">
+            <td colspan="10">
+              No mandi records match your search/filter.
+            </td>
+          </tr>
+        `;
+
+        if (resultCount) {
+          resultCount.textContent = "0 records";
+        }
+
+        return;
+      }
+
+      tableBody.innerHTML = data.map(function (item, index) {
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td class="crop-name">${escapeMandiHtml(item.crop)}</td>
+            <td>${escapeMandiHtml(item.variety)}</td>
+            <td>${escapeMandiHtml(item.mandi)}</td>
+            <td>${escapeMandiHtml(item.district)}</td>
+            <td>${escapeMandiHtml(item.state)}</td>
+            <td class="price-cell">₹${formatMandiNumber(item.min)}</td>
+            <td class="price-cell modal-price">₹${formatMandiNumber(item.modal)}</td>
+            <td class="price-cell">₹${formatMandiNumber(item.max)}</td>
+            <td class="arrival-cell">${formatMandiNumber(item.arrivals)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      if (resultCount) {
+        resultCount.textContent =
+          data.length + (data.length === 1 ? " record" : " records");
+      }
+    }
+
+
+    function formatMandiNumber(value) {
+      return Number(value).toLocaleString("en-IN");
+    }
+
+
+    function escapeMandiHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
+    function filterMandiPrices() {
+      const searchInput =
+        document.getElementById("mandi-search-input");
+
+      const stateFilter =
+        document.getElementById("mandi-state-filter");
+
+      const searchText =
+        searchInput
+          ? searchInput.value.trim().toLowerCase()
+          : "";
+
+      const selectedState =
+        stateFilter
+          ? stateFilter.value.trim().toLowerCase()
+          : "";
+
+      const filteredData =
+        KISAN_SETU_MANDI_DEMO_DATA.filter(function (item) {
+
+          const searchableText = [
+            item.crop,
+            item.variety,
+            item.mandi,
+            item.district,
+            item.state
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          const matchesSearch =
+            !searchText ||
+            searchableText.includes(searchText);
+
+          const matchesState =
+            !selectedState ||
+            item.state.toLowerCase() === selectedState;
+
+          return matchesSearch && matchesState;
+        });
+
+      renderMandiPrices(filteredData);
+    }
+
+
+    function populateMandiStateFilter() {
+      const stateFilter =
+        document.getElementById("mandi-state-filter");
+
+      if (!stateFilter) {
+        return;
+      }
+
+      const states =
+        [...new Set(
+          KISAN_SETU_MANDI_DEMO_DATA
+            .map(function (item) {
+              return item.state;
+            })
+        )].sort();
+
+      stateFilter.innerHTML =
+        '<option value="">All States</option>' +
+        states.map(function (state) {
+          return `
+            <option value="${escapeMandiHtml(state)}">
+              ${escapeMandiHtml(state)}
+            </option>
+          `;
+        }).join("");
+    }
+
+
+    function updateMandiSummary() {
+      const records =
+        document.getElementById("mandi-summary-records");
+
+      const crops =
+        document.getElementById("mandi-summary-crops");
+
+      const states =
+        document.getElementById("mandi-summary-states");
+
+      const markets =
+        document.getElementById("mandi-summary-markets");
+
+      const cropCount =
+        new Set(
+          KISAN_SETU_MANDI_DEMO_DATA.map(function (item) {
+            return item.crop;
+          })
+        ).size;
+
+      const stateCount =
+        new Set(
+          KISAN_SETU_MANDI_DEMO_DATA.map(function (item) {
+            return item.state;
+          })
+        ).size;
+
+      const marketCount =
+        new Set(
+          KISAN_SETU_MANDI_DEMO_DATA.map(function (item) {
+            return item.mandi;
+          })
+        ).size;
+
+      if (records) {
+        records.textContent =
+          KISAN_SETU_MANDI_DEMO_DATA.length;
+      }
+
+      if (crops) {
+        crops.textContent =
+          cropCount;
+      }
+
+      if (states) {
+        states.textContent =
+          stateCount;
+      }
+
+      if (markets) {
+        markets.textContent =
+          marketCount;
+      }
+    }
+
+
+    function openMandiPricesModal() {
+      const modal =
+        document.getElementById("mandi-prices-modal");
+
+      if (!modal) {
+        return;
+      }
+
+      populateMandiStateFilter();
+      updateMandiSummary();
+
+      const searchInput =
+        document.getElementById("mandi-search-input");
+
+      const stateFilter =
+        document.getElementById("mandi-state-filter");
+
+      if (searchInput) {
+        searchInput.value = "";
+      }
+
+      if (stateFilter) {
+        stateFilter.value = "";
+      }
+
+      renderMandiPrices(KISAN_SETU_MANDI_DEMO_DATA);
+
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+
+      document.body.style.overflow = "hidden";
+
+      window.setTimeout(function () {
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 50);
+    }
+
+
+    function closeMandiPricesModal() {
+      const modal =
+        document.getElementById("mandi-prices-modal");
+
+      if (!modal) {
+        return;
+      }
+
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+
+      document.body.style.overflow = "";
+    }
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      function () {
+
+        populateMandiStateFilter();
+        updateMandiSummary();
+        renderMandiPrices(KISAN_SETU_MANDI_DEMO_DATA);
+
+        const modal =
+          document.getElementById("mandi-prices-modal");
+
+        if (modal) {
+          modal.addEventListener(
+            "click",
+            function (event) {
+              if (event.target === modal) {
+                closeMandiPricesModal();
+              }
+            }
+          );
+        }
+
+        document.addEventListener(
+          "keydown",
+          function (event) {
+            if (
+              event.key === "Escape" &&
+              modal &&
+              modal.classList.contains("open")
+            ) {
+              closeMandiPricesModal();
+            }
+          }
+        );
+
+      }
+    );
+  </script>
+
+  <!-- ==================== END LIVE MANDI PRICES JAVASCRIPT ==================== -->
 
 </body>
 </html>
