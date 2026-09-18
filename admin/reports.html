@@ -1,324 +1,841 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>
-    Reports & Analytics | Kisan Setu Admin Portal
-  </title>
-
-
-  <!-- ============================================================
-       SHARED STYLES
-       ============================================================ -->
-
-  <link
-    rel="stylesheet"
-    href="../main.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="admin_navbar.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="../footer.css"
-  >
-
-
-  <!-- ============================================================
-       A7 PAGE STYLES
-       ============================================================ -->
-
-  <link
-    rel="stylesheet"
-    href="reports.css"
-  >
-
-
-  <!-- ============================================================
-       FONT AWESOME
-       ============================================================ -->
-
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports & Analytics | Kisan Setu Admin Portal</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/8524/8524310.png">
+  <link rel="stylesheet" href="../main.css">
+  <link rel="stylesheet" href="admin_navbar.css">
+  <link rel="stylesheet" href="../footer.css">
+  <link rel="stylesheet" href="reports.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest-dark:#121f0d;
+  --forest:#30401c;
+  --moss:#526532;
+  --sage:#758850;
+  --apple:#98a973;
+  --light-sage:#b9c798;
+  --cream-green:#dce7be;
+  --gold:#c9a24b;
+  --gold-soft:#e3cf94;
+  --page-bg:#e7edd5;
+  --card-bg:rgba(255,255,255,.96);
+  --card-bg-solid:#fffefb;
+  --text-main:#121f0d;
+  --text-muted:#526532;
+  --border-color:rgba(48,64,28,.13);
+  --shadow-sm:0 3px 10px rgba(18,31,13,.06);
+  --shadow-md:0 8px 24px rgba(18,31,13,.10)
+}
+body.dark-mode {
+  --page-bg:#0c1707;
+  --card-bg:rgba(24,35,17,.96);
+  --card-bg-solid:#182311;
+  --text-main:#eef4df;
+  --text-muted:#b9c798;
+  --border-color:rgba(185,199,152,.16);
+  --shadow-sm:0 3px 10px rgba(0,0,0,.20);
+  --shadow-md:0 8px 24px rgba(0,0,0,.28)
+}
+* {
+  box-sizing:border-box
+}
+html,body {
+  margin:0;
+  min-height:100%
+}
+body {
+  font-family:'Inter',sans-serif;
+  color:var(--text-main);
+  background:radial-gradient(circle at top left,rgba(255,255,255,.8),transparent 38%),radial-gradient(circle at bottom right,rgba(117,136,80,.20),transparent 42%),var(--page-bg);
+  transition:background .3s ease,color .3s ease
+}
+body.dark-mode {
+  background:radial-gradient(circle at top left,rgba(82,101,50,.12),transparent 40%),radial-gradient(circle at bottom right,rgba(152,169,115,.07),transparent 42%),#0c1707
+}
+button,input,select {
+  font-family:inherit
+}
+/* ADMIN */.top-nav-bar {
+  position:relative;
+  margin:14px 16px 10px;
+  min-height:84px;
+  padding:15px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  color:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  background:linear-gradient(90deg,rgba(12,23,7,.90),rgba(18,31,13,.76)),url("52565520646011763.jpg");
+  background-size:cover;
+  background-position:center 46%;
+  box-shadow:0 10px 28px rgba(12,23,7,.22);
+  border:1px solid rgba(255,255,255,.16)
+}
+.top-nav-bar::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 85% 20%,rgba(201,162,75,.18),transparent 28%);
+  pointer-events:none
+}
+.top-nav-bar>* {
+  position:relative;
+  z-index:2
+}
+.nav-left-brand {
+  min-width:275px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  text-decoration:none
+}
+.brand-logo-img {
+  width:48px;
+  height:48px;
+  object-fit:contain
+}
+.brand-title-group {
+  display:flex;
+  flex-direction:column;
+  gap:2px
+}
+.brand-title-group small {
+  color:var(--gold-soft);
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:1.5px
+}
+.brand-title-group strong {
+  color:#fff;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:21px;
+  font-weight:800
+}
+.nav-right-actions {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  flex-wrap:wrap
+}
+.header-glass-control {
+  background:rgba(12,23,7,.63);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(12px);
+  color:#fff
+}
+.user-pill-container {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 10px 6px 13px;
+  border-radius:12px;
+  background:rgba(12,23,7,.64);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(12px)
+}
+.user-details {
+  text-align:right
+}
+.user-name {
+  display:block;
+  color:#fff;
+  font-size:12px;
+  font-weight:700
+}
+.user-verified-tag {
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:4px;
+  margin-top:2px;
+  color:var(--light-sage);
+  font-size:9px;
+  font-weight:700
+}
+.user-avatar {
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:linear-gradient(135deg,#c9a24b,#9a742b);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  box-shadow:0 4px 10px rgba(0,0,0,.25)
+}
+.theme-toggle-btn,.icon-notification-btn {
+  width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  border-radius:10px;
+  cursor:pointer;
+  position:relative
+}
+.notification-badge {
+  position:absolute;
+  top:-3px;
+  right:-3px;
+  min-width:16px;
+  height:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:20px;
+  background:var(--gold);
+  color:var(--forest-dark);
+  font-size:8px;
+  font-weight:800;
+  border:2px solid var(--forest-dark)
+}
+.lang-select-box {
+  min-height:38px;
+  padding:0 10px;
+  border-radius:10px;
+  outline:none;
+  font-size:11px;
+  font-weight:600
+}
+.lang-select-box option {
+  background:var(--forest-dark);
+  color:#fff
+}
+.btn-farmer-portal,.btn-logout {
+  min-height:38px;
+  padding:0 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer
+}
+.btn-farmer-portal {
+  border:1px solid #fff;
+  background:rgba(255,255,255,.96);
+  color:var(--forest-dark)
+}
+.btn-logout {
+  border:1px solid #fca5a5;
+  background:#dc4545;
+  color:#fff
+}
+/* NAVIGATION */.secondary-module-nav {
+  margin:0 16px 18px;
+  padding:7px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:6px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--forest-dark),#1d2a13);
+  box-shadow:0 6px 18px rgba(12,23,7,.18)
+}
+.secondary-module-nav .admin-nav-item {
+  min-height:40px;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  border-radius:9px;
+  text-decoration:none;
+  color:#dce7be;
+  font-size:12px;
+  font-weight:600;
+  transition:.2s
+}
+.secondary-module-nav .admin-nav-item:hover {
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.11);
+  color:#fff
+}
+.secondary-module-nav .admin-nav-item.active {
+  background:#fff;
+  color:var(--forest-dark);
+  font-weight:800;
+  box-shadow:0 4px 10px rgba(0,0,0,.14)
+}
+.reports-page {
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0 0 36px!important
+}
+/* HERO */.reports-hero {
+  position:relative;
+  margin:0 16px 22px;
+  min-height:285px;
+  padding:24px;
+  display:grid;
+  grid-template-columns:minmax(300px,470px) minmax(260px,1fr) auto;
+  align-items:center;
+  gap:30px;
+  border-radius:22px;
+  color:#fff;
+  background:linear-gradient(130deg,#30401c 0%,#1a2810 58%,#0c1707 100%);
+  box-shadow:0 12px 30px rgba(12,23,7,.19);
+  overflow:visible
+}
+.reports-hero-photo {
+  width:100%;
+  height:235px;
+  border-radius:17px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 10px 24px rgba(0,0,0,.28)
+}
+.reports-hero-photo img {
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center 48%;
+  transition:transform .55s cubic-bezier(.16,1,.3,1)
+}
+.reports-hero:hover .reports-hero-photo img {
+  transform:scale(1.035)
+}
+.reports-hero-copy {
+  position:relative;
+  z-index:2
+}
+.reports-eyebrow {
+  width:fit-content;
+  margin-bottom:12px;
+  padding:6px 11px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border-radius:30px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.14);
+  color:#e4ecd4;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.1px
+}
+.reports-hero h1 {
+  margin:0 0 9px;
+  font-family:'Fraunces',serif;
+  font-size:clamp(34px,4vw,52px);
+  font-weight:600;
+  line-height:1.03;
+  letter-spacing:-1.2px;
+  color:#fff
+}
+.reports-hero p {
+  max-width:560px;
+  margin:0;
+  color:#dbe6cb;
+  font-size:14px;
+  line-height:1.65
+}
+.reports-hero-tools {
+  position:relative;
+  z-index:30;
+  min-width:180px;
+  display:flex;
+  flex-direction:column;
+  gap:9px
+}
+.reports-date-box {
+  position:relative;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:8px;
+  padding:9px 10px;
+  border-radius:11px;
+  background:#fff;
+  color:var(--forest-dark);
+  box-shadow:0 4px 14px rgba(0,0,0,.13)
+}
+.reports-date-display {
+  font-size:11px;
+  font-weight:700
+}
+.reports-calendar-trigger {
+  width:24px;
+  height:24px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:var(--moss);
+  cursor:pointer
+}
+.reports-calendar-dropdown {
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  width:290px;
+  padding:14px;
+  border-radius:14px;
+  background:#fff;
+  color:var(--forest-dark);
+  border:1px solid rgba(48,64,28,.13);
+  box-shadow:0 18px 40px rgba(12,23,7,.25);
+  z-index:999
+}
+.reports-calendar-dropdown[hidden] {
+  display:none!important
+}
+.reports-calendar-head {
+  display:grid;
+  grid-template-columns:34px 1fr 34px;
+  align-items:center;
+  gap:8px;
+  margin-bottom:11px
+}
+.reports-calendar-head strong {
+  text-align:center;
+  font-size:13px
+}
+.reports-calendar-head button {
+  width:34px;
+  height:34px;
+  border:1px solid rgba(48,64,28,.12);
+  border-radius:8px;
+  background:#f7f9f1;
+  color:var(--forest);
+  cursor:pointer
+}
+.reports-calendar-week,.reports-calendar-days {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px
+}
+.reports-calendar-week {
+  margin-bottom:5px
+}
+.reports-calendar-week span {
+  text-align:center;
+  color:var(--sage);
+  font-size:9px;
+  font-weight:800
+}
+.reports-calendar-day {
+  aspect-ratio:1;
+  padding:0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:var(--forest-dark);
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer
+}
+.reports-calendar-day:hover {
+  background:rgba(152,169,115,.18)
+}
+.reports-calendar-day.today {
+  border:1px solid var(--sage)
+}
+.reports-calendar-day.selected {
+  background:var(--forest)!important;
+  color:#fff!important
+}
+.reports-hero-actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px
+}
+.reports-hero .reports-refresh-button,.reports-hero .reports-export-button {
+  min-height:38px!important;
+  padding:0 11px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  border-radius:10px!important;
+  font-size:10px!important;
+  font-weight:700!important;
+  cursor:pointer!important;
+  transition:.2s!important
+}
+.reports-hero .reports-refresh-button {
+  border:1px solid rgba(255,255,255,.30)!important;
+  background:rgba(255,255,255,.11)!important;
+  color:#fff!important
+}
+.reports-hero .reports-export-button {
+  border:1px solid rgba(227,207,148,.45)!important;
+  background:rgba(201,162,75,.16)!important;
+  color:#f4e4b5!important
+}
+.reports-hero .reports-refresh-button:hover,.reports-hero .reports-export-button:hover {
+  transform:translateY(-2px)!important
+}
+/* CONTENT */.reports-connection-bar,.reports-filter-panel,.reports-summary-grid,.reports-analytics-grid,.reports-panel,.reports-info-panel {
+  margin-left:16px!important;
+  margin-right:16px!important
+}
+.reports-connection-bar {
+  margin-bottom:18px!important;
+  padding:11px 15px!important;
+  border:1px solid var(--border-color)!important;
+  border-radius:12px!important;
+  background:var(--card-bg)!important;
+  color:var(--text-muted)!important;
+  box-shadow:var(--shadow-sm)!important
+}
+.reports-filter-panel,.reports-panel,.reports-info-panel {
+  border:1px solid var(--border-color)!important;
+  background:var(--card-bg)!important;
+  color:var(--text-main)!important;
+  box-shadow:var(--shadow-sm)!important;
+  border-radius:18px!important;
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease
+}
+.reports-filter-panel:hover,.reports-panel:hover,.reports-info-panel:hover {
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md)!important;
+  border-color:rgba(152,169,115,.52)!important
+}
+.reports-filter-panel {
+  margin-bottom:24px!important
+}
+.reports-filter-header,.reports-panel-header {
+  border-color:var(--border-color)!important
+}
+.reports-filter-header h2,.reports-panel-header h2 {
+  color:var(--text-main)!important
+}
+.reports-filter-header p,.reports-panel-header p {
+  color:var(--text-muted)!important
+}
+.reports-filter-group label {
+  color:var(--text-muted)!important
+}
+.reports-filter-group select {
+  background:var(--card-bg-solid)!important;
+  color:var(--text-main)!important;
+  border:1px solid var(--border-color)!important
+}
+.reports-summary-grid {
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:16px!important;
+  margin-bottom:24px!important
+}
+.reports-summary-card {
+  position:relative!important;
+  min-height:112px!important;
+  padding:19px 20px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:14px!important;
+  border-radius:16px!important;
+  background:var(--card-bg)!important;
+  border:1px solid var(--border-color)!important;
+  box-shadow:var(--shadow-sm)!important;
+  overflow:hidden!important;
+  cursor:pointer;
+  transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease,border-color .25s ease!important
+}
+.reports-summary-card::after {
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:4px;
+  height:100%;
+  background:linear-gradient(to bottom,var(--apple),var(--forest));
+  opacity:0;
+  transition:opacity .25s ease
+}
+.reports-summary-card:hover {
+  transform:translateY(-5px)!important;
+  box-shadow:var(--shadow-md)!important;
+  border-color:rgba(152,169,115,.58)!important
+}
+.reports-summary-card:hover::after {
+  opacity:1
+}
+.reports-summary-icon {
+  width:48px!important;
+  height:48px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:13px!important;
+  background:rgba(152,169,115,.20)!important;
+  color:var(--forest)!important;
+  font-size:18px!important;
+  transition:.25s!important
+}
+.reports-summary-card:hover .reports-summary-icon {
+  transform:translateY(-2px) scale(1.07);
+  background:var(--forest)!important;
+  color:#fff!important
+}
+.reports-summary-label {
+  color:var(--text-muted)!important
+}
+.reports-summary-value {
+  color:var(--text-main)!important
+}
+.reports-analytics-grid {
+  gap:16px!important;
+  margin-bottom:24px!important
+}
+.reports-panel {
+  margin-bottom:24px!important
+}
+.reports-analytics-grid .reports-panel {
+  margin-left:0!important;
+  margin-right:0!important;
+  margin-bottom:0!important
+}
+.reports-data-list,.reports-chart-container,.reports-status-item,.reports-quality-item,.reports-payment-total,.reports-table-wrapper {
+  border-color:var(--border-color)!important
+}
+.reports-status-item,.reports-quality-item {
+  background:var(--card-bg-solid)!important;
+  color:var(--text-main)!important;
+  transition:.22s
+}
+.reports-status-item:hover,.reports-quality-item:hover {
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-sm);
+  border-color:rgba(152,169,115,.45)!important
+}
+.reports-table th {
+  color:var(--text-muted)!important;
+  border-color:var(--border-color)!important
+}
+.reports-table td {
+  color:var(--text-main)!important;
+  border-color:var(--border-color)!important
+}
+.reports-table tbody tr:hover {
+  background:rgba(152,169,115,.09)!important
+}
+.reports-info-panel {
+  margin-bottom:0!important
+}
+.reports-info-item {
+  background:var(--card-bg-solid)!important;
+  border:1px solid var(--border-color)!important;
+  transition:.22s
+}
+.reports-info-item:hover {
+  transform:translateY(-3px);
+  border-color:rgba(152,169,115,.45)!important;
+  box-shadow:var(--shadow-sm)
+}
+.reports-info-icon {
+  background:rgba(152,169,115,.16)!important;
+  color:var(--forest)!important;
+  transition:.22s
+}
+.reports-info-item:hover .reports-info-icon {
+  transform:translateY(-2px) scale(1.06);
+  background:var(--forest)!important;
+  color:#fff!important
+}
+.reports-info-item strong {
+  color:var(--text-main)!important
+}
+.reports-info-item span {
+  color:var(--text-muted)!important
+}
+/* DARK MODE */body.dark-mode .reports-hero {
+  background:#121f0d
+}
+body.dark-mode .reports-calendar-dropdown {
+  background:#182311;
+  color:#eef4df;
+  border-color:rgba(185,199,152,.16)
+}
+body.dark-mode .reports-calendar-head button {
+  background:#101b0c;
+  color:#eef4df;
+  border-color:rgba(185,199,152,.16)
+}
+body.dark-mode .reports-calendar-day {
+  color:#eef4df
+}
+body.dark-mode .reports-calendar-day.selected {
+  background:#758850!important
+}
+body.dark-mode .reports-summary-icon {
+  background:rgba(152,169,115,.13)!important;
+  color:#dbe7c7!important
+}
+body.dark-mode .reports-summary-card:hover .reports-summary-icon {
+  background:#758850!important;
+  color:#fff!important
+}
+body.dark-mode .reports-table tbody tr:hover {
+  background:rgba(185,199,152,.07)!important
+}
+/* FOOTER */.dashboard-footer {
+  width:100%!important;
+  min-height:112px;
+  margin:36px 0 0!important;
+  padding:22px 36px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:30px!important;
+  border:none!important;
+  border-radius:0!important;
+  background:#10210d!important;
+  box-shadow:none!important
+}
+.dashboard-footer-left {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:9px!important
+}
+.dashboard-footer-left strong {
+  color:#fff!important;
+  font-family:'Plus Jakarta Sans',sans-serif!important;
+  font-size:20px!important;
+  font-weight:800!important
+}
+.dashboard-footer-left span {
+  color:#b9c798!important;
+  font-size:14px!important;
+  font-weight:500!important;
+  text-transform:uppercase
+}
+.dashboard-footer-status {
+  flex-shrink:0;
+  padding:11px 17px;
+  display:flex!important;
+  align-items:center!important;
+  gap:5px!important;
+  border:1px solid rgba(185,199,152,.22);
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  color:#e3cf94!important;
+  font-size:13px;
+  font-weight:800
+}
+.dashboard-footer-dot {
+  width:10px;
+  height:10px;
+  margin-right:5px;
+  border-radius:50%;
+  background:#98a973;
+  box-shadow:0 0 0 6px rgba(152,169,115,.12)
+}
+/* RESPONSIVE */@media(max-width:1180px) {
+  .reports-hero {
+    grid-template-columns:minmax(300px,420px) 1fr
+  }
+  .reports-hero-tools {
+    grid-column:2
+  }
+}
+@media(max-width:980px) {
+  .top-nav-bar {
+    align-items:flex-start;
+    flex-direction:column
+  }
+  .nav-right-actions {
+    width:100%;
+    justify-content:flex-start
+  }
+  .secondary-module-nav {
+    grid-template-columns:repeat(3,1fr)
+  }
+  .reports-hero {
+    grid-template-columns:1fr
+  }
+  .reports-hero-photo {
+    height:270px
+  }
+  .reports-hero-tools {
+    grid-column:auto
+  }
+  .reports-summary-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important
+  }
+}
+@media(max-width:700px) {
+  .top-nav-bar {
+    margin:10px
+  }
+  .secondary-module-nav {
+    margin:0 10px 14px;
+    grid-template-columns:repeat(2,1fr)
+  }
+  .reports-hero {
+    margin:0 10px 18px;
+    padding:16px;
+    gap:20px
+  }
+  .reports-hero-photo {
+    height:220px
+  }
+  .reports-connection-bar,.reports-filter-panel,.reports-summary-grid,.reports-analytics-grid,.reports-panel,.reports-info-panel {
+    margin-left:10px!important;
+    margin-right:10px!important
+  }
+  .reports-analytics-grid .reports-panel {
+    margin-left:0!important;
+    margin-right:0!important
+  }
+  .dashboard-footer {
+    padding:18px 20px!important;
+    flex-direction:column!important;
+    align-items:flex-start!important
+  }
+  .dashboard-footer-status {
+    width:100%;
+    justify-content:center
+  }
+}
+@media(max-width:520px) {
+  .reports-summary-grid {
+    grid-template-columns:1fr!important
+  }
+  .reports-hero-actions {
+    grid-template-columns:1fr
+  }
+  .nav-right-actions {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+  .user-pill-container {
+    grid-column:1/-1
+  }
+}
+</style>
 </head>
-
-
 <body>
-
-
-  <!-- ============================================================
-       ADMIN NAVBAR
-       ============================================================ -->
-
-  <header class="admin-navbar">
-
-    <div class="admin-navbar-left">
-
-      <div class="admin-brand">
-
-        <div class="admin-brand-icon">
-
-          <i class="fa-solid fa-seedling"></i>
-
-        </div>
-
-
-        <span class="admin-brand-name">
-          Kisan Setu
-        </span>
-
-      </div>
-
-
-      <div class="admin-navbar-divider"></div>
-
-
-      <span class="admin-portal-title">
-        Admin Portal
-      </span>
-
-    </div>
-
-
-    <div class="admin-navbar-right">
-
-      <div class="admin-user">
-
-        <i class="fa-solid fa-user-shield"></i>
-
-        <span id="admin-user-name">
-          Administrator
-        </span>
-
-      </div>
-
-
-      <button
-        type="button"
-        class="admin-logout-button"
-        id="admin-logout-button"
-      >
-
-        <i class="fa-solid fa-right-from-bracket"></i>
-
-        <span>
-          Logout
-        </span>
-
-      </button>
-
-    </div>
-
-  </header>
-
-
-
-  <!-- ============================================================
-       ADMIN NAVIGATION
-       ============================================================ -->
-
-  <nav
-    class="admin-navigation"
-    aria-label="Admin portal navigation"
-  >
-
-    <a
-      href="dashboard.html"
-      class="admin-nav-item"
-      data-admin-page="dashboard"
-    >
-
-      <i class="fa-solid fa-chart-line"></i>
-
-      <span>
-        Dashboard
-      </span>
-
-    </a>
-
-
-    <a
-      href="farmers.html"
-      class="admin-nav-item"
-      data-admin-page="farmers"
-    >
-
-      <i class="fa-solid fa-users"></i>
-
-      <span>
-        Farmers
-      </span>
-
-    </a>
-
-
-    <a
-      href="mandi.html"
-      class="admin-nav-item"
-      data-admin-page="mandi"
-    >
-
-      <i class="fa-solid fa-warehouse"></i>
-
-      <span>
-        Mandi &amp; Slots
-      </span>
-
-    </a>
-
-
-    <a
-      href="queue.html"
-      class="admin-nav-item"
-      data-admin-page="queue"
-    >
-
-      <i class="fa-solid fa-list-ol"></i>
-
-      <span>
-        Live Queue
-      </span>
-
-    </a>
-
-
-    <a
-      href="payment.html"
-      class="admin-nav-item"
-      data-admin-page="payments"
-    >
-
-      <i class="fa-solid fa-money-bill-transfer"></i>
-
-      <span>
-        Payments
-      </span>
-
-    </a>
-
-
-    <a
-      href="reports.html"
-      class="admin-nav-item"
-      data-admin-page="reports"
-    >
-
-      <i class="fa-solid fa-chart-column"></i>
-
-      <span>
-        Reports
-      </span>
-
-    </a>
-
-
-    <a
-      href="../farmer/index.html"
-      class="admin-nav-item admin-farmer-portal-button"
-      title="Open Farmer Portal"
-    >
-
-      <i class="fa-solid fa-arrow-up-right-from-square"></i>
-
-      <span>
-        Farmer Portal
-      </span>
-
-    </a>
-
-  </nav>
-
-
-
-  <!-- ============================================================
-       A7 • REPORTS & ANALYTICS
-       ============================================================ -->
-
-  <main class="reports-page">
-
-
-    <!-- ==========================================================
-         PAGE HEADER
-         ========================================================== -->
-
-    <section class="reports-page-header">
-
-      <div class="reports-title-group">
-
-        <div class="reports-title-icon">
-
-          <i class="fa-solid fa-chart-column"></i>
-
-        </div>
-
-
-        <div>
-
-          <h1>
-            Reports & Analytics
-          </h1>
-
-          <p>
-            Analyze procurement, farmer activity, mandi performance,
-            quality, and payment operations.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div class="reports-header-actions">
-
-        <button
-          type="button"
-          class="reports-refresh-button"
-          id="refresh-reports-button"
-        >
-
-          <i class="fa-solid fa-rotate"></i>
-
-          <span>
-            Refresh Reports
-          </span>
-
-        </button>
-
-
-        <button
-          type="button"
-          class="reports-export-button"
-          id="export-report-button"
-        >
-
-          <i class="fa-solid fa-file-csv"></i>
-
-          <span>
-            Export Report
-          </span>
-
-        </button>
-
-      </div>
-
-    </section>
-
-
-
+<!-- ADMIN -->
+<header class="top-nav-bar">
+<a href="dashboard.html" class="nav-left-brand"><img class="brand-logo-img" src="https://cdn-icons-png.flaticon.com/128/8524/8524310.png" alt="Kisan Setu"><span class="brand-title-group"><small>KISAN SETU</small><strong>Administration Portal</strong></span></a>
+<div class="nav-right-actions"><div class="user-pill-container"><div class="user-details"><span class="user-name" id="admin-user-name">Administrator</span><span class="user-verified-tag"><i class="fa-solid fa-circle-check"></i> Verified</span></div><div class="user-avatar" id="admin-avatar">AD</div></div><button type="button" class="header-glass-control theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle dark mode"><i class="fa-solid fa-moon" id="theme-toggle-icon"></i></button><button type="button" class="header-glass-control icon-notification-btn" aria-label="Notifications"><i class="fa-regular fa-bell"></i><span class="notification-badge">3</span></button><select class="header-glass-control lang-select-box" aria-label="Language"><option>🌐 English</option></select><a href="../farmer/index.html" class="btn-farmer-portal"><i class="fa-solid fa-arrow-up-right-from-square"></i> Farmer Portal</a><button type="button" class="btn-logout" id="admin-logout-button"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></div>
+</header>
+<!-- NAVIGATION -->
+<nav class="secondary-module-nav" aria-label="Admin portal navigation"><a href="dashboard.html" class="admin-nav-item" data-admin-page="dashboard"><i class="fa-solid fa-chart-line"></i> Dashboard</a><a href="farmers.html" class="admin-nav-item" data-admin-page="farmers"><i class="fa-solid fa-users"></i> Farmers</a><a href="mandi.html" class="admin-nav-item" data-admin-page="mandi"><i class="fa-solid fa-warehouse"></i> Mandi &amp; Slots</a><a href="queue.html" class="admin-nav-item" data-admin-page="queue"><i class="fa-solid fa-list-ol"></i> Live Queue</a><a href="payment.html" class="admin-nav-item" data-admin-page="payments"><i class="fa-solid fa-money-bill-transfer"></i> Payments</a><a href="reports.html" class="admin-nav-item active" data-admin-page="reports"><i class="fa-solid fa-chart-column"></i> Reports</a></nav>
+<main class="reports-page">
+<!-- HERO -->
+<section class="reports-hero"><div class="reports-hero-photo"><img src="results-hero.jpg" alt="Reports and analytics"></div><div class="reports-hero-copy"><div class="reports-eyebrow"><i class="fa-solid fa-chart-column"></i> REPORTS &amp; ANALYTICS</div><h1>Reports &amp; Analytics</h1><p>Analyze procurement, farmer activity, mandi performance, quality, and payment operations.</p></div><div class="reports-hero-tools"><div class="reports-date-box"><i class="fa-regular fa-calendar"></i><span class="reports-date-display" id="reports-date-display">Loading...</span><button type="button" class="reports-calendar-trigger" id="reports-calendar-trigger" aria-label="Open calendar"><i class="fa-solid fa-chevron-down"></i></button><div class="reports-calendar-dropdown" id="reports-calendar-dropdown" hidden><div class="reports-calendar-head"><button type="button" id="reports-calendar-prev"><i class="fa-solid fa-chevron-left"></i></button><strong id="reports-calendar-title"></strong><button type="button" id="reports-calendar-next"><i class="fa-solid fa-chevron-right"></i></button></div><div class="reports-calendar-week"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div><div class="reports-calendar-days" id="reports-calendar-days"></div></div></div><div class="reports-hero-actions"><button type="button" class="reports-refresh-button" id="refresh-reports-button"><i class="fa-solid fa-rotate"></i><span>Refresh Reports</span></button><button type="button" class="reports-export-button" id="export-report-button"><i class="fa-solid fa-file-csv"></i><span>Export Report</span></button></div></div></section>
     <!-- ==========================================================
          CONNECTION STATUS
          ========================================================== -->
@@ -1309,57 +1826,93 @@
     </section>
 
   </main>
+<!-- FOOTER -->
+<footer class="admin-footer dashboard-footer">
+  <div class="dashboard-footer-left">
+    <strong>Kisan Setu • Department of Consumer Affairs (DoCA)</strong>
+    <span>MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION • NATIONAL INFORMATICS CENTRE</span>
+  </div>
 
-
-
-  <!-- ============================================================
-       FOOTER
-       ============================================================ -->
-
-  <footer class="admin-footer">
-
-    <div class="admin-footer-left">
-
-      <i class="fa-solid fa-seedling"></i>
-
-      <strong>
-        Kisan Setu
-      </strong>
-
-    </div>
-
-
-    <span class="admin-footer-right">
-      Digital Agriculture Procurement Platform
-    </span>
-
-  </footer>
-
-
-
-  <!-- ============================================================
-       CHART.JS
-       ============================================================ -->
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-
-  <!-- ============================================================
-       SHARED ADMIN NAVIGATION
-       ============================================================ -->
-
-  <script src="admin-navigation.js"></script>
-
-
-
-  <!-- ============================================================
-       A7 JAVASCRIPT
-       ============================================================ -->
-
-  <script src="reports.js"></script>
-
-
+  <div class="dashboard-footer-status">
+    <span class="dashboard-footer-dot" id="footer-status-dot"></span>
+    <span id="footer-connection-text">Backend connected</span>
+    <span>•</span>
+    <span id="footer-last-updated">Updated just now</span>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="admin-navigation.js"></script>
+<script src="reports.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded",function() {
+  /* ADMIN */const nameEl=document.getElementById("admin-user-name"),avatar=document.getElementById("admin-avatar");let name="Administrator";try {
+    const raw=sessionStorage.getItem("kisanSetuAdminUser");if(raw) {
+      const u=JSON.parse(raw);name=u.name||u.fullName||u.username||u.email||"Administrator"
+    }
+  }
+  catch(e) {
+  }
+  if(nameEl)nameEl.textContent=name;const clean=String(name).trim();let initials="AD";if(clean&&!/^(admin|administrator)$/i.test(clean)) {
+    const parts=clean.split(/\s+/);initials=parts.length>1?(parts[0][0]+parts[parts.length-1][0]).toUpperCase():parts[0][0].toUpperCase()
+  }
+  if(avatar)avatar.textContent=initials;/* DARK MODE */const themeBtn=document.getElementById("theme-toggle-btn"),themeIcon=document.getElementById("theme-toggle-icon");function icon() {
+    if(themeIcon)themeIcon.className=document.body.classList.contains("dark-mode")?"fa-solid fa-sun":"fa-solid fa-moon"
+  }
+  const saved=localStorage.getItem("kisan-setu-admin-theme"),auto=(new Date().getHours()>=18||new Date().getHours()<6)?"dark":"light";document.body.classList.toggle("dark-mode",(saved||auto)==="dark");icon();themeBtn?.addEventListener("click",()=> {
+    document.body.classList.toggle("dark-mode");localStorage.setItem("kisan-setu-admin-theme",document.body.classList.contains("dark-mode")?"dark":"light");icon()
+  }
+  );/* CALENDAR */const display=document.getElementById("reports-date-display"),trigger=document.getElementById("reports-calendar-trigger"),cal=document.getElementById("reports-calendar-dropdown"),title=document.getElementById("reports-calendar-title"),days=document.getElementById("reports-calendar-days"),prev=document.getElementById("reports-calendar-prev"),next=document.getElementById("reports-calendar-next");const today=new Date();let selected=new Date(today.getFullYear(),today.getMonth(),today.getDate()),year=selected.getFullYear(),month=selected.getMonth();const same=(a,b)=>a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();function render() {
+    if(!display||!title||!days)return;display.textContent=new Intl.DateTimeFormat("en-IN", {
+      day:"2-digit",month:"short",year:"numeric"
+    }
+    ).format(selected);title.textContent=new Intl.DateTimeFormat("en-IN", {
+      month:"long",year:"numeric"
+    }
+    ).format(new Date(year,month,1));days.innerHTML="";const first=new Date(year,month,1).getDay(),total=new Date(year,month+1,0).getDate();for(let i=0;i<first;i++) {
+      const e=document.createElement("span");days.appendChild(e)
+    }
+    for(let d=1;d<=total;d++) {
+      const date=new Date(year,month,d),b=document.createElement("button");b.type="button";b.className="reports-calendar-day";b.textContent=d;if(same(date,today))b.classList.add("today");if(same(date,selected))b.classList.add("selected");b.onclick=e=> {
+        e.stopPropagation();selected=date;render();cal.hidden=true
+      }
+      ;days.appendChild(b)
+    }
+  }
+  render();trigger?.addEventListener("click",e=> {
+    e.stopPropagation();cal.hidden=!cal.hidden
+  }
+  );prev?.addEventListener("click",e=> {
+    e.stopPropagation();month--;if(month<0) {
+      month=11;year--
+    }
+    render()
+  }
+  );next?.addEventListener("click",e=> {
+    e.stopPropagation();month++;if(month>11) {
+      month=0;year++
+    }
+    render()
+  }
+  );cal?.addEventListener("click",e=>e.stopPropagation());document.addEventListener("click",()=> {
+    if(cal)cal.hidden=true
+  }
+  );/* FOOTER */const srcC=document.getElementById("reports-connection-text"),srcU=document.getElementById("reports-last-updated"),footC=document.getElementById("footer-connection-text"),footU=document.getElementById("footer-last-updated"),dot=document.getElementById("footer-status-dot");function sync() {
+    if(srcC&&footC)footC.textContent=srcC.textContent.trim();if(srcU&&footU) {
+      const t=srcU.textContent.trim();footU.textContent=t==="--"?"Updated just now":"Updated "+t
+    }
+    if(srcC&&dot) {
+      const t=srcC.textContent.toLowerCase();dot.style.background=t.includes("connected")&&!t.includes("disconnected")?"#98a973":"#b65d52"
+    }
+  }
+  sync();if(srcC)new MutationObserver(sync).observe(srcC, {
+    childList:true,subtree:true,characterData:true
+  }
+  );if(srcU)new MutationObserver(sync).observe(srcU, {
+    childList:true,subtree:true,characterData:true
+  }
+  );
+}
+);
+</script>
 </body>
-
 </html>

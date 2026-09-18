@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,23 +12,36 @@
     >
 
     <title>Kisan Setu | Mandi & Slot Management</title>
+    <link rel="icon" type="image/png" href="kisan-setu-logo.png">
 
     <!-- Core Styles -->
-    <link rel="stylesheet" href="../main.css">
-    <link rel="stylesheet" href="../footer.css">
+<link rel="stylesheet" href="../main.css">
+<link rel="stylesheet" href="../footer.css">
 
-    <!-- Admin Styles -->
-    <link rel="stylesheet" href="admin.css">
-    <link rel="stylesheet" href="admin_navbar.css">
+<!-- Admin Styles -->
+<link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="admin_navbar.css">
 
-    <!-- A4 Styles -->
-    <link rel="stylesheet" href="mandi.css">
+<!-- Mandi Styles -->
+<link rel="stylesheet" href="mandi.css">
 
-    <!-- Icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    >
+<!-- Font Awesome -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+>
+
+<!-- EXACT DASHBOARD FONTS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+    rel="stylesheet"
+>
+
+<!-- MUST ALWAYS BE LAST -->
+<link rel="stylesheet" href="mandi-dashboard-additions.css">
 
 </head>
 
@@ -49,22 +63,18 @@
             >
 
                 <span class="admin-brand-icon">
-                    <i class="fa-solid fa-leaf"></i>
-                </span>
+    <img
+        src="https://cdn-icons-png.flaticon.com/128/8524/8524310.png"
+        alt="Kisan Setu"
+    >
+</span>
 
-                <span class="admin-brand-name">
-                    Kisan Setu
-                </span>
+                <span class="admin-brand-name"><small>KISAN SETU</small><strong>Administration Portal</strong></span>
 
             </a>
 
 
-            <span class="admin-navbar-divider"></span>
-
-
-            <span class="admin-portal-title">
-                Administration Portal
-            </span>
+            
 
         </div>
 
@@ -72,14 +82,14 @@
         <div class="admin-navbar-right">
 
             <div class="admin-user">
-
-                <i class="fa-solid fa-user-shield"></i>
-
-                <span id="admin-username">
-                    admin
-                </span>
-
+                <div class="admin-user-copy"><span id="admin-username">admin</span><small><i class="fa-solid fa-circle-check"></i> Verified</small></div>
+                <span id="admin-avatar" class="admin-avatar">AD</span>
             </div>
+
+            <button type="button" id="theme-toggle" class="admin-icon-button" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+            <button type="button" class="admin-icon-button" aria-label="Notifications"><i class="fa-regular fa-bell"></i><span class="notification-count">3</span></button>
+            <select class="admin-language" aria-label="Language"><option>🌐 English</option></select>
+            <a href="../farmer/index.html" class="admin-farmer-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Farmer Portal</a>
 
 
             <button
@@ -112,7 +122,7 @@
             href="dashboard.html"
             class="admin-nav-item"
         >
-            Dashboard
+            <i class="fa-solid fa-chart-line"></i> Dashboard
         </a>
 
 
@@ -120,7 +130,7 @@
             href="farmers.html"
             class="admin-nav-item"
         >
-            Farmers
+            <i class="fa-solid fa-users"></i> Farmers
         </a>
 
 
@@ -128,7 +138,7 @@
             href="mandi.html"
             class="admin-nav-item active"
         >
-            Mandi & Slots
+            <i class="fa-solid fa-warehouse"></i> Mandi & Slots
         </a>
 
 
@@ -136,7 +146,7 @@
             href="queue.html"
             class="admin-nav-item"
         >
-            Live Queue
+            <i class="fa-solid fa-list-ol"></i> Live Queue
         </a>
 
 
@@ -144,7 +154,7 @@
             href="payment.html"
             class="admin-nav-item"
         >
-            Payments
+            <i class="fa-solid fa-money-bill-transfer"></i> Payments
         </a>
 
 
@@ -152,7 +162,7 @@
             href="reports.html"
             class="admin-nav-item"
         >
-            Reports
+            <i class="fa-solid fa-chart-column"></i> Reports
         </a>
 
 
@@ -179,10 +189,12 @@
 
         <section class="mandi-page-header">
 
-            <div>
+            <div class="mandi-hero-photo"><img src="mandi-hero.jpg" alt="Mandi procurement center"></div>
+
+            <div class="mandi-hero-copy">
 
                 <div class="mandi-eyebrow">
-                    A4 • MANDI OPERATIONS
+                     MANDI OPERATIONS
                 </div>
 
                 <h1>
@@ -198,6 +210,17 @@
 
 
             <div class="mandi-header-actions">
+
+                <div class="mandi-date-box">
+                    <i class="fa-regular fa-calendar"></i>
+                    <input id="mandi-date-input" type="text" readonly aria-label="Selected date">
+                    <button type="button" id="mandi-calendar-trigger" aria-label="Open calendar"><i class="fa-solid fa-chevron-down"></i></button>
+                    <div id="mandi-calendar-dropdown" class="mandi-calendar-dropdown" hidden>
+                        <div class="mandi-calendar-head"><button type="button" id="mandi-calendar-prev"><i class="fa-solid fa-chevron-left"></i></button><strong id="mandi-calendar-title"></strong><button type="button" id="mandi-calendar-next"><i class="fa-solid fa-chevron-right"></i></button></div>
+                        <div class="mandi-calendar-week"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                        <div id="mandi-calendar-days" class="mandi-calendar-days"></div>
+                    </div>
+                </div>
 
                 <button
                     type="button"
@@ -810,38 +833,113 @@
     </main>
 
 
-    <!-- ============================================================
-         FOOTER
-    ============================================================= -->
+   <footer class="admin-footer dashboard-footer">
 
-    <footer class="admin-footer">
+    <div class="dashboard-footer-left">
 
-        <div>
+        <strong>
+            Kisan Setu • Department of Consumer Affairs (DoCA)
+        </strong>
 
-            <strong>
-                Kisan Setu
-            </strong>
+        <span>
+            MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION
+            • NATIONAL INFORMATICS CENTRE
+        </span>
 
-            <span>
-                Administration Portal
-            </span>
-
-        </div>
+    </div>
 
 
-        <div>
-            Backend connected • Mandi Operations
-        </div>
+    <div class="dashboard-footer-status">
 
-    </footer>
+        <span
+            id="footer-status-dot"
+            class="dashboard-footer-dot"
+        ></span>
 
+        <span id="footer-connection-text">
+            Connecting to backend...
+        </span>
+
+        <span>•</span>
+
+        <span id="footer-last-updated">
+            Waiting for data
+        </span>
+
+    </div>
+
+</footer>
 
     <!-- ============================================================
          JAVASCRIPT
     ============================================================= -->
 
+    <script src="mandi-dashboard-ui-additions.js"></script>
+    <script src="admin-navigation.js"></script>
     <script src="mandi.js"></script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    const sourceStatus =
+        document.getElementById("mandi-connection-text");
+
+    const sourceUpdated =
+        document.getElementById("mandi-last-updated");
+
+    const footerStatus =
+        document.getElementById("footer-connection-text");
+
+    const footerUpdated =
+        document.getElementById("footer-last-updated");
+
+
+    function syncMandiFooter() {
+
+        if (sourceStatus && footerStatus) {
+            footerStatus.textContent =
+                sourceStatus.textContent;
+        }
+
+        if (sourceUpdated && footerUpdated) {
+            footerUpdated.textContent =
+                sourceUpdated.textContent;
+        }
+
+    }
+
+
+    syncMandiFooter();
+
+
+    const observer =
+        new MutationObserver(syncMandiFooter);
+
+
+    if (sourceStatus) {
+        observer.observe(
+            sourceStatus,
+            {
+                childList: true,
+                subtree: true,
+                characterData: true
+            }
+        );
+    }
+
+
+    if (sourceUpdated) {
+        observer.observe(
+            sourceUpdated,
+            {
+                childList: true,
+                subtree: true,
+                characterData: true
+            }
+        );
+    }
+
+});
+</script>
 </body>
 
 </html>

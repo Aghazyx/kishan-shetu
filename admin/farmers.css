@@ -1,3 +1,4 @@
+
 /* ================================================================
    KISAN SETU ADMIN
    A3 • FARMER MANAGEMENT
@@ -687,4 +688,1540 @@
         grid-template-columns: 1fr 1fr;
     }
 
+}
+/* =========================================================
+   DASHBOARD-MATCHED COLOUR SYSTEM
+   Replace your current :root + body.dark-mode with this
+========================================================= */
+
+:root {
+    --bg-main: #e7edd5;
+    --bg-soft: #f3f6e9;
+
+    --card-bg: rgba(255, 255, 255, 0.96);
+    --card-bg-strong: #fffefb;
+
+    --text-main: #121f0d;
+    --text-soft: #526532;
+
+    --border: rgba(48, 64, 28, 0.13);
+
+    --shadow-sm: 0 4px 16px rgba(18, 31, 13, 0.07);
+    --shadow-md: 0 10px 28px rgba(18, 31, 13, 0.12);
+
+    /* Dashboard greens */
+    --forest-dark: #121f0d;
+    --forest: #30401c;
+    --moss: #526532;
+    --sage: #758850;
+    --apple: #98a973;
+    --light-sage: #b9c798;
+    --cream-green: #dce7be;
+
+    /* Dashboard gold */
+    --gold: #c9a24b;
+    --gold-soft: #e3cf94;
+
+    /* Map old Farmer-page variables to Dashboard colours */
+    --fresh-crown: #dce7be;
+    --azeitona: #758850;
+    --fig-leaf: #526532;
+    --moss-green: #121f0d;
+    --wood-bark: #4e4437;
+    --azul-petroleo: #30401c;
+
+    --topbar-1: #30401c;
+    --topbar-2: #121f0d;
+
+    --hero-1: #dce7be;
+    --hero-2: #b9c798;
+
+    --success-bg: rgba(117, 136, 80, 0.12);
+    --error-bg: rgba(170, 82, 82, 0.10);
+
+    --font-ui: 'Inter', sans-serif;
+    --font-heading: 'Plus Jakarta Sans', sans-serif;
+    --font-display: 'Fraunces', serif;
+}
+
+
+/* =========================================================
+   DARK MODE — FLAT DARK GREEN LIKE DASHBOARD
+   No gradients in dark mode
+========================================================= */
+
+body.dark-mode {
+    --bg-main: #0c1707;
+    --bg-soft: #121f0d;
+
+    --card-bg: rgba(24, 35, 17, 0.96);
+    --card-bg-strong: #182311;
+
+    --text-main: #eef4df;
+    --text-soft: #b9c798;
+
+    --border: rgba(185, 199, 152, 0.16);
+
+    --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.22);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.32);
+
+    --topbar-1: #121f0d;
+    --topbar-2: #121f0d;
+
+    --hero-1: #182311;
+    --hero-2: #182311;
+
+    --success-bg: rgba(152, 169, 115, 0.14);
+    --error-bg: rgba(190, 92, 92, 0.14);
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+    font-family: var(--font-ui);
+    color: var(--text-main);
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(255,255,255,0.72),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(152,169,115,0.12),
+            transparent 28%
+        ),
+        var(--bg-main);
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+/* Completely flat background in dark mode */
+
+body.dark-mode {
+    background: #0c1707;
+}
+
+
+/* =========================================================
+   TOP HEADER — SAME SPACING AS DASHBOARD
+========================================================= */
+
+.top-nav-bar {
+    position: relative;
+
+    margin: 14px 16px 10px;
+
+    min-height: 84px;
+
+    padding: 15px 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 18px;
+
+    color: white;
+
+    border-radius: 18px;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(12, 23, 7, 0.90),
+            rgba(18, 31, 13, 0.76)
+        ),
+        url("52565520646011763.jpg");
+
+    background-size: cover;
+    background-position: center 46%;
+
+    border: 1px solid rgba(255,255,255,0.16);
+
+    box-shadow:
+        0 10px 28px rgba(12,23,7,0.22);
+}
+
+/* Flat dark green header in dark mode */
+
+body.dark-mode .top-nav-bar {
+    background: #121f0d;
+    border-color: rgba(185,199,152,0.14);
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.nav-left-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 275px;
+}
+
+.brand-logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.brand-title-group small {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+
+    color: var(--gold-soft);
+}
+
+.brand-title-group strong {
+    font-family: var(--font-heading);
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.15;
+
+    color: white;
+}
+
+
+/* =========================================================
+   HEADER CONTROLS
+========================================================= */
+
+.header-soft-control {
+    background: rgba(12,23,7,0.63);
+
+    border:
+        1px solid rgba(255,255,255,0.18);
+
+    color: white;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.header-soft-control:hover {
+    transform: translateY(-2px);
+    background: rgba(12,23,7,0.78);
+}
+
+body.dark-mode .header-soft-control {
+    background: #182311;
+    border-color: rgba(185,199,152,0.16);
+    color: #eef4df;
+}
+
+body.dark-mode .header-soft-control:hover {
+    background: #202d17;
+}
+
+
+/* =========================================================
+   ADMIN USER PILL
+========================================================= */
+
+.user-pill-container {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 6px 10px 6px 13px;
+
+    border-radius: 12px;
+
+    background: rgba(12,23,7,0.63);
+
+    border:
+        1px solid rgba(255,255,255,0.18);
+
+    backdrop-filter: blur(12px);
+}
+
+body.dark-mode .user-pill-container {
+    background: #182311;
+    border-color: rgba(185,199,152,0.16);
+}
+
+.user-name {
+    display: block;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    color: white;
+
+    max-width: 145px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-verified-tag {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 4px;
+
+    margin-top: 2px;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    color: var(--light-sage);
+}
+
+body.dark-mode .user-name {
+    color: #eef4df;
+}
+
+body.dark-mode .user-verified-tag {
+    color: #b9c798;
+}
+
+
+/* =========================================================
+   ADMIN INITIAL AVATAR
+========================================================= */
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold),
+            #9a742b
+        );
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    box-shadow:
+        0 4px 10px rgba(12,23,7,0.22);
+}
+
+
+/* =========================================================
+   NOTIFICATION BADGE
+========================================================= */
+
+.notification-badge {
+    background: var(--gold);
+    color: #121f0d;
+}
+
+
+/* =========================================================
+   SECONDARY NAVIGATION
+========================================================= */
+
+.secondary-module-nav {
+    margin: 0 16px 18px;
+
+    padding: 7px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 1fr);
+
+    gap: 6px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,0.78);
+
+    border: 1px solid var(--border);
+
+    box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .secondary-module-nav {
+    background: #121f0d;
+    border-color: rgba(185,199,152,0.14);
+}
+
+.secondary-module-nav .admin-nav-item {
+    min-height: 40px;
+
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 10px;
+
+    color: var(--text-soft);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    transition: all 0.2s ease;
+}
+
+.secondary-module-nav .admin-nav-item:hover {
+    transform: translateY(-2px);
+
+    background:
+        rgba(82,101,50,0.10);
+
+    color: var(--forest);
+}
+
+body.dark-mode
+.secondary-module-nav
+.admin-nav-item:hover {
+    background: #182311;
+    color: #eef4df;
+}
+
+.secondary-module-nav .admin-nav-item.active {
+    background: var(--forest);
+
+    color: white;
+
+    box-shadow:
+        0 4px 12px rgba(18,31,13,0.16);
+}
+
+body.dark-mode
+.secondary-module-nav
+.admin-nav-item.active {
+    background: #30401c;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   PAGE SPACING
+========================================================= */
+
+.admin-page {
+    width: 100%;
+    max-width: none;
+
+    margin: 0 auto;
+
+    padding: 0 0 40px;
+}
+
+
+/* =========================================================
+   FARMER HERO
+========================================================= */
+
+.farmers-hero {
+    margin: 0 16px 22px;
+
+    padding: 22px;
+
+    min-height: 270px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(300px, 440px)
+        minmax(260px, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 24px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dce7be,
+            #b9c798
+        );
+
+    border:
+        1px solid rgba(48,64,28,0.13);
+
+    box-shadow: var(--shadow-sm);
+
+    overflow: hidden;
+    position: relative;
+}
+
+/* Flat dark hero */
+
+body.dark-mode .farmers-hero {
+    background: #182311;
+
+    border-color:
+        rgba(185,199,152,0.16);
+}
+
+
+/* Hero decorative circle */
+
+.farmers-hero::after {
+    background:
+        radial-gradient(
+            circle,
+            rgba(82,101,50,0.10),
+            transparent 70%
+        );
+}
+
+body.dark-mode .farmers-hero::after {
+    display: none;
+}
+
+
+/* =========================================================
+   HERO TEXT — FIX VISIBILITY IN DARK MODE
+========================================================= */
+
+.hero-eyebrow {
+    background:
+        rgba(48,64,28,0.09);
+
+    color: var(--forest);
+
+    border:
+        1px solid rgba(48,64,28,0.11);
+}
+
+.hero-copy h1 {
+    color: var(--forest-dark);
+}
+
+.hero-copy p {
+    color: var(--moss);
+}
+
+body.dark-mode .hero-eyebrow {
+    background: #24331a;
+
+    color: #e3cf94;
+
+    border-color:
+        rgba(227,207,148,0.18);
+}
+
+body.dark-mode .hero-copy h1 {
+    color: #eef4df;
+}
+
+body.dark-mode .hero-copy p {
+    color: #b9c798;
+}
+
+
+/* =========================================================
+   CALENDAR BOX
+========================================================= */
+
+.farmers-date-box {
+    background:
+        rgba(255,255,255,0.88);
+
+    border:
+        1px solid rgba(48,64,28,0.12);
+
+    box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .farmers-date-box {
+    background: #121f0d;
+
+    border-color:
+        rgba(185,199,152,0.16);
+}
+
+.date-calendar-icon {
+    color: var(--moss);
+}
+
+body.dark-mode .date-calendar-icon {
+    color: var(--light-sage);
+}
+
+
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
+
+.farmers-refresh-text-button {
+    border:
+        1px solid rgba(48,64,28,0.12);
+
+    background:
+        rgba(255,255,255,0.86);
+
+    color: var(--forest-dark);
+}
+
+.farmers-refresh-text-button:hover {
+    background: white;
+}
+
+body.dark-mode
+.farmers-refresh-text-button {
+    background: #121f0d;
+
+    border-color:
+        rgba(185,199,152,0.16);
+
+    color: #eef4df;
+}
+
+body.dark-mode
+.farmers-refresh-text-button:hover {
+    background: #24331a;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.farmer-summary-grid {
+    margin: 0 16px 24px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0,1fr));
+
+    gap: 16px;
+}
+
+.farmer-summary-card {
+    background: var(--card-bg);
+
+    border: 1px solid var(--border);
+
+    box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .farmer-summary-card {
+    background: #182311;
+}
+
+.summary-icon {
+    background:
+        rgba(152,169,115,0.16);
+
+    color: var(--forest);
+}
+
+body.dark-mode .summary-icon {
+    background: #24331a;
+    color: #b9c798;
+}
+
+.farmer-summary-card:hover
+.summary-icon {
+    background: var(--forest);
+    color: white;
+}
+
+body.dark-mode
+.farmer-summary-card:hover
+.summary-icon {
+    background: #526532;
+}
+
+
+/* =========================================================
+   FARMER MANAGEMENT PANEL
+========================================================= */
+
+.farmer-management-panel {
+    margin: 0 16px 24px;
+
+    background: var(--card-bg);
+
+    border:
+        1px solid var(--border);
+
+    box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode
+.farmer-management-panel {
+    background: #182311;
+}
+
+
+/* =========================================================
+   SEARCH / INPUTS
+========================================================= */
+
+.farmer-search input,
+.farmers-date-input {
+    color: var(--text-main);
+}
+
+body.dark-mode input,
+body.dark-mode select {
+    color: #eef4df;
+}
+
+body.dark-mode input::placeholder {
+    color: #758850;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+body.dark-mode table,
+body.dark-mode .farmer-table-container {
+    background: #182311;
+    color: #eef4df;
+}
+
+body.dark-mode thead {
+    background: #121f0d;
+}
+
+body.dark-mode th {
+    color: #b9c798;
+}
+
+body.dark-mode td {
+    color: #eef4df;
+
+    border-color:
+        rgba(185,199,152,0.10);
+}
+
+body.dark-mode tbody tr:hover {
+    background: #202d17;
+}
+
+
+/* =========================================================
+   GENERAL DARK MODE FIXES
+========================================================= */
+
+body.dark-mode .management-panel-header {
+    border-color:
+        rgba(185,199,152,0.14);
+}
+
+body.dark-mode .management-panel-header h2,
+body.dark-mode .summary-content strong {
+    color: #eef4df;
+}
+
+body.dark-mode .management-panel-header p,
+body.dark-mode .summary-content span,
+body.dark-mode .hero-mini-date {
+    color: #b9c798;
+}
+
+
+/* =========================================================
+   KEEP DASHBOARD EDGE SPACING CONSISTENT
+========================================================= */
+
+.top-nav-bar,
+.secondary-module-nav,
+.farmers-hero,
+.farmer-summary-grid,
+.farmer-management-panel {
+    box-sizing: border-box;
+}
+.page-transition-overlay {
+    display: none !important;
+}
+/* ==========================================================
+   FINAL DASHBOARD SYNC
+   Keep this LAST in <style>
+========================================================== */
+
+html,
+body {
+    margin: 0 !important;
+    width: 100%;
+    min-height: 100%;
+}
+
+/* LIGHT MODE */
+body {
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(255,255,255,.80),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(117,136,80,.20),
+            transparent 42%
+        ),
+        #e7edd5 !important;
+
+    color: #121f0d;
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+html:has(body.dark-mode) {
+    background: #0c1707 !important;
+}
+
+body.dark-mode {
+    --page-bg: #0c1707;
+    --card-bg: rgba(24,35,17,.96);
+    --card-bg-solid: #182311;
+    --text-main: #eef4df;
+    --text-muted: #b9c798;
+    --border-color: rgba(185,199,152,.16);
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(82,101,50,.12),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(152,169,115,.07),
+            transparent 42%
+        ),
+        #0c1707 !important;
+
+    color: #eef4df !important;
+}
+
+
+/* Make sure the main wrapper cannot remain light */
+
+body.dark-mode .admin-page {
+    background: transparent !important;
+}
+
+
+/* Cards/panels */
+
+body.dark-mode .farmer-summary-card,
+body.dark-mode .farmer-management-panel,
+body.dark-mode .farmer-modal-content {
+    background: #182311 !important;
+    color: #eef4df !important;
+    border-color: rgba(185,199,152,.16) !important;
+}
+
+
+/* Inputs */
+
+body.dark-mode .farmer-search input,
+body.dark-mode .small-action-button {
+    background: rgba(255,255,255,.05) !important;
+    color: #eef4df !important;
+    border-color: rgba(185,199,152,.16) !important;
+}
+
+body.dark-mode .farmer-search input::placeholder {
+    color: #9eae80;
+}
+
+
+/* =========================
+   EXACT PAGE GEOMETRY
+========================= */
+
+.top-nav-bar {
+    margin: 14px 16px 10px !important;
+    min-height: 84px !important;
+    padding: 15px 18px !important;
+}
+
+.secondary-module-nav {
+    margin: 0 16px 18px !important;
+    padding: 7px !important;
+}
+
+
+/*
+   CRITICAL:
+   no inherited top padding after navigation
+*/
+
+.admin-page {
+    width: 100% !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+
+    padding:
+        0
+        0
+        36px !important;
+
+    background: transparent !important;
+}
+
+
+/* =========================
+   HERO — EXACT DASHBOARD SIZE
+========================= */
+
+.farmers-hero {
+    position: relative !important;
+
+    margin:
+        0
+        16px
+        22px !important;
+
+    min-height: 285px !important;
+
+    padding: 24px !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        minmax(300px,470px)
+        minmax(260px,1fr)
+        auto !important;
+
+    align-items: center !important;
+
+    gap: 30px !important;
+
+    overflow: hidden !important;
+
+    border-radius: 22px !important;
+
+    border: 0 !important;
+
+    background:
+        linear-gradient(
+            130deg,
+            #30401c 0%,
+            #1a2810 58%,
+            #0c1707 100%
+        ) !important;
+
+    color: white !important;
+
+    box-shadow:
+        0 12px 30px
+        rgba(12,23,7,.19) !important;
+}
+
+
+/* Hero image must match dashboard */
+
+.farmers-hero .hero-photo-layer {
+    width: 100% !important;
+
+    height: 235px !important;
+
+    min-height: 235px !important;
+
+    margin: 0 !important;
+
+    border-radius: 17px !important;
+
+    overflow: hidden !important;
+
+    position: relative !important;
+
+    z-index: 2 !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.16) !important;
+
+    box-shadow:
+        0 10px 24px
+        rgba(0,0,0,.28) !important;
+}
+
+.farmers-hero .hero-photo-layer img {
+    width: 100% !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    object-fit: cover !important;
+    object-position: center 48% !important;
+}
+
+
+/* Hero text */
+
+.farmers-hero .hero-copy {
+    position: relative;
+    z-index: 2;
+}
+
+.farmers-hero .hero-copy h1 {
+    margin: 0 0 9px !important;
+
+    font-family:
+        'Fraunces',
+        Georgia,
+        serif !important;
+
+    font-size:
+        clamp(34px,4vw,52px) !important;
+
+    font-weight: 600 !important;
+
+    line-height: 1.03 !important;
+
+    letter-spacing: -1.2px !important;
+
+    color: white !important;
+}
+
+.farmers-hero .hero-copy p {
+    margin: 0 !important;
+
+    max-width: 560px !important;
+
+    color: #dbe6cb !important;
+
+    font-size: 14px !important;
+
+    line-height: 1.65 !important;
+}
+
+
+/* Date/refresh column */
+
+.farmers-hero .hero-tools {
+    position: relative !important;
+    z-index: 2 !important;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: stretch !important;
+
+    gap: 9px !important;
+
+    min-width: 168px !important;
+}
+
+
+/* =========================
+   CONTENT BELOW HERO
+========================= */
+
+.farmer-summary-grid {
+    margin:
+        0
+        16px
+        24px !important;
+
+    gap: 16px !important;
+}
+
+.farmer-management-panel {
+    margin:
+        0
+        16px
+        24px !important;
+}
+
+
+/* =========================
+   REMOVE VISUAL NAV DELAY
+========================= */
+
+.page-transition-overlay {
+    display: none !important;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1180px) {
+
+    .farmers-hero {
+        grid-template-columns:
+            minmax(300px,420px)
+            1fr !important;
+    }
+
+    .hero-tools {
+        grid-column: 2;
+
+        flex-direction: row !important;
+
+        align-items: center !important;
+    }
+}
+
+
+@media (max-width: 980px) {
+
+    .farmers-hero {
+        grid-template-columns:
+            1fr !important;
+    }
+
+    .farmers-hero .hero-photo-layer {
+        height: 270px !important;
+    }
+
+    .hero-tools {
+        grid-column: auto;
+
+        width: 100%;
+
+        flex-direction: row !important;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .top-nav-bar,
+    .secondary-module-nav,
+    .farmers-hero,
+    .farmer-summary-grid,
+    .farmer-management-panel {
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+
+    .farmers-hero {
+        padding: 16px !important;
+        gap: 20px !important;
+    }
+
+    .farmers-hero .hero-photo-layer {
+        height: 220px !important;
+        min-height: 220px !important;
+    }
+}
+/* NAVIGATION */
+
+.admin-navigation,
+.secondary-module-nav {
+    margin: 0 16px 18px !important;
+    padding: 7px !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+
+    gap: 6px !important;
+
+    border-radius: 14px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #121f0d,
+            #1d2a13
+        ) !important;
+
+    box-shadow:
+        0 6px 18px rgba(12, 23, 7, 0.18) !important;
+}
+
+.admin-nav-item,
+.secondary-module-nav a {
+    min-width: 0 !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 10px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 7px !important;
+
+    border: 0 !important;
+    border-radius: 9px !important;
+
+    background: transparent !important;
+
+    color: #dce7be !important;
+
+    font-family: 'Inter', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+
+    line-height: 1 !important;
+
+    text-decoration: none !important;
+    white-space: nowrap !important;
+
+    opacity: 1 !important;
+}
+
+.admin-nav-item i,
+.secondary-module-nav a i {
+    color: inherit !important;
+
+    font-size: 12px !important;
+
+    opacity: 1 !important;
+}
+
+.admin-nav-item.active,
+.secondary-module-nav a.active {
+    background: #ffffff !important;
+
+    color: #121f0d !important;
+
+    font-weight: 800 !important;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Farmer Portal belongs in header */
+.admin-navigation .admin-farmer-portal-button {
+    display: none !important;
+}
+/* FOOTER */
+
+.admin-footer {
+    margin: 10px 16px 16px !important;
+
+    padding: 18px 20px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    gap: 20px !important;
+
+    border:
+        1px solid
+        rgba(48, 64, 28, 0.13) !important;
+
+    border-radius: 16px !important;
+
+    background:
+        rgba(255, 255, 255, 0.76) !important;
+
+    color: #526532 !important;
+
+    font-family:
+        'Inter',
+        sans-serif !important;
+
+    font-size: 11px !important;
+
+    box-shadow:
+        0 6px 18px
+        rgba(18, 31, 13, 0.06) !important;
+}
+
+.admin-footer > div:first-child {
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 10px !important;
+}
+
+.admin-footer strong {
+    color: #30401c !important;
+
+    font-weight: 800 !important;
+}
+
+.admin-footer span {
+    color: #758850 !important;
+}
+
+
+/* DARK MODE */
+
+body.dark-mode .admin-footer {
+    border-color:
+        rgba(185, 199, 152, 0.16) !important;
+
+    background:
+        #182311 !important;
+
+    color:
+        #b9c798 !important;
+
+    box-shadow:
+        0 8px 22px
+        rgba(0, 0, 0, 0.18) !important;
+}
+
+body.dark-mode .admin-footer strong {
+    color: #eef4df !important;
+}
+
+body.dark-mode .admin-footer span {
+    color: #b9c798 !important;
+}
+
+
+@media (max-width: 650px) {
+
+    .admin-footer {
+        margin:
+            10px 10px
+            14px !important;
+
+        flex-direction: column !important;
+
+        align-items:
+            flex-start !important;
+    }
+}
+/* HIDE OLD HERO DATE */
+
+.farmers-hero .hero-mini-date {
+    display: none !important;
+}
+/* =========================================================
+   FINAL FOOTER FIX
+   - rectangular
+   - left aligned
+   - smaller text
+   - dashboard colours
+========================================================= */
+
+body .admin-footer.dashboard-footer {
+    width: 100% !important;
+
+    /* No side gap around the footer */
+    margin: 36px 0 0 0 !important;
+
+    /* Small internal spacing from browser edge */
+    padding: 20px 24px !important;
+
+    min-height: 95px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    background: #121f0d !important;
+    border: none !important;
+    border-radius: 0 !important;
+
+    text-align: left !important;
+    box-shadow: none !important;
+}
+
+
+/* LEFT TEXT AREA */
+
+body .admin-footer.dashboard-footer .dashboard-footer-left {
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    gap: 5px !important;
+
+    text-align: left !important;
+
+    /* IMPORTANT: prevents inherited centering */
+    margin-left: 0 !important;
+    transform: none !important;
+}
+
+
+/* KISAN SETU LINE */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-left strong {
+
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    text-align: left !important;
+
+    color: #ffffff !important;
+
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+}
+
+
+/* MINISTRY LINE */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-left > span {
+
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    text-align: left !important;
+
+    color: #ffffff !important;
+
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+
+    letter-spacing: 0 !important;
+}
+
+
+/* BACKEND STATUS */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-status {
+
+    margin: 0 !important;
+
+    padding: 8px 13px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+
+    gap: 6px !important;
+
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 999px !important;
+
+    color: #ffffff !important;
+
+    font-size: 10px !important;
+    font-weight: 600 !important;
+
+    white-space: nowrap !important;
+}
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-status span {
+
+    color: #ffffff !important;
+    font-size: 10px !important;
+}
+
+
+/* STATUS DOT */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-dot {
+
+    width: 8px !important;
+    height: 8px !important;
+
+    background: #98a973 !important;
+    border-radius: 50% !important;
+}
+
+
+/* DARK MODE — EXACT SAME FOOTER */
+
+body.dark-mode .admin-footer.dashboard-footer {
+    background: #121f0d !important;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 760px) {
+
+    body .admin-footer.dashboard-footer {
+        padding: 18px 16px !important;
+
+        flex-direction: column !important;
+        align-items: flex-start !important;
+
+        gap: 14px !important;
+    }
+
+    body .admin-footer.dashboard-footer
+    .dashboard-footer-status {
+        white-space: normal !important;
+    }
+}
+/* =========================================================
+   DARK MODE 
+========================================================= */
+
+/* "15 farmer records loaded." */
+body.dark-mode .farmer-status-message.success {
+    color: #dce7be !important;
+    background: rgba(152, 169, 115, 0.12) !important;
+    border-color: rgba(185, 199, 152, 0.22) !important;
+    opacity: 1 !important;
+}
+
+
+/* Active / Registered badges */
+body.dark-mode .farmer-status-badge {
+    color: #dce7be !important;
+    background: rgba(152, 169, 115, 0.18) !important;
+    border: 1px solid rgba(185, 199, 152, 0.20) !important;
+    opacity: 1 !important;
+}
+
+
+/* Little status dot */
+body.dark-mode .farmer-status-badge i {
+    color: #98a973 !important;
+    opacity: 1 !important;
+}
+/* DARK MODE- Make farmers initials visible */
+
+body.dark-mode .farmer-avatar {
+    background: rgba(152, 169, 115, 0.20) !important;
+    color: #dce7be !important;
+    font-weight: 800 !important;
+    opacity: 1 !important;
 }

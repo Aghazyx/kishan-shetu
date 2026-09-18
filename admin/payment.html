@@ -1,967 +1,6573 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <title>
-    Payment Monitoring | Kisan Setu Admin Portal
-  </title>
-
-
-  <!-- ============================================================
-       SHARED STYLES
-       ============================================================ -->
-
-  <link
-    rel="stylesheet"
-    href="../main.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="admin_navbar.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="../footer.css"
-  >
+    <title>
+        Payment Monitoring | Kisan Setu Admin Portal
+    </title>
 
 
-  <!-- ============================================================
-       A6 PAGE STYLES
-       ============================================================ -->
-
-  <link
-    rel="stylesheet"
-    href="payment.css"
-  >
+    <link
+        rel="icon"
+        type="image/png"
+        href="https://cdn-icons-png.flaticon.com/128/8524/8524310.png"
+    >
 
 
-  <!-- ============================================================
-       FONT AWESOME
-       ============================================================ -->
+    <link
+        rel="stylesheet"
+        href="../main.css"
+    >
 
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-  >
+    <link
+        rel="stylesheet"
+        href="admin_navbar.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../footer.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="payment.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        :root {
+
+            --forest-dark: #121f0d;
+            --forest: #30401c;
+            --moss: #526532;
+            --sage: #758850;
+            --apple: #98a973;
+            --light-sage: #b9c798;
+            --cream-green: #dce7be;
+
+            --gold: #c9a24b;
+            --gold-soft: #e3cf94;
+
+            --page-bg: #e7edd5;
+
+            --card-bg:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .96
+                );
+
+            --card-bg-solid:
+                #fffefb;
+
+            --text-main:
+                #121f0d;
+
+            --text-muted:
+                #526532;
+
+            --border-color:
+                rgba(
+                    48,
+                    64,
+                    28,
+                    .13
+                );
+
+            --shadow-sm:
+                0 3px 10px
+                rgba(
+                    18,
+                    31,
+                    13,
+                    .06
+                );
+
+            --shadow-md:
+                0 8px 24px
+                rgba(
+                    18,
+                    31,
+                    13,
+                    .10
+                );
+
+            --shadow-lg:
+                0 18px 42px
+                rgba(
+                    18,
+                    31,
+                    13,
+                    .15
+                );
+
+        }
+
+
+
+        body.dark-mode {
+
+            --page-bg:
+                #0c1707;
+
+            --card-bg:
+                rgba(
+                    24,
+                    35,
+                    17,
+                    .96
+                );
+
+            --card-bg-solid:
+                #182311;
+
+            --text-main:
+                #eef4df;
+
+            --text-muted:
+                #b9c798;
+
+            --border-color:
+                rgba(
+                    185,
+                    199,
+                    152,
+                    .16
+                );
+
+            --shadow-sm:
+                0 3px 10px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .20
+                );
+
+            --shadow-md:
+                0 8px 24px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .28
+                );
+
+            --shadow-lg:
+                0 18px 42px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .36
+                );
+
+        }
+
+
+
+        * {
+
+            box-sizing:
+                border-box;
+
+        }
+
+
+
+        html {
+
+            scroll-behavior:
+                smooth;
+
+        }
+
+
+
+        html,
+        body {
+
+            margin:
+                0;
+
+            min-height:
+                100%;
+
+        }
+
+
+
+        body {
+
+            font-family:
+                'Inter',
+                sans-serif;
+
+            color:
+                var(
+                    --text-main
+                );
+
+            background:
+
+                radial-gradient(
+                    circle at top left,
+                    rgba(
+                        255,
+                        255,
+                        255,
+                        .80
+                    ),
+                    transparent 38%
+                ),
+
+                radial-gradient(
+                    circle at bottom right,
+                    rgba(
+                        117,
+                        136,
+                        80,
+                        .20
+                    ),
+                    transparent 42%
+                ),
+
+                var(
+                    --page-bg
+                );
+
+            transition:
+                background .3s ease,
+                color .3s ease;
+
+        }
+
+
+
+        body.dark-mode {
+
+            background:
+
+                radial-gradient(
+                    circle at top left,
+                    rgba(
+                        82,
+                        101,
+                        50,
+                        .12
+                    ),
+                    transparent 40%
+                ),
+
+                radial-gradient(
+                    circle at bottom right,
+                    rgba(
+                        152,
+                        169,
+                        115,
+                        .07
+                    ),
+                    transparent 42%
+                ),
+
+                #0c1707;
+
+        }
+
+
+
+        button,
+        input,
+        select {
+
+            font-family:
+                inherit;
+
+        }
+
+
+
+        /* ADMIN */
+
+
+        .top-nav-bar {
+
+            position:
+                relative;
+
+            margin:
+                14px
+                16px
+                10px;
+
+            min-height:
+                84px;
+
+            padding:
+                15px
+                18px;
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap:
+                18px;
+
+            color:
+                white;
+
+            border-radius:
+                18px;
+
+            overflow:
+                hidden;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    rgba(
+                        12,
+                        23,
+                        7,
+                        .90
+                    ),
+                    rgba(
+                        18,
+                        31,
+                        13,
+                        .76
+                    )
+                ),
+
+                url(
+                    "52565520646011763.jpg"
+                );
+
+            background-size:
+                cover;
+
+            background-position:
+                center 46%;
+
+            box-shadow:
+                0 10px 28px
+                rgba(
+                    12,
+                    23,
+                    7,
+                    .22
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .16
+                );
+
+        }
+
+
+
+        .top-nav-bar::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            background:
+
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(
+                        201,
+                        162,
+                        75,
+                        .18
+                    ),
+                    transparent 28%
+                );
+
+            pointer-events:
+                none;
+
+        }
+
+
+
+        .top-nav-bar > * {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+        }
+
+
+
+        .nav-left-brand {
+
+            min-width:
+                275px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                14px;
+
+            text-decoration:
+                none;
+
+        }
+
+
+
+        .brand-logo-img {
+
+            width:
+                48px;
+
+            height:
+                48px;
+
+            object-fit:
+                contain;
+
+            filter:
+                drop-shadow(
+                    0 4px 8px
+                    rgba(
+                        0,
+                        0,
+                        0,
+                        .35
+                    )
+                );
+
+        }
+
+
+
+        .brand-title-group {
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                2px;
+
+        }
+
+
+
+        .brand-title-group small {
+
+            color:
+                var(
+                    --gold-soft
+                );
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                1.5px;
+
+        }
+
+
+
+        .brand-title-group strong {
+
+            color:
+                white;
+
+            font-family:
+                'Plus Jakarta Sans',
+                sans-serif;
+
+            font-size:
+                21px;
+
+            font-weight:
+                800;
+
+            line-height:
+                1.1;
+
+        }
+
+
+
+        .nav-right-actions {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                flex-end;
+
+            gap:
+                9px;
+
+            flex-wrap:
+                wrap;
+
+        }
+
+
+
+        .header-glass-control {
+
+            background:
+                rgba(
+                    12,
+                    23,
+                    7,
+                    .63
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .18
+                );
+
+            backdrop-filter:
+                blur(
+                    12px
+                );
+
+            -webkit-backdrop-filter:
+                blur(
+                    12px
+                );
+
+            color:
+                white;
+
+        }
+
+
+
+        .user-pill-container {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            padding:
+                6px
+                10px
+                6px
+                13px;
+
+            border-radius:
+                12px;
+
+            background:
+                rgba(
+                    12,
+                    23,
+                    7,
+                    .64
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .18
+                );
+
+            backdrop-filter:
+                blur(
+                    12px
+                );
+
+        }
+
+
+
+        .user-details {
+
+            text-align:
+                right;
+
+        }
+
+
+
+        .user-name {
+
+            display:
+                block;
+
+            color:
+                white;
+
+            font-size:
+                12px;
+
+            font-weight:
+                700;
+
+            max-width:
+                150px;
+
+            overflow:
+                hidden;
+
+            white-space:
+                nowrap;
+
+            text-overflow:
+                ellipsis;
+
+        }
+
+
+
+        .user-verified-tag {
+
+            display:
+                flex;
+
+            justify-content:
+                flex-end;
+
+            align-items:
+                center;
+
+            gap:
+                4px;
+
+            margin-top:
+                2px;
+
+            color:
+                var(
+                    --light-sage
+                );
+
+            font-size:
+                9px;
+
+            font-weight:
+                700;
+
+        }
+
+
+
+        .user-avatar {
+
+            width:
+                36px;
+
+            height:
+                36px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            flex-shrink:
+                0;
+
+            border-radius:
+                50%;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    #c9a24b,
+                    #9a742b
+                );
+
+            color:
+                white;
+
+            font-size:
+                11px;
+
+            font-weight:
+                800;
+
+            box-shadow:
+                0 4px 10px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .25
+                );
+
+        }
+
+
+
+        .theme-toggle-btn,
+        .icon-notification-btn {
+
+            width:
+                38px;
+
+            height:
+                38px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                0;
+
+            border-radius:
+                10px;
+
+            cursor:
+                pointer;
+
+            position:
+                relative;
+
+            transition:
+                transform .2s ease,
+                background .2s ease;
+
+        }
+
+
+
+        .theme-toggle-btn:hover,
+        .icon-notification-btn:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .15
+                );
+
+        }
+
+
+
+        .notification-badge {
+
+            position:
+                absolute;
+
+            top:
+                -3px;
+
+            right:
+                -3px;
+
+            min-width:
+                16px;
+
+            height:
+                16px;
+
+            padding:
+                0 4px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                20px;
+
+            background:
+                var(
+                    --gold
+                );
+
+            color:
+                var(
+                    --forest-dark
+                );
+
+            font-size:
+                8px;
+
+            font-weight:
+                800;
+
+            border:
+                2px solid
+                var(
+                    --forest-dark
+                );
+
+        }
+
+
+
+        .lang-select-box {
+
+            min-height:
+                38px;
+
+            padding:
+                0 10px;
+
+            border-radius:
+                10px;
+
+            outline:
+                none;
+
+            cursor:
+                pointer;
+
+            font-size:
+                11px;
+
+            font-weight:
+                600;
+
+        }
+
+
+
+        .lang-select-box option {
+
+            background:
+                var(
+                    --forest-dark
+                );
+
+            color:
+                white;
+
+        }
+
+
+
+        .btn-farmer-portal,
+        .btn-logout {
+
+            min-height:
+                38px;
+
+            padding:
+                0 12px;
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                6px;
+
+            border-radius:
+                10px;
+
+            font-size:
+                11px;
+
+            font-weight:
+                700;
+
+            text-decoration:
+                none;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+
+        }
+
+
+
+        .btn-farmer-portal {
+
+            border:
+                1px solid white;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .96
+                );
+
+            color:
+                var(
+                    --forest-dark
+                );
+
+        }
+
+
+
+        .btn-logout {
+
+            border:
+                1px solid
+                #fca5a5;
+
+            background:
+                #dc4545;
+
+            color:
+                white;
+
+        }
+
+
+
+        .btn-farmer-portal:hover,
+        .btn-logout:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+        }
+
+
+
+        /* NAVIGATION */
+
+
+        .secondary-module-nav {
+
+            margin:
+                0 16px 18px;
+
+            padding:
+                7px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    6,
+                    1fr
+                );
+
+            gap:
+                6px;
+
+            border-radius:
+                14px;
+
+            background:
+
+                linear-gradient(
+                    135deg,
+                    var(
+                        --forest-dark
+                    ),
+                    #1d2a13
+                );
+
+            box-shadow:
+                0 6px 18px
+                rgba(
+                    12,
+                    23,
+                    7,
+                    .18
+                );
+
+        }
+
+
+
+        .secondary-module-nav
+        .admin-nav-item {
+
+            min-height:
+                40px;
+
+            padding:
+                0 10px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                7px;
+
+            border-radius:
+                9px;
+
+            text-decoration:
+                none;
+
+            color:
+                #dce7be;
+
+            font-size:
+                12px;
+
+            font-weight:
+                600;
+
+            transition:
+                transform .2s ease,
+                background .2s ease,
+                color .2s ease;
+
+        }
+
+
+
+        .secondary-module-nav
+        .admin-nav-item:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .11
+                );
+
+            color:
+                white;
+
+        }
+
+
+
+        .secondary-module-nav
+        .admin-nav-item.active {
+
+            background:
+                white;
+
+            color:
+                var(
+                    --forest-dark
+                );
+
+            font-weight:
+                800;
+
+            box-shadow:
+                0 4px 10px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .14
+                );
+
+        }
+
+
+
+        /* PAYMENT */
+
+
+        .payment-page {
+
+            width:
+                100% !important;
+
+            max-width:
+                none !important;
+
+            margin:
+                0 auto !important;
+
+            padding:
+                0 0 36px !important;
+
+        }
+
+
+
+        /* HERO */
+
+
+        .payment-hero {
+
+            position:
+                relative;
+
+            margin:
+                0 16px 22px;
+
+            min-height:
+                285px;
+
+            padding:
+                24px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                minmax(
+                    300px,
+                    470px
+                )
+                minmax(
+                    260px,
+                    1fr
+                )
+                auto;
+
+            align-items:
+                center;
+
+            gap:
+                30px;
+
+            overflow:
+                visible;
+
+            border-radius:
+                22px;
+
+            color:
+                white;
+
+            background:
+
+                linear-gradient(
+                    130deg,
+                    #30401c 0%,
+                    #1a2810 58%,
+                    #0c1707 100%
+                );
+
+            box-shadow:
+                0 12px 30px
+                rgba(
+                    12,
+                    23,
+                    7,
+                    .19
+                );
+
+        }
+
+
+
+        .payment-hero-photo {
+
+            width:
+                100%;
+
+            height:
+                235px;
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            border-radius:
+                17px;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .16
+                );
+
+            box-shadow:
+                0 10px 24px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .28
+                );
+
+        }
+
+
+
+        .payment-hero-photo::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            background:
+
+                linear-gradient(
+                    to top,
+                    rgba(
+                        12,
+                        23,
+                        7,
+                        .25
+                    ),
+                    transparent 55%
+                );
+
+            pointer-events:
+                none;
+
+        }
+
+
+
+        .payment-hero-photo img {
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            display:
+                block;
+
+            object-fit:
+                cover;
+
+            object-position:
+                center 48%;
+
+            transform:
+                scale(
+                    1
+                );
+
+            transition:
+                transform
+                .55s
+                cubic-bezier(
+                    .16,
+                    1,
+                    .3,
+                    1
+                );
+
+        }
+
+
+
+        .payment-hero:hover
+        .payment-hero-photo img {
+
+            transform:
+                scale(
+                    1.035
+                );
+
+        }
+
+
+
+        .payment-hero-copy {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+        }
+
+
+
+        .payment-eyebrow {
+
+            width:
+                fit-content;
+
+            margin-bottom:
+                12px;
+
+            padding:
+                6px 11px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                6px;
+
+            border-radius:
+                30px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .09
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .14
+                );
+
+            color:
+                #e4ecd4;
+
+            font-size:
+                9px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                1.1px;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+
+        .payment-hero h1 {
+
+            margin:
+                0 0 9px;
+
+            font-family:
+                'Fraunces',
+                Georgia,
+                serif;
+
+            font-size:
+                clamp(
+                    34px,
+                    4vw,
+                    52px
+                );
+
+            font-weight:
+                600;
+
+            line-height:
+                1.03;
+
+            letter-spacing:
+                -1.2px;
+
+            color:
+                white;
+
+        }
+
+
+
+        .payment-hero-copy p {
+
+            max-width:
+                560px;
+
+            margin:
+                0;
+
+            color:
+                #dbe6cb;
+
+            font-size:
+                14px;
+
+            line-height:
+                1.65;
+
+        }
+
+
+
+        .payment-hero-tools {
+
+            position:
+                relative;
+
+            z-index:
+                20;
+
+            min-width:
+                168px;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                9px;
+
+        }
+
+
+
+        /* CALENDAR */
+
+
+        .payment-date-box {
+
+            position:
+                relative;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                auto
+                1fr
+                auto;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            padding:
+                9px 10px;
+
+            border-radius:
+                11px;
+
+            background:
+                white;
+
+            color:
+                var(
+                    --forest-dark
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .70
+                );
+
+            box-shadow:
+                0 4px 14px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .13
+                );
+
+        }
+
+
+
+        .payment-date-box > i {
+
+            color:
+                var(
+                    --forest
+                );
+
+            font-size:
+                13px;
+
+        }
+
+
+
+        .payment-date-display {
+
+            font-size:
+                11px;
+
+            font-weight:
+                700;
+
+            white-space:
+                nowrap;
+
+        }
+
+
+
+        .payment-calendar-trigger {
+
+            width:
+                24px;
+
+            height:
+                24px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                0;
+
+            border:
+                none;
+
+            border-radius:
+                6px;
+
+            background:
+                transparent;
+
+            color:
+                var(
+                    --moss
+                );
+
+            cursor:
+                pointer;
+
+        }
+
+
+
+        .payment-calendar-trigger:hover {
+
+            background:
+                rgba(
+                    82,
+                    101,
+                    50,
+                    .10
+                );
+
+        }
+
+
+
+        .payment-calendar-dropdown {
+
+            position:
+                absolute;
+
+            top:
+                calc(
+                    100% + 8px
+                );
+
+            right:
+                0;
+
+            width:
+                290px;
+
+            padding:
+                14px;
+
+            border-radius:
+                14px;
+
+            background:
+                white;
+
+            color:
+                var(
+                    --forest-dark
+                );
+
+            border:
+                1px solid
+                rgba(
+                    48,
+                    64,
+                    28,
+                    .13
+                );
+
+            box-shadow:
+                0 18px 40px
+                rgba(
+                    12,
+                    23,
+                    7,
+                    .25
+                );
+
+            z-index:
+                999;
+
+        }
+
+
+
+        .payment-calendar-dropdown[hidden] {
+
+            display:
+                none !important;
+
+        }
+
+
+
+        .payment-calendar-head {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                34px
+                1fr
+                34px;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            margin-bottom:
+                11px;
+
+        }
+
+
+
+        .payment-calendar-head strong {
+
+            text-align:
+                center;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+        }
+
+
+
+        .payment-calendar-head button {
+
+            width:
+                34px;
+
+            height:
+                34px;
+
+            border:
+                1px solid
+                rgba(
+                    48,
+                    64,
+                    28,
+                    .12
+                );
+
+            border-radius:
+                8px;
+
+            background:
+                #f7f9f1;
+
+            color:
+                var(
+                    --forest
+                );
+
+            cursor:
+                pointer;
+
+        }
+
+
+
+        .payment-calendar-week,
+        .payment-calendar-days {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    7,
+                    1fr
+                );
+
+            gap:
+                5px;
+
+        }
+
+
+
+        .payment-calendar-week {
+
+            margin-bottom:
+                5px;
+
+        }
+
+
+
+        .payment-calendar-week span {
+
+            text-align:
+                center;
+
+            color:
+                var(
+                    --sage
+                );
+
+            font-size:
+                9px;
+
+            font-weight:
+                800;
+
+        }
+
+
+
+        .payment-calendar-empty {
+
+            display:
+                block;
+
+        }
+
+
+
+        .payment-calendar-day {
+
+            aspect-ratio:
+                1;
+
+            padding:
+                0;
+
+            border:
+                none;
+
+            border-radius:
+                8px;
+
+            background:
+                transparent;
+
+            color:
+                var(
+                    --forest-dark
+                );
+
+            font-size:
+                10px;
+
+            font-weight:
+                700;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform .15s ease,
+                background .15s ease,
+                color .15s ease;
+
+        }
+
+
+
+        .payment-calendar-day:hover {
+
+            transform:
+                scale(
+                    1.06
+                );
+
+            background:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .18
+                );
+
+        }
+
+
+
+        .payment-calendar-day.today {
+
+            border:
+                1px solid
+                var(
+                    --sage
+                );
+
+        }
+
+
+
+        .payment-calendar-day.selected {
+
+            background:
+                var(
+                    --forest
+                ) !important;
+
+            color:
+                white !important;
+
+        }
+
+
+
+        .payment-refresh-button {
+
+            min-height:
+                38px !important;
+
+            display:
+                flex !important;
+
+            align-items:
+                center !important;
+
+            justify-content:
+                center !important;
+
+            gap:
+                7px !important;
+
+            padding:
+                0 12px !important;
+
+            border-radius:
+                10px !important;
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .30
+                ) !important;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .11
+                ) !important;
+
+            color:
+                white !important;
+
+            font-size:
+                11px !important;
+
+            font-weight:
+                700 !important;
+
+            cursor:
+                pointer;
+
+            backdrop-filter:
+                blur(
+                    8px
+                );
+
+            transition:
+                transform .2s ease,
+                background .2s ease !important;
+
+        }
+
+
+
+        .payment-refresh-button:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .19
+                ) !important;
+
+        }
+
+
+
+        .payment-refresh-button.loading i {
+
+            animation:
+                paymentSpin
+                .8s
+                linear
+                infinite;
+
+        }
+
+
+
+        @keyframes paymentSpin {
+
+            to {
+
+                transform:
+                    rotate(
+                        360deg
+                    );
+
+            }
+
+        }
+
+
+
+        /* CONTENT */
+
+
+        .payment-connection-bar,
+        .payment-summary-grid,
+        .payment-monitoring-panel,
+        .payment-status-legend,
+        .payment-info-panel {
+
+            margin-left:
+                16px !important;
+
+            margin-right:
+                16px !important;
+
+        }
+
+
+
+        .payment-connection-bar {
+
+            margin-bottom:
+                18px !important;
+
+            padding:
+                11px 15px !important;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                ) !important;
+
+            border-radius:
+                12px !important;
+
+            background:
+                var(
+                    --card-bg
+                ) !important;
+
+            color:
+                var(
+                    --text-muted
+                ) !important;
+
+            box-shadow:
+                var(
+                    --shadow-sm
+                );
+
+            font-size:
+                11px;
+
+            font-weight:
+                600;
+
+        }
+
+
+
+        .payment-connection-status {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                7px;
+
+        }
+
+
+
+        .payment-status-dot {
+
+            width:
+                8px;
+
+            height:
+                8px;
+
+            border-radius:
+                50%;
+
+            background:
+                var(
+                    --apple
+                );
+
+            box-shadow:
+                0 0 0 5px
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .13
+                );
+
+        }
+
+
+
+        .payment-connection-separator {
+
+            color:
+                var(
+                    --border-color
+                );
+
+        }
+
+
+
+        .payment-last-updated-label {
+
+            color:
+                var(
+                    --text-muted
+                );
+
+        }
+
+
+
+        .payment-last-updated {
+
+            color:
+                var(
+                    --text-main
+                );
+
+            font-weight:
+                700;
+
+        }
+
+
+
+        /* SUMMARY */
+
+
+        .payment-summary-grid {
+
+            display:
+                grid !important;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                ) !important;
+
+            gap:
+                16px !important;
+
+            margin-bottom:
+                24px !important;
+
+        }
+
+
+
+        .payment-summary-card {
+
+            position:
+                relative !important;
+
+            min-height:
+                112px !important;
+
+            padding:
+                19px 20px !important;
+
+            display:
+                flex !important;
+
+            align-items:
+                center !important;
+
+            gap:
+                14px !important;
+
+            overflow:
+                hidden !important;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                ) !important;
+
+            border-radius:
+                16px !important;
+
+            background:
+                var(
+                    --card-bg
+                ) !important;
+
+            color:
+                var(
+                    --text-main
+                ) !important;
+
+            box-shadow:
+                var(
+                    --shadow-sm
+                ) !important;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform
+                .25s
+                cubic-bezier(
+                    .16,
+                    1,
+                    .3,
+                    1
+                ),
+                box-shadow .25s ease,
+                border-color .25s ease !important;
+
+        }
+
+
+
+        .payment-summary-card::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            top:
+                0;
+
+            left:
+                0;
+
+            width:
+                4px;
+
+            height:
+                100%;
+
+            background:
+
+                linear-gradient(
+                    to bottom,
+                    #98a973,
+                    #30401c
+                );
+
+            opacity:
+                0;
+
+            pointer-events:
+                none;
+
+            transition:
+                opacity .25s ease;
+
+        }
+
+
+
+        .payment-summary-card:hover {
+
+            transform:
+                translateY(
+                    -5px
+                ) !important;
+
+            border-color:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .58
+                ) !important;
+
+            box-shadow:
+                var(
+                    --shadow-md
+                ) !important;
+
+        }
+
+
+
+        .payment-summary-card:hover::after {
+
+            opacity:
+                1;
+
+        }
+
+
+
+        .payment-summary-icon {
+
+            width:
+                48px !important;
+
+            height:
+                48px !important;
+
+            flex:
+                0 0 48px;
+
+            display:
+                flex !important;
+
+            align-items:
+                center !important;
+
+            justify-content:
+                center !important;
+
+            border-radius:
+                13px !important;
+
+            background:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .20
+                ) !important;
+
+            color:
+                var(
+                    --forest
+                ) !important;
+
+            font-size:
+                18px !important;
+
+            transition:
+                transform .25s ease,
+                background .25s ease,
+                color .25s ease !important;
+
+        }
+
+
+
+        .payment-summary-card:hover
+        .payment-summary-icon {
+
+            transform:
+                translateY(
+                    -2px
+                )
+                scale(
+                    1.07
+                );
+
+            background:
+                var(
+                    --forest
+                ) !important;
+
+            color:
+                white !important;
+
+        }
+
+
+
+        .payment-summary-label {
+
+            display:
+                block;
+
+            margin-bottom:
+                5px;
+
+            color:
+                var(
+                    --text-muted
+                ) !important;
+
+            font-size:
+                11px !important;
+
+            font-weight:
+                700 !important;
+
+        }
+
+
+
+        .payment-summary-value {
+
+            color:
+                var(
+                    --text-main
+                ) !important;
+
+            font-family:
+                'Plus Jakarta Sans',
+                sans-serif !important;
+
+            font-size:
+                25px !important;
+
+            font-weight:
+                700 !important;
+
+        }
+
+
+
+        /* TRANSACTIONS */
+
+
+        .payment-monitoring-panel {
+
+            margin-bottom:
+                24px !important;
+
+            overflow:
+                hidden;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                ) !important;
+
+            border-radius:
+                18px !important;
+
+            background:
+                var(
+                    --card-bg
+                ) !important;
+
+            box-shadow:
+                var(
+                    --shadow-sm
+                ) !important;
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+
+        }
+
+
+
+        .payment-monitoring-panel:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            border-color:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .45
+                ) !important;
+
+            box-shadow:
+                var(
+                    --shadow-md
+                ) !important;
+
+        }
+
+
+
+        .payment-panel-header {
+
+            padding:
+                20px 22px;
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap:
+                18px;
+
+            border-bottom:
+                1px solid
+                var(
+                    --border-color
+                );
+
+        }
+
+
+
+        .payment-panel-header h2 {
+
+            margin:
+                0 0 5px;
+
+            color:
+                var(
+                    --text-main
+                );
+
+            font-family:
+                'Plus Jakarta Sans',
+                sans-serif;
+
+            font-size:
+                18px;
+
+            font-weight:
+                800;
+
+        }
+
+
+
+        .payment-panel-header p {
+
+            margin:
+                0;
+
+            color:
+                var(
+                    --text-muted
+                );
+
+            font-size:
+                11px;
+
+            line-height:
+                1.5;
+
+        }
+
+
+
+        .payment-live-badge {
+
+            flex-shrink:
+                0;
+
+            padding:
+                7px 11px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                6px;
+
+            border-radius:
+                30px;
+
+            background:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .15
+                );
+
+            color:
+                var(
+                    --forest
+                );
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+        }
+
+
+
+        .payment-live-dot {
+
+            width:
+                7px;
+
+            height:
+                7px;
+
+            border-radius:
+                50%;
+
+            background:
+                var(
+                    --sage
+                );
+
+            box-shadow:
+                0 0 0 4px
+                rgba(
+                    117,
+                    136,
+                    80,
+                    .12
+                );
+
+        }
+
+
+
+        /* FILTERS */
+
+
+        .payment-filter-toolbar {
+
+            padding:
+                18px 22px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                minmax(
+                    220px,
+                    1.6fr
+                )
+                repeat(
+                    3,
+                    minmax(
+                        145px,
+                        .7fr
+                    )
+                );
+
+            gap:
+                13px;
+
+            align-items:
+                end;
+
+            border-bottom:
+                1px solid
+                var(
+                    --border-color
+                );
+
+        }
+
+
+
+        .payment-filter-group {
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                6px;
+
+        }
+
+
+
+        .payment-filter-group label {
+
+            color:
+                var(
+                    --text-muted
+                );
+
+            font-size:
+                10px;
+
+            font-weight:
+                800;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                .5px;
+
+        }
+
+
+
+        .payment-search-wrapper {
+
+            position:
+                relative;
+
+        }
+
+
+
+        .payment-search-wrapper i {
+
+            position:
+                absolute;
+
+            top:
+                50%;
+
+            left:
+                12px;
+
+            transform:
+                translateY(
+                    -50%
+                );
+
+            color:
+                var(
+                    --sage
+                );
+
+            font-size:
+                12px;
+
+            pointer-events:
+                none;
+
+        }
+
+
+
+        .payment-search-wrapper input,
+        .payment-filter-group select {
+
+            width:
+                100%;
+
+            height:
+                40px;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                ) !important;
+
+            border-radius:
+                10px;
+
+            outline:
+                none;
+
+            background:
+                var(
+                    --card-bg-solid
+                ) !important;
+
+            color:
+                var(
+                    --text-main
+                ) !important;
+
+            font-size:
+                11px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+
+        }
+
+
+
+        .payment-search-wrapper input {
+
+            padding:
+                0 12px 0 34px;
+
+        }
+
+
+
+        .payment-filter-group select {
+
+            padding:
+                0 10px;
+
+            cursor:
+                pointer;
+
+        }
+
+
+
+        .payment-search-wrapper input:focus,
+        .payment-filter-group select:focus {
+
+            border-color:
+                var(
+                    --sage
+                ) !important;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    117,
+                    136,
+                    80,
+                    .12
+                );
+
+        }
+
+
+
+        /* TABLE */
+
+
+        .payment-table-wrapper {
+
+            width:
+                100%;
+
+            overflow-x:
+                auto;
+
+        }
+
+
+
+        .payment-table {
+
+            width:
+                100%;
+
+            border-collapse:
+                collapse;
+
+            min-width:
+                1000px;
+
+        }
+
+
+
+        .payment-table thead {
+
+            background:
+                rgba(
+                    117,
+                    136,
+                    80,
+                    .08
+                );
+
+        }
+
+
+
+        .payment-table th {
+
+            padding:
+                13px 14px;
+
+            text-align:
+                left;
+
+            color:
+                var(
+                    --text-muted
+                );
+
+            border-bottom:
+                1px solid
+                var(
+                    --border-color
+                );
+
+            font-size:
+                9px;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                .5px;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+
+        .payment-table td {
+
+            padding:
+                14px;
+
+            color:
+                var(
+                    --text-main
+                );
+
+            border-bottom:
+                1px solid
+                var(
+                    --border-color
+                );
+
+            font-size:
+                11px;
+
+        }
+
+
+
+        .payment-table tbody tr {
+
+            transition:
+                background .2s ease;
+
+        }
+
+
+
+        .payment-table tbody tr:hover {
+
+            background:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .09
+                );
+
+        }
+
+
+
+        .payment-transaction,
+        .payment-farmer {
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                3px;
+
+        }
+
+
+
+        .payment-transaction strong,
+        .payment-farmer strong {
+
+            color:
+                var(
+                    --text-main
+                );
+
+            font-weight:
+                700;
+
+        }
+
+
+
+        .payment-transaction span,
+        .payment-farmer span,
+        .payment-reference,
+        .payment-updated {
+
+            color:
+                var(
+                    --text-muted
+                );
+
+            font-size:
+                10px;
+
+        }
+
+
+
+        .payment-amount {
+
+            color:
+                var(
+                    --forest
+                );
+
+            font-weight:
+                800;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-amount {
+
+            color:
+                var(
+                    --light-sage
+                );
+
+        }
+
+
+
+        .payment-status-badge {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            min-width:
+                84px;
+
+            padding:
+                6px 9px;
+
+            border-radius:
+                30px;
+
+            font-size:
+                9px;
+
+            font-weight:
+                800;
+
+        }
+
+
+
+        .payment-status-badge.pending {
+
+            background:
+                rgba(
+                    201,
+                    162,
+                    75,
+                    .16
+                );
+
+            color:
+                #8a651d;
+
+        }
+
+
+
+        .payment-status-badge.pfms-batched {
+
+            background:
+                rgba(
+                    117,
+                    136,
+                    80,
+                    .17
+                );
+
+            color:
+                var(
+                    --forest
+                );
+
+        }
+
+
+
+        .payment-status-badge.dbt-dispatched {
+
+            background:
+                rgba(
+                    82,
+                    101,
+                    50,
+                    .15
+                );
+
+            color:
+                var(
+                    --forest
+                );
+
+        }
+
+
+
+        .payment-status-badge.failed {
+
+            background:
+                rgba(
+                    180,
+                    70,
+                    70,
+                    .13
+                );
+
+            color:
+                #a83e3e;
+
+        }
+
+
+
+        .payment-loading-cell,
+        .payment-error-row {
+
+            padding:
+                35px !important;
+
+            text-align:
+                center !important;
+
+            color:
+                var(
+                    --text-muted
+                ) !important;
+
+        }
+
+
+
+        .payment-loading-cell i {
+
+            margin-right:
+                7px;
+
+        }
+
+
+
+        /* EMPTY STATE */
+
+
+        .payment-empty-state {
+
+            padding:
+                50px 20px;
+
+            text-align:
+                center;
+
+        }
+
+
+
+        .payment-empty-state[hidden] {
+
+            display:
+                none !important;
+
+        }
+
+
+
+        .payment-empty-icon {
+
+            width:
+                55px;
+
+            height:
+                55px;
+
+            margin:
+                0 auto 14px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                15px;
+
+            background:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .16
+                );
+
+            color:
+                var(
+                    --forest
+                );
+
+            font-size:
+                20px;
+
+        }
+
+
+
+        .payment-empty-state h3 {
+
+            margin:
+                0 0 6px;
+
+            color:
+                var(
+                    --text-main
+                );
+
+            font-family:
+                'Plus Jakarta Sans',
+                sans-serif;
+
+        }
+
+
+
+        .payment-empty-state p {
+
+            margin:
+                0;
+
+            color:
+                var(
+                    --text-muted
+                );
+
+            font-size:
+                11px;
+
+        }
+
+
+
+        /* LEGEND */
+
+
+        .payment-status-legend {
+
+            margin-bottom:
+                24px !important;
+
+            padding:
+                16px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                12px;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                );
+
+            border-radius:
+                18px;
+
+            background:
+                var(
+                    --card-bg
+                );
+
+            box-shadow:
+                var(
+                    --shadow-sm
+                );
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+
+        }
+
+
+
+        .payment-status-legend:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            border-color:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .45
+                );
+
+            box-shadow:
+                var(
+                    --shadow-md
+                );
+
+        }
+
+
+
+        .payment-legend-item {
+
+            min-height:
+                74px;
+
+            padding:
+                13px;
+
+            display:
+                flex;
+
+            align-items:
+                flex-start;
+
+            gap:
+                10px;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                );
+
+            border-radius:
+                12px;
+
+            background:
+                var(
+                    --card-bg-solid
+                );
+
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                box-shadow .22s ease;
+
+        }
+
+
+
+        .payment-legend-item:hover {
+
+            transform:
+                translateY(
+                    -3px
+                );
+
+            border-color:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .45
+                );
+
+            box-shadow:
+                var(
+                    --shadow-sm
+                );
+
+        }
+
+
+
+        .payment-legend-dot {
+
+            width:
+                9px;
+
+            height:
+                9px;
+
+            margin-top:
+                4px;
+
+            flex:
+                0 0 9px;
+
+            border-radius:
+                50%;
+
+        }
+
+
+
+        .payment-legend-dot.pending {
+
+            background:
+                var(
+                    --gold
+                );
+
+        }
+
+
+
+        .payment-legend-dot.pfms-batched {
+
+            background:
+                var(
+                    --sage
+                );
+
+        }
+
+
+
+        .payment-legend-dot.dbt-dispatched {
+
+            background:
+                var(
+                    --forest
+                );
+
+        }
+
+
+
+        .payment-legend-dot.failed {
+
+            background:
+                #b94646;
+
+        }
+
+
+
+        .payment-legend-item div {
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                4px;
+
+        }
+
+
+
+        .payment-legend-item strong {
+
+            color:
+                var(
+                    --text-main
+                );
+
+            font-size:
+                11px;
+
+        }
+
+
+
+        .payment-legend-item span:not(
+            .payment-legend-dot
+        ) {
+
+            color:
+                var(
+                    --text-muted
+                );
+
+            font-size:
+                9px;
+
+            line-height:
+                1.45;
+
+        }
+
+
+
+        /* INFORMATION */
+
+
+        .payment-info-panel {
+
+            padding:
+                16px;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+
+            gap:
+                13px;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                );
+
+            border-radius:
+                18px;
+
+            background:
+                var(
+                    --card-bg
+                );
+
+            box-shadow:
+                var(
+                    --shadow-sm
+                );
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+
+        }
+
+
+
+        .payment-info-panel:hover {
+
+            transform:
+                translateY(
+                    -2px
+                );
+
+            border-color:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .45
+                );
+
+            box-shadow:
+                var(
+                    --shadow-md
+                );
+
+        }
+
+
+
+        .payment-info-item {
+
+            min-height:
+                95px;
+
+            padding:
+                15px;
+
+            display:
+                flex;
+
+            align-items:
+                flex-start;
+
+            gap:
+                12px;
+
+            border:
+                1px solid
+                var(
+                    --border-color
+                );
+
+            border-radius:
+                13px;
+
+            background:
+                var(
+                    --card-bg-solid
+                );
+
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                box-shadow .22s ease;
+
+        }
+
+
+
+        .payment-info-item:hover {
+
+            transform:
+                translateY(
+                    -3px
+                );
+
+            border-color:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .45
+                );
+
+            box-shadow:
+                var(
+                    --shadow-sm
+                );
+
+        }
+
+
+
+        .payment-info-icon {
+
+            width:
+                40px;
+
+            height:
+                40px;
+
+            flex:
+                0 0 40px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            border-radius:
+                11px;
+
+            background:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .16
+                );
+
+            color:
+                var(
+                    --forest
+                );
+
+            transition:
+                transform .22s ease,
+                background .22s ease,
+                color .22s ease;
+
+        }
+
+
+
+        .payment-info-item:hover
+        .payment-info-icon {
+
+            transform:
+                translateY(
+                    -2px
+                )
+                scale(
+                    1.06
+                );
+
+            background:
+                var(
+                    --forest
+                );
+
+            color:
+                white;
+
+        }
+
+
+
+        .payment-info-item > div:last-child {
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            gap:
+                5px;
+
+        }
+
+
+
+        .payment-info-item strong {
+
+            color:
+                var(
+                    --text-main
+                );
+
+            font-size:
+                11px;
+
+        }
+
+
+
+        .payment-info-item span {
+
+            color:
+                var(
+                    --text-muted
+                );
+
+            font-size:
+                9px;
+
+            line-height:
+                1.5;
+
+        }
+
+
+
+        /* DARK MODE */
+
+
+        body.dark-mode
+        .payment-hero {
+
+            background:
+                #121f0d;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-calendar-dropdown {
+
+            background:
+                #182311;
+
+            color:
+                #eef4df;
+
+            border-color:
+                rgba(
+                    185,
+                    199,
+                    152,
+                    .16
+                );
+
+        }
+
+
+
+        body.dark-mode
+        .payment-calendar-head button {
+
+            background:
+                #101b0c;
+
+            color:
+                #eef4df;
+
+            border-color:
+                rgba(
+                    185,
+                    199,
+                    152,
+                    .16
+                );
+
+        }
+
+
+
+        body.dark-mode
+        .payment-calendar-day {
+
+            color:
+                #eef4df;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-calendar-day:hover {
+
+            background:
+                rgba(
+                    185,
+                    199,
+                    152,
+                    .12
+                );
+
+        }
+
+
+
+        body.dark-mode
+        .payment-calendar-day.selected {
+
+            background:
+                #758850 !important;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-summary-card::after {
+
+            background:
+
+                linear-gradient(
+                    to bottom,
+                    #98a973,
+                    #526532
+                );
+
+        }
+
+
+
+        body.dark-mode
+        .payment-summary-icon {
+
+            background:
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .13
+                ) !important;
+
+            color:
+                #dbe7c7 !important;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-summary-card:hover
+        .payment-summary-icon {
+
+            background:
+                #758850 !important;
+
+            color:
+                white !important;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-live-badge {
+
+            color:
+                #dce7be;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-table thead {
+
+            background:
+                #121f0d;
+
+        }
+
+
+
+        body.dark-mode
+        .payment-table tbody tr:hover {
+
+            background:
+                rgba(
+                    185,
+                    199,
+                    152,
+                    .07
+                );
+
+        }
+
+
+
+        body.dark-mode
+        .payment-info-item:hover
+        .payment-info-icon {
+
+            background:
+                #758850;
+
+        }
+
+
+
+        /* FOOTER */
+
+
+        .dashboard-footer {
+
+            width:
+                100% !important;
+
+            min-height:
+                160px;
+
+            margin:
+                36px 0 0 !important;
+
+            padding:
+                38px 36px !important;
+
+            display:
+                flex !important;
+
+            align-items:
+                center !important;
+
+            justify-content:
+                space-between !important;
+
+            gap:
+                30px !important;
+
+            border:
+                none !important;
+
+            border-radius:
+                0 !important;
+
+            background:
+                #10210d !important;
+
+            box-shadow:
+                none !important;
+
+        }
+
+
+
+        .dashboard-footer-left {
+
+            display:
+                flex !important;
+
+            flex-direction:
+                column !important;
+
+            align-items:
+                flex-start !important;
+
+            gap:
+                9px !important;
+
+        }
+
+
+
+        .dashboard-footer-left strong {
+
+            color:
+                white !important;
+
+            font-family:
+                'Plus Jakarta Sans',
+                sans-serif !important;
+
+            font-size:
+                20px !important;
+
+            font-weight:
+                800 !important;
+
+            line-height:
+                1.25;
+
+        }
+
+
+
+        .dashboard-footer-left span {
+
+            color:
+                #b9c798 !important;
+
+            font-family:
+                'Inter',
+                sans-serif !important;
+
+            font-size:
+                14px !important;
+
+            font-weight:
+                500 !important;
+
+            line-height:
+                1.4;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+
+        .dashboard-footer-status {
+
+            flex-shrink:
+                0;
+
+            padding:
+                11px 17px;
+
+            display:
+                flex !important;
+
+            align-items:
+                center !important;
+
+            gap:
+                5px !important;
+
+            border:
+                1px solid
+                rgba(
+                    185,
+                    199,
+                    152,
+                    .22
+                );
+
+            border-radius:
+                999px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .07
+                );
+
+            color:
+                #e3cf94 !important;
+
+            font-size:
+                13px;
+
+            font-weight:
+                800;
+
+        }
+
+
+
+        .dashboard-footer-dot {
+
+            width:
+                10px;
+
+            height:
+                10px;
+
+            margin-right:
+                5px;
+
+            flex:
+                0 0 10px;
+
+            border-radius:
+                50%;
+
+            background:
+                #98a973;
+
+            box-shadow:
+                0 0 0 6px
+                rgba(
+                    152,
+                    169,
+                    115,
+                    .12
+                );
+
+        }
+
+
+
+        /* RESPONSIVE */
+
+
+        @media (
+            max-width:
+            1180px
+        ) {
+
+            .payment-hero {
+
+                grid-template-columns:
+                    minmax(
+                        300px,
+                        420px
+                    )
+                    1fr;
+
+            }
+
+
+            .payment-hero-tools {
+
+                grid-column:
+                    2;
+
+                flex-direction:
+                    row;
+
+            }
+
+
+            .payment-date-box,
+            .payment-refresh-button {
+
+                flex:
+                    1;
+
+            }
+
+        }
+
+
+
+        @media (
+            max-width:
+            980px
+        ) {
+
+            .top-nav-bar {
+
+                align-items:
+                    flex-start;
+
+                flex-direction:
+                    column;
+
+            }
+
+
+            .nav-right-actions {
+
+                width:
+                    100%;
+
+                justify-content:
+                    flex-start;
+
+            }
+
+
+            .secondary-module-nav {
+
+                grid-template-columns:
+                    repeat(
+                        3,
+                        1fr
+                    );
+
+            }
+
+
+            .payment-hero {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .payment-hero-photo {
+
+                height:
+                    270px;
+
+            }
+
+
+            .payment-hero-tools {
+
+                grid-column:
+                    auto;
+
+                flex-direction:
+                    row;
+
+            }
+
+
+            .payment-summary-grid {
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    ) !important;
+
+            }
+
+
+            .payment-filter-toolbar {
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        1fr
+                    );
+
+            }
+
+
+            .payment-status-legend {
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        1fr
+                    );
+
+            }
+
+
+            .payment-info-panel {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+        }
+
+
+
+        @media (
+            max-width:
+            700px
+        ) {
+
+            .top-nav-bar {
+
+                margin:
+                    10px;
+
+            }
+
+
+            .secondary-module-nav {
+
+                margin:
+                    0 10px 14px;
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        1fr
+                    );
+
+            }
+
+
+            .payment-hero {
+
+                margin:
+                    0 10px 18px;
+
+                padding:
+                    16px;
+
+                gap:
+                    20px;
+
+            }
+
+
+            .payment-hero-photo {
+
+                height:
+                    220px;
+
+            }
+
+
+            .payment-hero-tools {
+
+                flex-direction:
+                    column;
+
+            }
+
+
+            .payment-calendar-dropdown {
+
+                right:
+                    auto;
+
+                left:
+                    0;
+
+                width:
+                    min(
+                        290px,
+                        calc(
+                            100vw - 40px
+                        )
+                    );
+
+            }
+
+
+            .payment-connection-bar,
+            .payment-summary-grid,
+            .payment-monitoring-panel,
+            .payment-status-legend,
+            .payment-info-panel {
+
+                margin-left:
+                    10px !important;
+
+                margin-right:
+                    10px !important;
+
+            }
+
+
+            .payment-filter-toolbar {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .dashboard-footer {
+
+                padding:
+                    28px 20px !important;
+
+                flex-direction:
+                    column !important;
+
+                align-items:
+                    flex-start !important;
+
+            }
+
+
+            .dashboard-footer-status {
+
+                width:
+                    100%;
+
+                justify-content:
+                    center;
+
+            }
+
+        }
+
+
+
+        @media (
+            max-width:
+            520px
+        ) {
+
+            .payment-summary-grid {
+
+                grid-template-columns:
+                    1fr !important;
+
+            }
+
+
+            .payment-status-legend {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .nav-right-actions {
+
+                display:
+                    grid;
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(
+                            0,
+                            1fr
+                        )
+                    );
+
+            }
+
+
+            .user-pill-container {
+
+                grid-column:
+                    1 / -1;
+
+            }
+
+        }
+
+    </style>
 
 </head>
+
 
 
 <body>
 
 
-  <!-- ============================================================
-       ADMIN NAVBAR
-       ============================================================ -->
+    <!-- ADMIN -->
 
-  <header class="admin-navbar">
+    <header class="top-nav-bar">
 
 
-    <!-- ==========================================================
-         LEFT SIDE
-         ========================================================== -->
-
-    <div class="admin-navbar-left">
-
-      <div class="admin-brand">
-
-        <div class="admin-brand-icon">
-
-          <i class="fa-solid fa-seedling"></i>
-
-        </div>
-
-        <span class="admin-brand-name">
-          Kisan Setu
-        </span>
-
-      </div>
-
-
-      <div class="admin-navbar-divider"></div>
-
-
-      <span class="admin-portal-title">
-        Admin Portal
-      </span>
-
-    </div>
-
-
-
-    <!-- ==========================================================
-         RIGHT SIDE
-         ========================================================== -->
-
-    <div class="admin-navbar-right">
-
-      <div class="admin-user">
-
-        <i class="fa-solid fa-user-shield"></i>
-
-        <span id="admin-user-name">
-          Administrator
-        </span>
-
-      </div>
-
-
-      <button
-        type="button"
-        class="admin-logout-button"
-        id="admin-logout-button"
-      >
-
-        <i class="fa-solid fa-right-from-bracket"></i>
-
-        <span>
-          Logout
-        </span>
-
-      </button>
-
-    </div>
-
-  </header>
-
-
-
-  <!-- ============================================================
-       ADMIN NAVIGATION
-       ============================================================ -->
-
-  <nav
-    class="admin-navigation"
-    aria-label="Admin Portal Navigation"
-  >
-
-
-    <!-- Dashboard -->
-
-    <a
-      href="dashboard.html"
-      class="admin-nav-item"
-      data-admin-page="dashboard"
-    >
-
-      <i class="fa-solid fa-chart-line"></i>
-
-      Dashboard
-
-    </a>
-
-
-
-    <!-- Farmers -->
-
-    <a
-      href="farmers.html"
-      class="admin-nav-item"
-      data-admin-page="farmers"
-    >
-
-      <i class="fa-solid fa-users"></i>
-
-      Farmers
-
-    </a>
-
-
-
-    <!-- Mandi -->
-
-    <a
-      href="mandi.html"
-      class="admin-nav-item"
-      data-admin-page="mandi"
-    >
-
-      <i class="fa-solid fa-warehouse"></i>
-
-      Mandi & Slots
-
-    </a>
-
-
-
-    <!-- Queue -->
-
-    <a
-      href="queue.html"
-      class="admin-nav-item"
-      data-admin-page="queue"
-    >
-
-      <i class="fa-solid fa-list-ol"></i>
-
-      Live Queue
-
-    </a>
-
-
-
-    <!-- Payments -->
-
-    <a
-      href="payment.html"
-      class="admin-nav-item active"
-      data-admin-page="payments"
-    >
-
-      <i class="fa-solid fa-money-bill-transfer"></i>
-
-      Payments
-
-    </a>
-
-
-
-    <!-- Reports -->
-
-    <a
-      href="reports.html"
-      class="admin-nav-item"
-      data-admin-page="reports"
-    >
-
-      <i class="fa-solid fa-file-chart-column"></i>
-
-      Reports
-
-    </a>
-
-
-
-    <!-- Farmer Portal -->
-
-    <a
-      href="../farmer/index.html"
-      class="admin-nav-item admin-farmer-portal-button"
-      title="Open Farmer Portal"
-    >
-
-      <i class="fa-solid fa-user"></i>
-
-      Farmer Portal
-
-      <i class="fa-solid fa-arrow-up-right-from-square"></i>
-
-    </a>
-
-  </nav>
-
-
-
-  <!-- ============================================================
-       A6 • PAYMENT MONITORING
-       ============================================================ -->
-
-  <main class="payment-page">
-
-
-    <!-- ==========================================================
-         PAGE HEADER
-         ========================================================== -->
-
-    <section class="payment-page-header">
-
-      <div class="payment-title-group">
-
-        <div class="payment-title-icon">
-
-          <i class="fa-solid fa-indian-rupee-sign"></i>
-
-        </div>
-
-
-        <div>
-
-          <h1>
-            Payment Monitoring
-          </h1>
-
-          <p>
-            Track procurement payments, PFMS processing, and DBT
-            disbursement status.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <button
-        type="button"
-        class="payment-refresh-button"
-        id="refresh-payment-button"
-      >
-
-        <i class="fa-solid fa-rotate"></i>
-
-        <span>
-          Refresh Payments
-        </span>
-
-      </button>
-
-    </section>
-
-
-
-    <!-- ==========================================================
-         CONNECTION STATUS
-         ========================================================== -->
-
-    <section
-      class="payment-connection-bar"
-      aria-live="polite"
-    >
-
-      <div class="payment-connection-status">
-
-        <span
-          class="payment-status-dot"
-          id="payment-status-dot"
-        ></span>
-
-
-        <span
-          id="payment-connection-text"
+        <a
+            href="dashboard.html"
+            class="nav-left-brand"
         >
-          Connecting to payment service...
-        </span>
 
-      </div>
-
-
-      <span class="payment-connection-separator">
-        |
-      </span>
-
-
-      <span class="payment-last-updated-label">
-        Last updated:
-      </span>
-
-
-      <span
-        id="payment-last-updated"
-        class="payment-last-updated"
-      >
-        --
-      </span>
-
-    </section>
-
-
-
-    <!-- ==========================================================
-         PAYMENT SUMMARY
-         ========================================================== -->
-
-    <section class="payment-summary-grid">
-
-
-      <article class="payment-summary-card">
-
-        <div class="payment-summary-icon">
-
-          <i class="fa-solid fa-indian-rupee-sign"></i>
-
-        </div>
-
-
-        <div class="payment-summary-content">
-
-          <span class="payment-summary-label">
-            Total Payment Value
-          </span>
-
-          <strong
-            id="total-payment-value"
-            class="payment-summary-value"
-          >
-            ₹0
-          </strong>
-
-        </div>
-
-      </article>
-
-
-
-      <article class="payment-summary-card">
-
-        <div class="payment-summary-icon">
-
-          <i class="fa-solid fa-clock"></i>
-
-        </div>
-
-
-        <div class="payment-summary-content">
-
-          <span class="payment-summary-label">
-            Pending Payments
-          </span>
-
-          <strong
-            id="pending-payment-count"
-            class="payment-summary-value"
-          >
-            0
-          </strong>
-
-        </div>
-
-      </article>
-
-
-
-      <article class="payment-summary-card">
-
-        <div class="payment-summary-icon">
-
-          <i class="fa-solid fa-building-columns"></i>
-
-        </div>
-
-
-        <div class="payment-summary-content">
-
-          <span class="payment-summary-label">
-            PFMS Batched
-          </span>
-
-          <strong
-            id="pfms-batched-count"
-            class="payment-summary-value"
-          >
-            0
-          </strong>
-
-        </div>
-
-      </article>
-
-
-
-      <article class="payment-summary-card">
-
-        <div class="payment-summary-icon">
-
-          <i class="fa-solid fa-money-bill-transfer"></i>
-
-        </div>
-
-
-        <div class="payment-summary-content">
-
-          <span class="payment-summary-label">
-            DBT Dispatched
-          </span>
-
-          <strong
-            id="dbt-dispatched-count"
-            class="payment-summary-value"
-          >
-            0
-          </strong>
-
-        </div>
-
-      </article>
-
-    </section>
-
-
-
-    <!-- ==========================================================
-         PAYMENT MONITORING PANEL
-         ========================================================== -->
-
-    <section class="payment-monitoring-panel">
-
-
-      <div class="payment-panel-header">
-
-        <div>
-
-          <h2>
-            Payment Transactions
-          </h2>
-
-          <p>
-            Monitor farmer-wise procurement payment processing
-            across all procurement centers.
-          </p>
-
-        </div>
-
-
-        <span class="payment-live-badge">
-
-          <span class="payment-live-dot"></span>
-
-          Live Updates
-
-        </span>
-
-      </div>
-
-
-
-      <!-- ========================================================
-           FILTER TOOLBAR
-           ======================================================== -->
-
-      <div class="payment-filter-toolbar">
-
-
-        <div class="payment-filter-group payment-search-group">
-
-          <label for="payment-search">
-            Search
-          </label>
-
-
-          <div class="payment-search-wrapper">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-
-            <input
-              type="search"
-              id="payment-search"
-              placeholder="Search farmer, KCC, token..."
-              autocomplete="off"
+            <img
+                class="brand-logo-img"
+                src="https://cdn-icons-png.flaticon.com/128/8524/8524310.png"
+                alt="Kisan Setu"
             >
 
-          </div>
+
+            <span class="brand-title-group">
+
+                <small>
+                    KISAN SETU
+                </small>
+
+                <strong>
+                    Administration Portal
+                </strong>
+
+            </span>
+
+        </a>
+
+
+
+        <div class="nav-right-actions">
+
+
+            <div class="user-pill-container">
+
+
+                <div class="user-details">
+
+                    <span
+                        class="user-name"
+                        id="admin-user-name"
+                    >
+                        Administrator
+                    </span>
+
+
+                    <span class="user-verified-tag">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Verified
+
+                    </span>
+
+                </div>
+
+
+
+                <div
+                    class="user-avatar"
+                    id="admin-avatar"
+                >
+                    AD
+                </div>
+
+            </div>
+
+
+
+            <button
+                type="button"
+                class="header-glass-control theme-toggle-btn"
+                id="theme-toggle-btn"
+                aria-label="Toggle dark mode"
+            >
+
+                <i
+                    class="fa-solid fa-moon"
+                    id="theme-toggle-icon"
+                ></i>
+
+            </button>
+
+
+
+            <button
+                type="button"
+                class="header-glass-control icon-notification-btn"
+                aria-label="Notifications"
+            >
+
+                <i class="fa-regular fa-bell"></i>
+
+                <span class="notification-badge">
+                    3
+                </span>
+
+            </button>
+
+
+
+            <select
+                class="header-glass-control lang-select-box"
+                aria-label="Language"
+            >
+
+                <option>
+                    🌐 English
+                </option>
+
+            </select>
+
+
+
+            <a
+                href="../farmer/index.html"
+                class="btn-farmer-portal"
+            >
+
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                Farmer Portal
+
+            </a>
+
+
+
+            <button
+                type="button"
+                class="btn-logout"
+                id="admin-logout-button"
+            >
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- NAVIGATION -->
+
+    <nav
+        class="secondary-module-nav"
+        aria-label="Admin Portal Navigation"
+    >
+
+
+        <a
+            href="dashboard.html"
+            class="admin-nav-item"
+            data-admin-page="dashboard"
+        >
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            Dashboard
+
+        </a>
+
+
+
+        <a
+            href="farmers.html"
+            class="admin-nav-item"
+            data-admin-page="farmers"
+        >
+
+            <i class="fa-solid fa-users"></i>
+
+            Farmers
+
+        </a>
+
+
+
+        <a
+            href="mandi.html"
+            class="admin-nav-item"
+            data-admin-page="mandi"
+        >
+
+            <i class="fa-solid fa-warehouse"></i>
+
+            Mandi & Slots
+
+        </a>
+
+
+
+        <a
+            href="queue.html"
+            class="admin-nav-item"
+            data-admin-page="queue"
+        >
+
+            <i class="fa-solid fa-list-ol"></i>
+
+            Live Queue
+
+        </a>
+
+
+
+        <a
+            href="payment.html"
+            class="admin-nav-item active"
+            data-admin-page="payments"
+        >
+
+            <i class="fa-solid fa-money-bill-transfer"></i>
+
+            Payments
+
+        </a>
+
+
+
+        <a
+            href="reports.html"
+            class="admin-nav-item"
+            data-admin-page="reports"
+        >
+
+            <i class="fa-solid fa-chart-column"></i>
+
+            Reports
+
+        </a>
+
+    </nav>
+
+
+
+    <main class="payment-page">
+
+
+        <!-- HERO -->
+
+        <section class="payment-hero">
+
+
+            <div class="payment-hero-photo">
+
+                <img
+                    src="payment-hero.jpg"
+                    alt="Digital procurement payment monitoring"
+                >
+
+            </div>
+
+
+
+            <div class="payment-hero-copy">
+
+
+                <div class="payment-eyebrow">
+
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+
+                    PAYMENT MONITORING
+
+                </div>
+
+
+
+                <h1>
+                    Payment Monitoring
+                </h1>
+
+
+
+                <p>
+                    Track procurement payments, PFMS processing,
+                    and DBT disbursement status.
+                </p>
+
+            </div>
+
+
+
+            <div class="payment-hero-tools">
+
+
+                <div class="payment-date-box">
+
+
+                    <i class="fa-regular fa-calendar"></i>
+
+
+                    <span
+                        class="payment-date-display"
+                        id="payment-date-display"
+                    >
+                        Loading...
+                    </span>
+
+
+
+                    <button
+                        type="button"
+                        class="payment-calendar-trigger"
+                        id="payment-calendar-trigger"
+                        aria-label="Open calendar"
+                    >
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                    </button>
+
+
+
+                    <div
+                        class="payment-calendar-dropdown"
+                        id="payment-calendar-dropdown"
+                        hidden
+                    >
+
+
+                        <div class="payment-calendar-head">
+
+
+                            <button
+                                type="button"
+                                id="payment-calendar-prev"
+                                aria-label="Previous month"
+                            >
+
+                                <i class="fa-solid fa-chevron-left"></i>
+
+                            </button>
+
+
+                            <strong
+                                id="payment-calendar-title"
+                            ></strong>
+
+
+                            <button
+                                type="button"
+                                id="payment-calendar-next"
+                                aria-label="Next month"
+                            >
+
+                                <i class="fa-solid fa-chevron-right"></i>
+
+                            </button>
+
+                        </div>
+
+
+
+                        <div class="payment-calendar-week">
+
+                            <span>Su</span>
+                            <span>Mo</span>
+                            <span>Tu</span>
+                            <span>We</span>
+                            <span>Th</span>
+                            <span>Fr</span>
+                            <span>Sa</span>
+
+                        </div>
+
+
+
+                        <div
+                            class="payment-calendar-days"
+                            id="payment-calendar-days"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <button
+                    type="button"
+                    class="payment-refresh-button"
+                    id="refresh-payment-button"
+                >
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    <span>
+                        Refresh Payments
+                    </span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CONNECTION -->
+
+        <section
+            class="payment-connection-bar"
+            aria-live="polite"
+        >
+
+
+            <div class="payment-connection-status">
+
+
+                <span
+                    class="payment-status-dot"
+                    id="payment-status-dot"
+                ></span>
+
+
+                <span id="payment-connection-text">
+                    Connecting to payment service...
+                </span>
+
+            </div>
+
+
+
+            <span class="payment-connection-separator">
+                |
+            </span>
+
+
+
+            <span class="payment-last-updated-label">
+                Last updated:
+            </span>
+
+
+
+            <span
+                id="payment-last-updated"
+                class="payment-last-updated"
+            >
+                --
+            </span>
+
+        </section>
+
+
+
+        <!-- SUMMARY -->
+
+        <section class="payment-summary-grid">
+
+
+            <article class="payment-summary-card">
+
+
+                <div class="payment-summary-icon">
+
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+
+                </div>
+
+
+
+                <div class="payment-summary-content">
+
+
+                    <span class="payment-summary-label">
+                        Total Payment Value
+                    </span>
+
+
+                    <strong
+                        id="total-payment-value"
+                        class="payment-summary-value"
+                    >
+                        ₹0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="payment-summary-card">
+
+
+                <div class="payment-summary-icon">
+
+                    <i class="fa-solid fa-clock"></i>
+
+                </div>
+
+
+
+                <div class="payment-summary-content">
+
+
+                    <span class="payment-summary-label">
+                        Pending Payments
+                    </span>
+
+
+                    <strong
+                        id="pending-payment-count"
+                        class="payment-summary-value"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="payment-summary-card">
+
+
+                <div class="payment-summary-icon">
+
+                    <i class="fa-solid fa-building-columns"></i>
+
+                </div>
+
+
+
+                <div class="payment-summary-content">
+
+
+                    <span class="payment-summary-label">
+                        PFMS Batched
+                    </span>
+
+
+                    <strong
+                        id="pfms-batched-count"
+                        class="payment-summary-value"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+
+            <article class="payment-summary-card">
+
+
+                <div class="payment-summary-icon">
+
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+
+                </div>
+
+
+
+                <div class="payment-summary-content">
+
+
+                    <span class="payment-summary-label">
+                        DBT Dispatched
+                    </span>
+
+
+                    <strong
+                        id="dbt-dispatched-count"
+                        class="payment-summary-value"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- TRANSACTIONS -->
+
+        <section class="payment-monitoring-panel">
+
+
+            <div class="payment-panel-header">
+
+
+                <div>
+
+
+                    <h2>
+                        Payment Transactions
+                    </h2>
+
+
+                    <p>
+                        Monitor farmer-wise procurement payment
+                        processing across all procurement centers.
+                    </p>
+
+                </div>
+
+
+
+                <span class="payment-live-badge">
+
+                    <span class="payment-live-dot"></span>
+
+                    Live Updates
+
+                </span>
+
+            </div>
+
+
+
+            <!-- FILTERS -->
+
+            <div class="payment-filter-toolbar">
+
+
+                <div class="payment-filter-group payment-search-group">
+
+
+                    <label for="payment-search">
+                        Search
+                    </label>
+
+
+
+                    <div class="payment-search-wrapper">
+
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                        <input
+                            type="search"
+                            id="payment-search"
+                            placeholder="Search farmer, KCC, token..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="payment-filter-group">
+
+
+                    <label for="payment-center-filter">
+                        Mandi Center
+                    </label>
+
+
+                    <select id="payment-center-filter">
+
+
+                        <option value="all">
+                            All Centers
+                        </option>
+
+
+                        <option value="Mandi-Center-01">
+                            Mandi-Center-01
+                        </option>
+
+
+                        <option value="Mandi-Center-02">
+                            Mandi-Center-02
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="payment-filter-group">
+
+
+                    <label for="payment-status-filter">
+                        Payment Status
+                    </label>
+
+
+                    <select id="payment-status-filter">
+
+
+                        <option value="all">
+                            All Statuses
+                        </option>
+
+
+                        <option value="pending">
+                            Pending
+                        </option>
+
+
+                        <option value="pfms-batched">
+                            PFMS Batched
+                        </option>
+
+
+                        <option value="dbt-dispatched">
+                            DBT Dispatched
+                        </option>
+
+
+                        <option value="failed">
+                            Failed
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="payment-filter-group">
+
+
+                    <label for="payment-date-filter">
+                        Date
+                    </label>
+
+
+                    <select id="payment-date-filter">
+
+
+                        <option value="all">
+                            All Dates
+                        </option>
+
+
+                        <option value="today">
+                            Today
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TABLE -->
+
+            <div class="payment-table-wrapper">
+
+
+                <table class="payment-table">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Transaction
+                            </th>
+
+                            <th>
+                                Farmer / KCC
+                            </th>
+
+                            <th>
+                                Token
+                            </th>
+
+                            <th>
+                                Center
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Payable Amount
+                            </th>
+
+                            <th>
+                                Payment Status
+                            </th>
+
+                            <th>
+                                Updated
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody id="payment-table-body">
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="payment-loading-cell"
+                            >
+
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                                Loading payment transactions...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+
+            <div
+                id="payment-empty-state"
+                class="payment-empty-state"
+                hidden
+            >
+
+
+                <div class="payment-empty-icon">
+
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                </div>
+
+
+                <h3>
+                    No Payment Transactions
+                </h3>
+
+
+                <p>
+                    There are currently no payment records
+                    matching the selected filters.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- STATUS -->
+
+        <section class="payment-status-legend">
+
+
+            <div class="payment-legend-item">
+
+
+                <span class="payment-legend-dot pending"></span>
+
+
+                <div>
+
+                    <strong>
+                        Pending
+                    </strong>
+
+                    <span>
+                        Payment is awaiting processing.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="payment-legend-item">
+
+
+                <span class="payment-legend-dot pfms-batched"></span>
+
+
+                <div>
+
+                    <strong>
+                        PFMS Batched
+                    </strong>
+
+                    <span>
+                        Payment has been added to the PFMS batch.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="payment-legend-item">
+
+
+                <span class="payment-legend-dot dbt-dispatched"></span>
+
+
+                <div>
+
+                    <strong>
+                        DBT Dispatched
+                    </strong>
+
+                    <span>
+                        Payment has been dispatched for beneficiary transfer.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="payment-legend-item">
+
+
+                <span class="payment-legend-dot failed"></span>
+
+
+                <div>
+
+                    <strong>
+                        Failed
+                    </strong>
+
+                    <span>
+                        Payment requires administrative review.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- INFORMATION -->
+
+        <section class="payment-info-panel">
+
+
+            <div class="payment-info-item">
+
+
+                <div class="payment-info-icon">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Secure Payment Tracking
+                    </strong>
+
+                    <span>
+                        Payment references and beneficiary records are
+                        monitored through authenticated admin access.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="payment-info-item">
+
+
+                <div class="payment-info-icon">
+
+                    <i class="fa-solid fa-building-columns"></i>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        PFMS Processing
+                    </strong>
+
+                    <span>
+                        Procurement liabilities are tracked from receipt
+                        generation through payment processing.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="payment-info-item">
+
+
+                <div class="payment-info-icon">
+
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        DBT Monitoring
+                    </strong>
+
+                    <span>
+                        Dispatched payments can be monitored using PFMS
+                        references and transaction identifiers.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- FOOTER -->
+
+    <footer class="admin-footer dashboard-footer">
+
+
+        <div class="dashboard-footer-left">
+
+
+            <strong>
+                Kisan Setu • Department of Consumer Affairs (DoCA)
+            </strong>
+
+
+            <span>
+                MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC
+                DISTRIBUTION • NATIONAL INFORMATICS CENTRE
+            </span>
 
         </div>
 
 
 
-        <div class="payment-filter-group">
-
-          <label for="payment-center-filter">
-            Mandi Center
-          </label>
+        <div class="dashboard-footer-status">
 
 
-          <select id="payment-center-filter">
-
-            <option value="all">
-              All Centers
-            </option>
-
-            <option value="Mandi-Center-01">
-              Mandi-Center-01
-            </option>
-
-            <option value="Mandi-Center-02">
-              Mandi-Center-02
-            </option>
-
-          </select>
-
-        </div>
+            <span
+                class="dashboard-footer-dot"
+                id="footer-status-dot"
+            ></span>
 
 
-
-        <div class="payment-filter-group">
-
-          <label for="payment-status-filter">
-            Payment Status
-          </label>
+            <span id="footer-connection-text">
+                Backend connected
+            </span>
 
 
-          <select id="payment-status-filter">
+            <span>
+                •
+            </span>
 
-            <option value="all">
-              All Statuses
-            </option>
 
-            <option value="pending">
-              Pending
-            </option>
-
-            <option value="pfms-batched">
-              PFMS Batched
-            </option>
-
-            <option value="dbt-dispatched">
-              DBT Dispatched
-            </option>
-
-            <option value="failed">
-              Failed
-            </option>
-
-          </select>
+            <span id="footer-last-updated">
+                Updated just now
+            </span>
 
         </div>
 
+    </footer>
 
 
-        <div class="payment-filter-group">
 
-          <label for="payment-date-filter">
-            Date
-          </label>
+    <script src="admin-navigation.js"></script>
 
+    <script src="payment.js"></script>
 
-          <select id="payment-date-filter">
 
-            <option value="all">
-              All Dates
-            </option>
 
-            <option value="today">
-              Today
-            </option>
+    <script>
 
-          </select>
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
-        </div>
 
-      </div>
+                /* ADMIN */
 
 
+                const adminName =
+                    document.getElementById(
+                        "admin-user-name"
+                    );
 
-      <!-- ========================================================
-           PAYMENT TABLE
-           ======================================================== -->
 
-      <div class="payment-table-wrapper">
+                const adminAvatar =
+                    document.getElementById(
+                        "admin-avatar"
+                    );
 
-        <table class="payment-table">
 
-          <thead>
 
-            <tr>
+                function getAdminDisplayName() {
 
-              <th>
-                Transaction
-              </th>
+                    try {
 
-              <th>
-                Farmer / KCC
-              </th>
+                        const storedUser =
+                            sessionStorage.getItem(
+                                "kisanSetuAdminUser"
+                            );
 
-              <th>
-                Token
-              </th>
 
-              <th>
-                Center
-              </th>
+                        if (!storedUser) {
 
-              <th>
-                Quantity
-              </th>
+                            return (
+                                adminName?.textContent.trim() ||
+                                "Administrator"
+                            );
 
-              <th>
-                Payable Amount
-              </th>
+                        }
 
-              <th>
-                Payment Status
-              </th>
 
-              <th>
-                Updated
-              </th>
+                        const user =
+                            JSON.parse(
+                                storedUser
+                            );
 
-            </tr>
 
-          </thead>
+                        return (
 
+                            user.name ||
 
-          <tbody id="payment-table-body">
+                            user.fullName ||
 
-            <tr>
+                            user.username ||
 
-              <td
-                colspan="8"
-                class="payment-loading-cell"
-              >
+                            user.email ||
 
-                <i class="fa-solid fa-spinner fa-spin"></i>
+                            "Administrator"
 
-                Loading payment transactions...
+                        );
 
-              </td>
 
-            </tr>
+                    } catch {
 
-          </tbody>
+                        return "Administrator";
 
-        </table>
+                    }
 
-      </div>
+                }
 
 
 
-      <!-- ========================================================
-           EMPTY STATE
-           ======================================================== -->
+                function getInitials(
+                    name
+                ) {
 
-      <div
-        id="payment-empty-state"
-        class="payment-empty-state"
-        hidden
-      >
+                    const cleanName =
+                        String(
+                            name || ""
+                        )
+                            .trim()
+                            .replace(
+                                /\s+/g,
+                                " "
+                            );
 
-        <div class="payment-empty-icon">
 
-          <i class="fa-solid fa-file-invoice-dollar"></i>
+                    if (
+                        !cleanName ||
+                        /^(admin|administrator)$/i.test(
+                            cleanName
+                        )
+                    ) {
 
-        </div>
+                        return "AD";
 
+                    }
 
-        <h3>
-          No Payment Transactions
-        </h3>
 
+                    const parts =
+                        cleanName.split(
+                            " "
+                        );
 
-        <p>
-          There are currently no payment records matching
-          the selected filters.
-        </p>
 
-      </div>
+                    if (
+                        parts.length >= 2
+                    ) {
 
-    </section>
+                        return (
+                            parts[0][0] +
+                            parts[1][0]
+                        ).toUpperCase();
 
+                    }
 
 
-    <!-- ==========================================================
-         PAYMENT STATUS LEGEND
-         ========================================================== -->
+                    return parts[0][0]
+                        .toUpperCase();
 
-    <section class="payment-status-legend">
+                }
 
 
-      <div class="payment-legend-item">
 
-        <span class="payment-legend-dot pending"></span>
+                const displayName =
+                    getAdminDisplayName();
 
-        <div>
 
-          <strong>
-            Pending
-          </strong>
+                if (
+                    adminName
+                ) {
 
-          <span>
-            Payment is awaiting processing.
-          </span>
+                    adminName.textContent =
+                        displayName;
 
-        </div>
+                }
 
-      </div>
 
+                if (
+                    adminAvatar
+                ) {
 
+                    adminAvatar.textContent =
+                        getInitials(
+                            displayName
+                        );
 
-      <div class="payment-legend-item">
+                }
 
-        <span class="payment-legend-dot pfms-batched"></span>
 
-        <div>
 
-          <strong>
-            PFMS Batched
-          </strong>
+                /* DARK MODE */
 
-          <span>
-            Payment has been added to the PFMS batch.
-          </span>
 
-        </div>
+                const themeButton =
+                    document.getElementById(
+                        "theme-toggle-btn"
+                    );
 
-      </div>
 
+                const themeIcon =
+                    document.getElementById(
+                        "theme-toggle-icon"
+                    );
 
 
-      <div class="payment-legend-item">
 
-        <span class="payment-legend-dot dbt-dispatched"></span>
+                function setThemeIcon() {
 
-        <div>
+                    if (
+                        !themeIcon
+                    ) {
 
-          <strong>
-            DBT Dispatched
-          </strong>
+                        return;
 
-          <span>
-            Payment has been dispatched for beneficiary transfer.
-          </span>
+                    }
 
-        </div>
 
-      </div>
+                    themeIcon.className =
+                        document.body.classList.contains(
+                            "dark-mode"
+                        )
+                            ? "fa-solid fa-sun"
+                            : "fa-solid fa-moon";
 
+                }
 
 
-      <div class="payment-legend-item">
 
-        <span class="payment-legend-dot failed"></span>
+                function getAutomaticTheme() {
 
-        <div>
+                    const hour =
+                        new Date()
+                            .getHours();
 
-          <strong>
-            Failed
-          </strong>
 
-          <span>
-            Payment requires administrative review.
-          </span>
+                    if (
+                        hour >= 18 ||
+                        hour < 6
+                    ) {
 
-        </div>
+                        return "dark";
 
-      </div>
+                    }
 
-    </section>
 
+                    return "light";
 
+                }
 
-    <!-- ==========================================================
-         PAYMENT INFORMATION
-         ========================================================== -->
 
-    <section class="payment-info-panel">
 
+                const storedTheme =
+                    localStorage.getItem(
+                        "kisan-setu-admin-theme"
+                    );
 
-      <div class="payment-info-item">
 
-        <div class="payment-info-icon">
+                const initialTheme =
+                    storedTheme ||
+                    getAutomaticTheme();
 
-          <i class="fa-solid fa-shield-halved"></i>
 
-        </div>
+                document.body.classList.toggle(
+                    "dark-mode",
+                    initialTheme === "dark"
+                );
 
 
-        <div>
+                setThemeIcon();
 
-          <strong>
-            Secure Payment Tracking
-          </strong>
 
-          <span>
-            Payment references and beneficiary records are
-            monitored through authenticated admin access.
-          </span>
 
-        </div>
+                if (
+                    themeButton
+                ) {
 
-      </div>
+                    themeButton.addEventListener(
+                        "click",
+                        function () {
 
 
+                            document.body.classList.toggle(
+                                "dark-mode"
+                            );
 
-      <div class="payment-info-item">
 
-        <div class="payment-info-icon">
+                            const darkMode =
+                                document.body.classList.contains(
+                                    "dark-mode"
+                                );
 
-          <i class="fa-solid fa-building-columns"></i>
 
-        </div>
+                            localStorage.setItem(
+                                "kisan-setu-admin-theme",
+                                darkMode
+                                    ? "dark"
+                                    : "light"
+                            );
 
 
-        <div>
+                            setThemeIcon();
 
-          <strong>
-            PFMS Processing
-          </strong>
+                        }
+                    );
 
-          <span>
-            Procurement liabilities are tracked from receipt
-            generation through payment processing.
-          </span>
+                }
 
-        </div>
 
-      </div>
 
+                /* CALENDAR */
 
 
-      <div class="payment-info-item">
+                const dateDisplay =
+                    document.getElementById(
+                        "payment-date-display"
+                    );
 
-        <div class="payment-info-icon">
 
-          <i class="fa-solid fa-money-bill-transfer"></i>
+                const calendarTrigger =
+                    document.getElementById(
+                        "payment-calendar-trigger"
+                    );
 
-        </div>
 
+                const calendar =
+                    document.getElementById(
+                        "payment-calendar-dropdown"
+                    );
 
-        <div>
 
-          <strong>
-            DBT Monitoring
-          </strong>
+                const calendarTitle =
+                    document.getElementById(
+                        "payment-calendar-title"
+                    );
 
-          <span>
-            Dispatched payments can be monitored using PFMS
-            references and transaction identifiers.
-          </span>
 
-        </div>
+                const calendarDays =
+                    document.getElementById(
+                        "payment-calendar-days"
+                    );
 
-      </div>
 
-    </section>
+                const previousMonth =
+                    document.getElementById(
+                        "payment-calendar-prev"
+                    );
 
-  </main>
 
+                const nextMonth =
+                    document.getElementById(
+                        "payment-calendar-next"
+                    );
 
 
-  <!-- ============================================================
-       FOOTER
-       ============================================================ -->
 
-  <footer class="admin-footer">
+                const today =
+                    new Date();
 
-    <div class="admin-footer-left">
 
-      <i class="fa-solid fa-seedling"></i>
 
-      <strong>
-        Kisan Setu
-      </strong>
+                let selectedDate =
+                    new Date(
+                        today.getFullYear(),
+                        today.getMonth(),
+                        today.getDate()
+                    );
 
-    </div>
 
 
-    <span class="admin-footer-right">
-      Digital Agriculture Procurement Platform
-    </span>
+                let calendarYear =
+                    selectedDate.getFullYear();
 
-  </footer>
 
 
+                let calendarMonth =
+                    selectedDate.getMonth();
 
-  <!-- ============================================================
-       SHARED ADMIN NAVIGATION
-       ============================================================ -->
 
-  <script src="admin-navigation.js"></script>
 
+                function sameDate(
+                    first,
+                    second
+                ) {
 
-  <!-- ============================================================
-       A6 JAVASCRIPT
-       ============================================================ -->
+                    return (
 
-  <script src="payment.js"></script>
+                        first.getFullYear() ===
+                            second.getFullYear() &&
+
+                        first.getMonth() ===
+                            second.getMonth() &&
+
+                        first.getDate() ===
+                            second.getDate()
+
+                    );
+
+                }
+
+
+
+                function formatDisplayDate(
+                    date
+                ) {
+
+                    return new Intl.DateTimeFormat(
+                        "en-IN",
+                        {
+
+                            day:
+                                "2-digit",
+
+                            month:
+                                "short",
+
+                            year:
+                                "numeric"
+
+                        }
+                    ).format(
+                        date
+                    );
+
+                }
+
+
+
+                function renderCalendar() {
+
+
+                    if (
+                        !dateDisplay ||
+                        !calendarTitle ||
+                        !calendarDays
+                    ) {
+
+                        return;
+
+                    }
+
+
+
+                    dateDisplay.textContent =
+                        formatDisplayDate(
+                            selectedDate
+                        );
+
+
+
+                    calendarTitle.textContent =
+                        new Intl.DateTimeFormat(
+                            "en-IN",
+                            {
+
+                                month:
+                                    "long",
+
+                                year:
+                                    "numeric"
+
+                            }
+                        ).format(
+
+                            new Date(
+                                calendarYear,
+                                calendarMonth,
+                                1
+                            )
+
+                        );
+
+
+
+                    calendarDays.innerHTML =
+                        "";
+
+
+
+                    const firstDay =
+                        new Date(
+                            calendarYear,
+                            calendarMonth,
+                            1
+                        )
+                            .getDay();
+
+
+
+                    const totalDays =
+                        new Date(
+                            calendarYear,
+                            calendarMonth + 1,
+                            0
+                        )
+                            .getDate();
+
+
+
+                    for (
+                        let blank = 0;
+                        blank < firstDay;
+                        blank++
+                    ) {
+
+                        const empty =
+                            document.createElement(
+                                "span"
+                            );
+
+
+                        empty.className =
+                            "payment-calendar-empty";
+
+
+                        calendarDays.appendChild(
+                            empty
+                        );
+
+                    }
+
+
+
+                    for (
+                        let day = 1;
+                        day <= totalDays;
+                        day++
+                    ) {
+
+
+                        const date =
+                            new Date(
+                                calendarYear,
+                                calendarMonth,
+                                day
+                            );
+
+
+                        const button =
+                            document.createElement(
+                                "button"
+                            );
+
+
+                        button.type =
+                            "button";
+
+
+                        button.className =
+                            "payment-calendar-day";
+
+
+                        button.textContent =
+                            day;
+
+
+
+                        if (
+                            sameDate(
+                                date,
+                                today
+                            )
+                        ) {
+
+                            button.classList.add(
+                                "today"
+                            );
+
+                        }
+
+
+
+                        if (
+                            sameDate(
+                                date,
+                                selectedDate
+                            )
+                        ) {
+
+                            button.classList.add(
+                                "selected"
+                            );
+
+                        }
+
+
+
+                        button.addEventListener(
+                            "click",
+                            function (
+                                event
+                            ) {
+
+
+                                event.stopPropagation();
+
+
+                                selectedDate =
+                                    new Date(
+                                        date
+                                    );
+
+
+                                renderCalendar();
+
+
+                                if (
+                                    calendar
+                                ) {
+
+                                    calendar.hidden =
+                                        true;
+
+                                }
+
+                            }
+                        );
+
+
+
+                        calendarDays.appendChild(
+                            button
+                        );
+
+                    }
+
+                }
+
+
+
+                renderCalendar();
+
+
+
+                if (
+                    calendarTrigger
+                ) {
+
+                    calendarTrigger.addEventListener(
+                        "click",
+                        function (
+                            event
+                        ) {
+
+
+                            event.stopPropagation();
+
+
+                            if (
+                                calendar
+                            ) {
+
+                                calendar.hidden =
+                                    !calendar.hidden;
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+
+                if (
+                    previousMonth
+                ) {
+
+                    previousMonth.addEventListener(
+                        "click",
+                        function (
+                            event
+                        ) {
+
+
+                            event.stopPropagation();
+
+
+                            calendarMonth--;
+
+
+                            if (
+                                calendarMonth < 0
+                            ) {
+
+                                calendarMonth =
+                                    11;
+
+                                calendarYear--;
+
+                            }
+
+
+                            renderCalendar();
+
+                        }
+                    );
+
+                }
+
+
+
+                if (
+                    nextMonth
+                ) {
+
+                    nextMonth.addEventListener(
+                        "click",
+                        function (
+                            event
+                        ) {
+
+
+                            event.stopPropagation();
+
+
+                            calendarMonth++;
+
+
+                            if (
+                                calendarMonth > 11
+                            ) {
+
+                                calendarMonth =
+                                    0;
+
+                                calendarYear++;
+
+                            }
+
+
+                            renderCalendar();
+
+                        }
+                    );
+
+                }
+
+
+
+                if (
+                    calendar
+                ) {
+
+                    calendar.addEventListener(
+                        "click",
+                        function (
+                            event
+                        ) {
+
+                            event.stopPropagation();
+
+                        }
+                    );
+
+                }
+
+
+
+                document.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            calendar
+                        ) {
+
+                            calendar.hidden =
+                                true;
+
+                        }
+
+                    }
+                );
+
+
+
+                /* FOOTER */
+
+
+                const sourceConnection =
+                    document.getElementById(
+                        "payment-connection-text"
+                    );
+
+
+                const sourceUpdated =
+                    document.getElementById(
+                        "payment-last-updated"
+                    );
+
+
+                const footerConnection =
+                    document.getElementById(
+                        "footer-connection-text"
+                    );
+
+
+                const footerUpdated =
+                    document.getElementById(
+                        "footer-last-updated"
+                    );
+
+
+                const footerDot =
+                    document.getElementById(
+                        "footer-status-dot"
+                    );
+
+
+
+                function syncFooter() {
+
+
+                    if (
+                        sourceConnection &&
+                        footerConnection
+                    ) {
+
+                        footerConnection.textContent =
+                            sourceConnection
+                                .textContent
+                                .trim();
+
+                    }
+
+
+
+                    if (
+                        sourceUpdated &&
+                        footerUpdated
+                    ) {
+
+                        const updatedText =
+                            sourceUpdated
+                                .textContent
+                                .trim();
+
+
+                        footerUpdated.textContent =
+                            updatedText === "--"
+                                ? "Updated just now"
+                                : `Updated ${updatedText}`;
+
+                    }
+
+
+
+                    if (
+                        sourceConnection &&
+                        footerDot
+                    ) {
+
+
+                        const statusText =
+                            sourceConnection
+                                .textContent
+                                .toLowerCase();
+
+
+                        const connected =
+                            statusText.includes(
+                                "connected"
+                            ) &&
+                            !statusText.includes(
+                                "disconnected"
+                            );
+
+
+                        footerDot.style.background =
+                            connected
+                                ? "#98a973"
+                                : "#b65d52";
+
+                    }
+
+                }
+
+
+
+                syncFooter();
+
+
+
+                if (
+                    sourceConnection
+                ) {
+
+                    new MutationObserver(
+                        syncFooter
+                    ).observe(
+                        sourceConnection,
+                        {
+
+                            childList:
+                                true,
+
+                            subtree:
+                                true,
+
+                            characterData:
+                                true
+
+                        }
+                    );
+
+                }
+
+
+
+                if (
+                    sourceUpdated
+                ) {
+
+                    new MutationObserver(
+                        syncFooter
+                    ).observe(
+                        sourceUpdated,
+                        {
+
+                            childList:
+                                true,
+
+                            subtree:
+                                true,
+
+                            characterData:
+                                true
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+    </script>
 
 
 </body>

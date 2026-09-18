@@ -1,23 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Kisan Setu | Admin Dashboard</title>
 
-    <!-- Existing Kisan Setu Styles -->
-    <link rel="stylesheet" href="../main.css">
-    <link rel="stylesheet" href="../navbar.css">
-    <link rel="stylesheet" href="../footer.css">
+    <link
+        rel="icon"
+        type="image/png"
+        href="https://cdn-icons-png.flaticon.com/128/8524/8524310.png"
+    >
 
-    <!-- Admin Styles -->
+    <!-- EXISTING PROJECT CSS -->
+    <link rel="stylesheet" href="../main.css">
+    <link rel="stylesheet" href="admin_navbar.css?v=1">
+    <link rel="stylesheet" href="../footer.css">
     <link rel="stylesheet" href="admin.css">
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="dashboard.css?v=3">
     <link rel="stylesheet" href="admin_navbar.css">
 
     <!-- Font Awesome -->
@@ -25,130 +26,2159 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+        /* =========================================================
+           KISAN SETU DASHBOARD - VISUAL REDESIGN
+        ========================================================== */
+
+        :root {
+            --forest-dark: #121f0d;
+            --forest: #30401c;
+            --moss: #526532;
+            --sage: #758850;
+            --apple: #98a973;
+            --light-sage: #b9c798;
+            --cream-green: #dce7be;
+
+            --gold: #c9a24b;
+            --gold-soft: #e3cf94;
+
+            --page-bg: #e7edd5;
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --card-bg-solid: #fffefb;
+
+            --text-main: #121f0d;
+            --text-muted: #526532;
+            --border-color: rgba(48, 64, 28, 0.13);
+
+            --shadow-sm: 0 3px 10px rgba(18, 31, 13, 0.06);
+            --shadow-md: 0 8px 24px rgba(18, 31, 13, 0.10);
+            --shadow-lg: 0 18px 42px rgba(18, 31, 13, 0.15);
+
+            --font-ui: 'Inter', sans-serif;
+            --font-heading: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* =========================================================
+           DARK MODE VARIABLES
+        ========================================================== */
+
+        body.dark-mode {
+            --page-bg: #0c1707;
+            --card-bg: rgba(24, 35, 17, 0.96);
+            --card-bg-solid: #182311;
+            --text-main: #eef4df;
+            --text-muted: #b9c798;
+            --border-color: rgba(185, 199, 152, 0.16);
+
+            --shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.20);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
+            --shadow-lg: 0 18px 42px rgba(0, 0, 0, 0.36);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(255, 255, 255, 0.80),
+                    transparent 38%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    rgba(117, 136, 80, 0.20),
+                    transparent 42%
+                ),
+                var(--page-bg);
+
+            color: var(--text-main);
+
+            transition:
+                background-color 0.3s ease,
+                color 0.3s ease;
+        }
+
+        body.dark-mode {
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(82, 101, 50, 0.12),
+                    transparent 40%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    rgba(152, 169, 115, 0.07),
+                    transparent 42%
+                ),
+                var(--page-bg);
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        /* =========================================================
+           PAGE TRANSITION
+        ========================================================== */
+
+        .page-transition-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(18, 31, 13, 0.96);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.25s ease;
+        }
+
+        .page-transition-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .page-transition-overlay i {
+            font-size: 30px;
+        }
+
+        /* =========================================================
+           TOP HEADER
+        ========================================================== */
+
+        .top-nav-bar {
+            position: relative;
+
+            margin: 14px 16px 10px;
+
+            min-height: 84px;
+
+            padding: 15px 18px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+
+            color: white;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(12, 23, 7, 0.90),
+                    rgba(18, 31, 13, 0.76)
+                ),
+                url("52565520646011763.jpg");
+
+            background-size: cover;
+            background-position: center 46%;
+
+            box-shadow:
+                0 10px 28px rgba(12, 23, 7, 0.22);
+
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+
+        .top-nav-bar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background:
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(201, 162, 75, 0.18),
+                    transparent 28%
+                );
+
+            pointer-events: none;
+        }
+
+        .top-nav-bar > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-left-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 275px;
+        }
+
+        .brand-logo-img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+
+            filter:
+                drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+        }
+
+        .brand-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .brand-title-group small {
+            color: var(--gold-soft);
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-title-group strong {
+            color: white;
+
+            font-family: var(--font-heading);
+
+            font-size: 21px;
+            font-weight: 800;
+
+            line-height: 1.1;
+        }
+
+        .nav-right-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            gap: 9px;
+
+            flex-wrap: wrap;
+        }
+
+        .header-glass-control {
+            background: rgba(12, 23, 7, 0.63);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.18);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            color: white;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .header-glass-control:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.34);
+        }
+
+        /* =========================================================
+           USER PROFILE
+        ========================================================== */
+
+        .user-pill-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 6px 10px 6px 13px;
+
+            border-radius: 12px;
+
+            background: rgba(12, 23, 7, 0.64);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.18);
+
+            backdrop-filter: blur(12px);
+        }
+
+        .user-details {
+            text-align: right;
+        }
+
+        .user-name {
+            display: block;
+
+            color: white;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            max-width: 145px;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-verified-tag {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            gap: 4px;
+
+            margin-top: 2px;
+
+            color: var(--light-sage);
+
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #c9a24b,
+                    #9a742b
+                );
+
+            color: white;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        /* =========================================================
+           HEADER BUTTONS
+        ========================================================== */
+
+        .icon-notification-btn,
+        .theme-toggle-btn {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+
+            top: -3px;
+            right: -3px;
+
+            min-width: 16px;
+            height: 16px;
+
+            padding: 0 4px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: var(--gold);
+
+            color: var(--forest-dark);
+
+            font-size: 8px;
+            font-weight: 800;
+
+            border: 2px solid var(--forest-dark);
+        }
+
+        .lang-select-box {
+            min-height: 38px;
+
+            padding: 0 10px;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            cursor: pointer;
+
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .lang-select-box option {
+            background: var(--forest-dark);
+            color: white;
+        }
+
+        .btn-farmer-portal,
+        .btn-logout {
+            min-height: 38px;
+
+            padding: 0 12px;
+
+            border-radius: 10px;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .btn-farmer-portal {
+            border: 1px solid white;
+
+            background: rgba(255, 255, 255, 0.96);
+
+            color: var(--forest-dark);
+        }
+
+        .btn-farmer-portal:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 6px 16px rgba(0, 0, 0, 0.20);
+        }
+
+        .btn-logout {
+            border: 1px solid #fca5a5;
+
+            background: #dc4545;
+
+            color: white;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 6px 16px rgba(220, 69, 69, 0.28);
+        }
+
+        /* =========================================================
+           MODULE NAVIGATION
+        ========================================================== */
+
+        .secondary-module-nav {
+            margin: 0 16px 18px;
+
+            padding: 7px;
+
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+
+            gap: 6px;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--forest-dark),
+                    #1d2a13
+                );
+
+            box-shadow:
+                0 6px 18px rgba(12, 23, 7, 0.18);
+        }
+
+        .secondary-module-nav .admin-nav-item {
+            min-height: 40px;
+
+            padding: 0 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+
+            color: #dce7be;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .secondary-module-nav .admin-nav-item:hover {
+            transform: translateY(-2px);
+
+            background:
+                rgba(255, 255, 255, 0.11);
+
+            color: white;
+        }
+
+        .secondary-module-nav .admin-nav-item.active {
+            background: white;
+
+            color: var(--forest-dark);
+
+            font-weight: 800;
+
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.14);
+        }
+
+        /* =========================================================
+           MAIN WRAPPER
+        ========================================================== */
+
+        .admin-dashboard {
+            width: 100%;
+
+            max-width: none;
+
+            margin: 0 auto;
+
+            padding: 0 0 36px;
+        }
+
+        /* =========================================================
+           HERO / DASHBOARD BANNER
+        ========================================================== */
+
+        .high-contrast-dashboard-banner {
+            position: relative;
+
+            margin: 0 16px 22px;
+
+            min-height: 285px;
+
+            padding: 24px;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(300px, 470px)
+                minmax(260px, 1fr)
+                auto;
+
+            align-items: center;
+
+            gap: 30px;
+
+            overflow: hidden;
+
+            border-radius: 22px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    130deg,
+                    #30401c 0%,
+                    #1a2810 58%,
+                    #0c1707 100%
+                );
+
+            box-shadow:
+                0 12px 30px rgba(12, 23, 7, 0.19);
+        }
+
+        .hero-photo-layer {
+            width: 100%;
+            height: 235px;
+
+            border-radius: 17px;
+
+            overflow: hidden;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.16);
+
+            box-shadow:
+                0 10px 24px rgba(0, 0, 0, 0.28);
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .hero-photo-layer::after {
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    to top,
+                    rgba(12, 23, 7, 0.25),
+                    transparent 55%
+                );
+
+            pointer-events: none;
+        }
+
+        .hero-photo-layer img {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: cover;
+
+            object-position: center 48%;
+
+            transition:
+                transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .high-contrast-dashboard-banner:hover
+        .hero-photo-layer img {
+            transform: scale(1.035);
+        }
+
+        .banner-decor {
+            position: absolute;
+
+            width: 340px;
+            height: 340px;
+
+            right: -100px;
+            top: -150px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(201, 162, 75, 0.13),
+                    transparent 68%
+                );
+        }
+
+        .banner-decor.secondary {
+            width: 260px;
+            height: 260px;
+
+            right: 28%;
+            top: auto;
+            bottom: -150px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(152, 169, 115, 0.13),
+                    transparent 68%
+                );
+        }
+
+        .banner-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .banner-eyebrow {
+            width: fit-content;
+
+            margin-bottom: 12px;
+
+            padding: 6px 11px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 6px;
+
+            border-radius: 30px;
+
+            background:
+                rgba(255, 255, 255, 0.09);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.14);
+
+            color: #e4ecd4;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: 1.1px;
+        }
+
+        .high-contrast-dashboard-banner h1 {
+            margin: 0 0 9px;
+
+            font-family:
+                'Fraunces',
+                Georgia,
+                serif;
+
+            font-size:
+                clamp(34px, 4vw, 52px);
+
+            font-weight: 600;
+
+            line-height: 1.03;
+
+            letter-spacing: -1.2px;
+
+            color: white;
+        }
+
+        .dashboard-subtitle {
+            margin: 0;
+
+            max-width: 560px;
+
+            color: #dbe6cb;
+
+            font-size: 14px;
+
+            line-height: 1.65;
+        }
+
+        /* =========================================================
+           DATE / REFRESH COLUMN
+        ========================================================== */
+
+        .farmers-date-column {
+            position: relative;
+            z-index: 2;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: stretch;
+
+            gap: 9px;
+
+            min-width: 168px;
+        }
+
+        .farmers-date-box {
+            position: relative;
+
+            display: grid;
+
+            grid-template-columns: auto 1fr auto;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 9px 10px;
+
+            border-radius: 11px;
+
+            background: white;
+
+            color: var(--forest-dark);
+
+            box-shadow:
+                0 4px 14px rgba(0, 0, 0, 0.13);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.70);
+        }
+
+        .date-calendar-icon {
+            color: var(--forest);
+            font-size: 13px;
+        }
+
+        .farmers-date-input {
+            min-width: 0;
+            width: 100%;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            color: var(--forest-dark);
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .date-dropdown-trigger {
+            width: 24px;
+            height: 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: none;
+
+            background: transparent;
+
+            color: var(--moss);
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .date-dropdown-trigger:hover {
+            background:
+                rgba(82, 101, 50, 0.10);
+
+            transform: translateY(1px);
+        }
+
+        .date-dropdown-icon {
+            font-size: 10px;
+        }
+
+        .hidden-native-date {
+            position: absolute;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            width: 1px;
+            height: 1px;
+        }
+
+        .farmers-refresh-text-button {
+            min-height: 38px;
+
+            border-radius: 10px !important;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.30) !important;
+
+            background:
+                rgba(255, 255, 255, 0.11) !important;
+
+            color: white !important;
+
+            backdrop-filter: blur(8px);
+
+            font-size: 11px !important;
+            font-weight: 700 !important;
+
+            cursor: pointer;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .farmers-refresh-text-button:hover {
+            background:
+                rgba(255, 255, 255, 0.19) !important;
+
+            transform: translateY(-2px);
+        }
+
+        /* =========================================================
+           METRICS
+        ========================================================== */
+
+        .dashboard-metrics-grid {
+            margin: 0 16px 24px;
+
+            padding: 0 !important;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 16px;
+        }
+
+        .metric-card {
+            position: relative;
+
+            min-height: 112px;
+
+            padding: 19px 20px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 14px;
+
+            border-radius: 16px;
+
+            background: var(--card-bg);
+
+            border:
+                1px solid var(--border-color);
+
+            box-shadow: var(--shadow-sm);
+
+            overflow: hidden;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .metric-card::after {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 4px;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    var(--apple),
+                    var(--forest)
+                );
+
+            opacity: 0;
+
+            transition: opacity 0.25s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+
+            box-shadow: var(--shadow-md);
+
+            border-color:
+                rgba(152, 169, 115, 0.58);
+        }
+
+        .metric-card:hover::after {
+            opacity: 1;
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background:
+                rgba(152, 169, 115, 0.20);
+
+            color: var(--forest);
+
+            font-size: 18px;
+
+            transition:
+                transform 0.25s ease,
+                background 0.25s ease,
+                color 0.25s ease;
+        }
+
+        .metric-card:hover .metric-icon {
+            transform:
+                translateY(-2px)
+                scale(1.07);
+
+            background: var(--forest);
+
+            color: white;
+        }
+
+        body.dark-mode .metric-icon {
+            color: #dbe7c7;
+
+            background:
+                rgba(152, 169, 115, 0.13);
+        }
+
+        .metric-content {
+            min-width: 0;
+        }
+
+        .metric-label {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 700;
+
+            letter-spacing: 0.1px;
+        }
+
+        .metric-value {
+            display: block;
+
+            color: var(--text-main);
+
+            font-family: var(--font-heading);
+
+            font-size: 25px;
+            font-weight: 700;
+
+            line-height: 1;
+        }
+
+        .metric-content small {
+            display: inline-block;
+
+            margin-top: 3px;
+
+            color: var(--text-muted);
+
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           QUICK ACTIONS
+        ========================================================== */
+
+        .quick-actions-panel {
+            margin: 0 16px 24px;
+        }
+
+        .quick-actions-heading {
+            margin-bottom: 11px;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 15px;
+        }
+
+        .quick-actions-heading h2 {
+            margin: 0;
+
+            color: var(--text-main);
+
+            font-family: var(--font-heading);
+
+            font-size: 18px;
+        }
+
+        .quick-actions-heading span {
+            color: var(--text-muted);
+
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, minmax(0, 1fr));
+
+            gap: 12px;
+        }
+
+        .quick-action-card {
+            min-height: 112px;
+
+            padding: 17px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            gap: 18px;
+
+            border-radius: 15px;
+
+            text-decoration: none;
+
+            color: #eff4e6;
+
+            background:
+                linear-gradient(
+                    150deg,
+                    #3a4f22 0%,
+                    #1d2b11 55%,
+                    #0c1707 100%
+                );
+
+            border:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 5px 14px rgba(12, 23, 7, 0.12);
+
+            transition:
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-5px);
+
+            box-shadow:
+                0 12px 25px rgba(12, 23, 7, 0.20);
+
+            border-color:
+                rgba(185, 199, 152, 0.30);
+        }
+
+        .quick-action-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .action-icon {
+            width: 37px;
+            height: 37px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            color: var(--light-sage);
+
+            font-size: 15px;
+        }
+
+        .quick-action-arrow {
+            color: rgba(255, 255, 255, 0.55);
+
+            font-size: 12px;
+
+            transition:
+                transform 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .quick-action-card:hover .quick-action-arrow {
+            transform: translateX(3px);
+
+            color: white;
+        }
+
+        .action-label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           OPERATIONAL GRID
+        ========================================================== */
+
+        .dashboard-operational-grid {
+            margin: 0 16px 24px;
+
+            padding: 0 !important;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(0, 1fr);
+
+            gap: 18px;
+        }
+
+        .dashboard-panel {
+            position: relative;
+
+            padding: 22px;
+
+            border-radius: 18px;
+
+            background: var(--card-bg);
+
+            border:
+                1px solid var(--border-color);
+
+            box-shadow: var(--shadow-sm);
+
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+        }
+
+        .dashboard-panel:hover {
+            transform: translateY(-2px);
+
+            box-shadow: var(--shadow-md);
+
+            border-color:
+                rgba(152, 169, 115, 0.52);
+        }
+
+        .dashboard-panel.full-width {
+            margin-left: 16px !important;
+            margin-right: 16px !important;
+        }
+
+        .panel-header {
+            margin-bottom: 18px;
+
+            padding-bottom: 13px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            border-bottom:
+                1px solid var(--border-color);
+        }
+
+        .panel-header h2 {
+            margin: 0;
+
+            color: var(--text-main);
+
+            font-family: var(--font-heading);
+
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .panel-header p {
+            margin: 4px 0 0;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .panel-header > i {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 10px;
+
+            background:
+                rgba(152, 169, 115, 0.15);
+
+            color: var(--forest);
+
+            font-size: 15px;
+        }
+
+        body.dark-mode .panel-header > i {
+            color: #dce7be;
+        }
+
+        /* =========================================================
+           QUALITY SUMMARY
+        ========================================================== */
+
+        .quality-summary {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+        .quality-item {
+            padding: 18px 10px;
+
+            text-align: center;
+
+            border-radius: 12px;
+
+            background:
+                rgba(152, 169, 115, 0.13);
+
+            border:
+                1px solid var(--border-color);
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .quality-item:hover {
+            transform: translateY(-3px);
+
+            background:
+                rgba(152, 169, 115, 0.20);
+        }
+
+        .quality-item span {
+            display: block;
+
+            margin-bottom: 6px;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .quality-item strong {
+            color: var(--text-main);
+
+            font-family: var(--font-heading);
+
+            font-size: 22px;
+        }
+
+        /* =========================================================
+           DYNAMIC ROWS
+        ========================================================== */
+
+        .crop-row,
+        .center-row {
+            padding: 12px 4px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 16px;
+
+            border-bottom:
+                1px solid var(--border-color);
+
+            transition:
+                background 0.18s ease,
+                padding 0.18s ease;
+        }
+
+        .crop-row:last-child,
+        .center-row:last-child {
+            border-bottom: none;
+        }
+
+        .crop-row:hover,
+        .center-row:hover {
+            padding-left: 8px;
+            padding-right: 8px;
+
+            background:
+                rgba(152, 169, 115, 0.08);
+
+            border-radius: 8px;
+        }
+
+        .crop-info,
+        .center-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .crop-name,
+        .center-title strong {
+            color: var(--text-main);
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .crop-transactions,
+        .center-title span {
+            color: var(--text-muted);
+
+            font-size: 10px;
+        }
+
+        .crop-quantity strong,
+        .crop-amount {
+            color: var(--forest);
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        body.dark-mode .crop-quantity strong,
+        body.dark-mode .crop-amount {
+            color: var(--light-sage);
+        }
+
+        .center-progress {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+
+            flex: 1;
+
+            max-width: 250px;
+
+            margin: 0 14px;
+        }
+
+        .progress-track {
+            flex: 1;
+
+            height: 7px;
+
+            overflow: hidden;
+
+            border-radius: 99px;
+
+            background:
+                rgba(152, 169, 115, 0.23);
+        }
+
+        .progress-fill {
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--apple),
+                    var(--forest)
+                );
+
+            transition: width 0.35s ease;
+        }
+
+        .center-stats {
+            display: flex;
+
+            gap: 10px;
+
+            color: var(--text-muted);
+
+            font-size: 10px;
+        }
+
+        /* =========================================================
+           TABLE
+        ========================================================== */
+
+        .table-wrapper {
+            overflow-x: auto;
+
+            border-radius: 12px;
+        }
+
+        .transactions-table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 780px;
+        }
+
+        .transactions-table th {
+            padding: 11px 12px;
+
+            text-align: left;
+
+            background:
+                rgba(117, 136, 80, 0.08);
+
+            color: var(--text-muted);
+
+            font-size: 9px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+
+            border-bottom:
+                1px solid var(--border-color);
+        }
+
+        .transactions-table td {
+            padding: 13px 12px;
+
+            color: var(--text-main);
+
+            font-size: 11px;
+
+            border-bottom:
+                1px solid var(--border-color);
+        }
+
+        .transactions-table tbody tr {
+            transition:
+                background 0.18s ease,
+                transform 0.18s ease;
+        }
+
+        .transactions-table tbody tr:hover {
+            background:
+                rgba(152, 169, 115, 0.09);
+        }
+
+        .token-badge {
+            display: inline-flex;
+
+            padding: 5px 8px;
+
+            border-radius: 7px;
+
+            background:
+                rgba(152, 169, 115, 0.20);
+
+            color: var(--forest);
+
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        body.dark-mode .token-badge {
+            color: #dce7be;
+        }
+
+        .farmer-cell {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .farmer-cell strong {
+            font-size: 11px;
+        }
+
+        .farmer-cell small {
+            margin-top: 2px;
+
+            color: var(--text-muted);
+
+            font-size: 9px;
+        }
+
+        .quantity-cell {
+            display: flex;
+            align-items: baseline;
+            gap: 3px;
+        }
+
+        .payment-value {
+            color: var(--forest);
+
+            font-weight: 700;
+        }
+
+        body.dark-mode .payment-value {
+            color: var(--light-sage);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 5px 8px;
+
+            border-radius: 20px;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .status-success {
+            background: rgba(152, 169, 115, 0.22);
+            color: #365004;
+        }
+
+        .status-active {
+            background: #fff2cc;
+            color: #72580c;
+        }
+
+        .status-danger {
+            background: #f8e5e5;
+            color: #963d3d;
+        }
+
+        .status-pending {
+            background: rgba(117, 136, 80, 0.18);
+            color: #526532;
+        }
+
+        body.dark-mode .status-success {
+            color: #d8e8b4;
+        }
+
+        body.dark-mode .status-active {
+            background: rgba(201, 162, 75, 0.16);
+            color: #f0d797;
+        }
+
+        body.dark-mode .status-danger {
+            background: rgba(180, 65, 65, 0.16);
+            color: #efaaaa;
+        }
+
+        body.dark-mode .status-pending {
+            color: #c8d2ac;
+        }
+
+        /* =========================================================
+           LOADING STATES
+        ========================================================== */
+
+        .loading-state,
+        .empty-state,
+        .table-loading,
+        .table-empty,
+        .table-error,
+        .error-state {
+            min-height: 90px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 8px;
+
+            padding: 24px;
+
+            text-align: center;
+
+            color: var(--text-muted);
+
+            font-size: 11px;
+        }
+
+        .loading-state i,
+        .table-loading i {
+            color: var(--moss);
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================== */
+
+        .system-footer-contrast {
+            margin-top: 12px;
+
+            padding: 22px 28px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 18px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #0c1707,
+                    #182511
+                );
+
+            color: #dce7be;
+        }
+
+        .active-indicator-pill {
+            padding: 6px 12px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+
+            border-radius: 30px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            border:
+                1px solid rgba(255, 255, 255, 0.11);
+
+            color: var(--gold-soft);
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .active-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #98a973;
+
+            box-shadow:
+                0 0 0 4px rgba(152, 169, 115, 0.09),
+                0 0 9px rgba(152, 169, 115, 0.55);
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================== */
+
+        @media (max-width: 1180px) {
+
+            .high-contrast-dashboard-banner {
+                grid-template-columns:
+                    minmax(300px, 420px)
+                    1fr;
+            }
+
+            .farmers-date-column {
+                grid-column: 2;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .farmers-date-box,
+            .farmers-refresh-text-button {
+                flex: 1;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 980px) {
+
+            .top-nav-bar {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .nav-right-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .secondary-module-nav {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+            .high-contrast-dashboard-banner {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-photo-layer {
+                height: 270px;
+            }
+
+            .farmers-date-column {
+                grid-column: auto;
+
+                flex-direction: row;
+
+                width: 100%;
+            }
+
+            .dashboard-metrics-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .dashboard-operational-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .top-nav-bar,
+            .secondary-module-nav,
+            .high-contrast-dashboard-banner,
+            .dashboard-metrics-grid,
+            .quick-actions-panel,
+            .dashboard-operational-grid {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .dashboard-panel.full-width {
+                margin-left: 10px !important;
+                margin-right: 10px !important;
+            }
+
+            .secondary-module-nav {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .high-contrast-dashboard-banner {
+                padding: 16px;
+                gap: 20px;
+            }
+
+            .hero-photo-layer {
+                height: 220px;
+            }
+
+            .high-contrast-dashboard-banner h1 {
+                font-size: 34px;
+            }
+
+            .dashboard-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .system-footer-contrast {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .nav-right-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .user-pill-container {
+                grid-column: 1 / -1;
+
+                justify-content: space-between;
+            }
+
+            .lang-select-box,
+            .btn-farmer-portal,
+            .btn-logout {
+                width: 100%;
+            }
+
+            .quick-actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .farmers-date-column {
+                flex-direction: column;
+            }
+
+            .quality-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- =========================================================
-         ADMIN NAVBAR
+         PAGE TRANSITION OVERLAY
     ========================================================== -->
 
-    <header class="navbar">
+    <div
+        class="page-transition-overlay"
+        id="page-transition-overlay"
+    >
+        <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
 
-        <div class="navbar-left">
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
 
-            <div class="brand">
+    <header class="top-nav-bar">
 
-                <i class="fa-solid fa-seedling"></i>
+        <div class="nav-left-brand">
 
-                <span>Kisan Setu</span>
-
-            </div>
-
-            <span class="admin-label">
-                Administration Portal
-            </span>
-
-            <!-- =================================================
-                 ADMIN MODULE NAVIGATION
-            ================================================== -->
-
-            <nav
-                class="admin-navigation"
-                aria-label="Admin Portal Navigation"
+            <img
+                src="https://cdn-icons-png.flaticon.com/128/8524/8524310.png"
+                alt="Kisan Setu Logo"
+                class="brand-logo-img"
             >
 
-                <a
-                    href="dashboard.html"
-                    data-admin-page="dashboard"
-                >
-                    Dashboard
-                </a>
-
-                <a
-                    href="farmers.html"
-                    data-admin-page="farmers"
-                >
-                    Farmers
-                </a>
-
-                <a
-                    href="mandi.html"
-                    data-admin-page="mandi"
-                >
-                    Mandi
-                </a>
-
-                <a
-                    href="queue.html"
-                    data-admin-page="queue"
-                >
-                    Queue
-                </a>
-
-                <a
-                    href="payment.html"
-                    data-admin-page="payments"
-                >
-                    Payments
-                </a>
-
-                <a
-                    href="reports.html"
-                    data-admin-page="reports"
-                >
-                    Reports
-                </a>
-
-            </nav>
+            <div class="brand-title-group">
+                <small>Kisan Setu</small>
+                <strong>Administration Portal</strong>
+            </div>
 
         </div>
 
+        <div class="nav-right-actions">
 
-        <!-- =====================================================
-             ADMIN ACCOUNT / PORTAL SWITCH
-        ====================================================== -->
+            <div class="user-pill-container">
 
-        <div class="navbar-right">
+                <div class="user-details">
 
-            <!-- Farmer portal is located in the sibling /farmer folder -->
-            <a
-                href="../farmer/index.html"
-                id="admin-farmer-portal-link"
-                class="admin-farmer-portal-button"
-                title="Open Farmer Portal"
-            >
-                Farmer Portal →
-            </a>
+                    <span
+                        class="user-name"
+                        id="admin-user-name"
+                    >
+                        Administrator
+                    </span>
 
+                    <span class="user-verified-tag">
+                        <i class="fa-solid fa-circle-check"></i>
+                        Verified
+                    </span>
 
-            <div class="admin-user">
+                </div>
 
-                <i class="fa-solid fa-user-shield"></i>
-
-                <span id="admin-user-name">
-                    Administrator
-                </span>
+                <div
+                    class="user-avatar"
+                    id="admin-user-avatar"
+                >
+                    AD
+                </div>
 
             </div>
 
+            <button
+                type="button"
+                class="theme-toggle-btn header-glass-control"
+                id="theme-toggle-btn"
+                title="Switch theme"
+                aria-label="Switch light and dark mode"
+            >
+                <i
+                    id="theme-toggle-icon"
+                    class="fa-solid fa-moon"
+                ></i>
+            </button>
+
+            <div
+                class="icon-notification-btn header-glass-control"
+                title="Notifications"
+            >
+                <i class="fa-regular fa-bell"></i>
+
+                <span class="notification-badge">
+                    3
+                </span>
+            </div>
+
+            <select
+                class="lang-select-box header-glass-control"
+                id="admin-lang-select"
+            >
+                <option value="en">
+                    🌐 English
+                </option>
+
+                <option value="hi">
+                    Hindi (हिन्दी)
+                </option>
+
+                <option value="pb">
+                    Punjabi (ਪੰਜਾਬੀ)
+                </option>
+
+                <option value="bn">
+                    Bengali (বাংলা)
+                </option>
+
+                <option value="te">
+                    Telugu (తెలుగు)
+                </option>
+
+                <option value="mr">
+                    Marathi (मराठी)
+                </option>
+            </select>
+
+            <a
+                href="../farmer/index.html"
+                class="btn-farmer-portal"
+                title="Open Farmer Portal"
+            >
+                <i
+                    class="fa-solid fa-arrow-up-right-from-square"
+                ></i>
+
+                <span>
+                    Farmer Portal
+                </span>
+            </a>
 
             <button
-                id="admin-logout-button"
-                class="admin-logout-button"
                 type="button"
+                id="admin-logout-button"
+                class="btn-logout"
             >
+                <i
+                    class="fa-solid fa-right-from-bracket"
+                ></i>
 
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-                Logout
-
+                <span>
+                    Logout
+                </span>
             </button>
 
         </div>
 
     </header>
 
+    <!-- =========================================================
+         SECONDARY NAVIGATION
+    ========================================================== -->
+
+    <nav
+        class="secondary-module-nav"
+        aria-label="Admin Portal Navigation"
+    >
+
+        <a
+            href="dashboard.html"
+            class="admin-nav-item active"
+            data-admin-page="dashboard"
+        >
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a
+            href="farmers.html"
+            class="admin-nav-item"
+            data-admin-page="farmers"
+        >
+            <i class="fa-solid fa-users"></i>
+            <span>Farmers</span>
+        </a>
+
+        <a
+            href="mandi.html"
+            class="admin-nav-item"
+            data-admin-page="mandi"
+        >
+            <i class="fa-solid fa-warehouse"></i>
+            <span>Mandi & Slots</span>
+        </a>
+
+        <a
+            href="queue.html"
+            class="admin-nav-item"
+            data-admin-page="queue"
+        >
+            <i class="fa-solid fa-list-ol"></i>
+            <span>Live Queue</span>
+        </a>
+
+        <a
+            href="payment.html"
+            class="admin-nav-item"
+            data-admin-page="payments"
+        >
+            <i
+                class="fa-solid fa-money-bill-transfer"
+            ></i>
+
+            <span>
+                Payments
+            </span>
+        </a>
+
+        <a
+            href="reports.html"
+            class="admin-nav-item"
+            data-admin-page="reports"
+        >
+            <i
+                class="fa-solid fa-chart-column"
+            ></i>
+
+            <span>
+                Reports
+            </span>
+        </a>
+
+    </nav>
 
     <!-- =========================================================
          MAIN DASHBOARD
@@ -156,15 +2186,36 @@
 
     <main class="admin-dashboard">
 
-        <!-- Dashboard Heading -->
+        <!-- HERO -->
 
-        <section class="dashboard-header">
+        <section
+            class="high-contrast-dashboard-banner"
+        >
 
-            <div>
+            <div class="hero-photo-layer">
 
-                <p class="dashboard-eyebrow">
+                <img
+                    src="52565520646011763.jpg"
+                    alt="Farmer holding a young plant in soil"
+                >
+
+            </div>
+
+            <div class="banner-decor"></div>
+
+            <div
+                class="banner-decor secondary"
+            ></div>
+
+            <div class="banner-text">
+
+                <div class="banner-eyebrow">
+                    <i
+                        class="fa-solid fa-shield-halved"
+                    ></i>
+
                     ADMINISTRATION
-                </p>
+                </div>
 
                 <h1>
                     Dashboard Overview
@@ -177,34 +2228,70 @@
 
             </div>
 
+            <div class="farmers-date-column">
 
-            <div class="dashboard-date">
+                <div class="farmers-date-box">
 
-                <i class="fa-regular fa-calendar"></i>
+                    <i
+                        class="fa-regular fa-calendar date-calendar-icon"
+                    ></i>
 
-                <span id="dashboard-date">
-                    Loading date...
-                </span>
+                    <input
+                        type="text"
+                        id="dashboard-date-picker"
+                        class="farmers-date-input"
+                        placeholder="dd/mm/yyyy"
+                        maxlength="10"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        id="dashboard-calendar-btn"
+                        class="date-dropdown-trigger"
+                        title="Open Calendar"
+                    >
+                        <i
+                            class="fa-solid fa-chevron-down date-dropdown-icon"
+                        ></i>
+                    </button>
+
+                    <input
+                        type="date"
+                        id="hidden-dashboard-native-date"
+                        class="hidden-native-date"
+                        tabindex="-1"
+                        aria-hidden="true"
+                    >
+
+                </div>
+
+                <button
+                    type="button"
+                    class="farmers-refresh-text-button"
+                    id="refresh-dashboard"
+                >
+                    <i class="fa-solid fa-rotate"></i>
+
+                    <span>
+                        Refresh
+                    </span>
+                </button>
 
             </div>
 
         </section>
 
-
         <!-- =====================================================
              KPI CARDS
         ====================================================== -->
 
-        <section class="dashboard-metrics">
-
-            <!-- Registered Farmers -->
+        <section class="dashboard-metrics-grid">
 
             <article class="metric-card">
 
                 <div class="metric-icon">
-
                     <i class="fa-solid fa-users"></i>
-
                 </div>
 
                 <div class="metric-content">
@@ -224,15 +2311,12 @@
 
             </article>
 
-
-            <!-- Today's Bookings -->
-
             <article class="metric-card">
 
                 <div class="metric-icon">
-
-                    <i class="fa-solid fa-calendar-check"></i>
-
+                    <i
+                        class="fa-solid fa-calendar-check"
+                    ></i>
                 </div>
 
                 <div class="metric-content">
@@ -252,15 +2336,12 @@
 
             </article>
 
-
-            <!-- Active Queue -->
-
             <article class="metric-card">
 
                 <div class="metric-icon">
-
-                    <i class="fa-solid fa-users-line"></i>
-
+                    <i
+                        class="fa-solid fa-users-line"
+                    ></i>
                 </div>
 
                 <div class="metric-content">
@@ -280,15 +2361,12 @@
 
             </article>
 
-
-            <!-- Procurement -->
-
             <article class="metric-card">
 
                 <div class="metric-icon">
-
-                    <i class="fa-solid fa-weight-hanging"></i>
-
+                    <i
+                        class="fa-solid fa-weight-hanging"
+                    ></i>
                 </div>
 
                 <div class="metric-content">
@@ -312,15 +2390,12 @@
 
             </article>
 
-
-            <!-- Payments -->
-
             <article class="metric-card">
 
                 <div class="metric-icon">
-
-                    <i class="fa-solid fa-indian-rupee-sign"></i>
-
+                    <i
+                        class="fa-solid fa-indian-rupee-sign"
+                    ></i>
                 </div>
 
                 <div class="metric-content">
@@ -340,15 +2415,12 @@
 
             </article>
 
-
-            <!-- Completed -->
-
             <article class="metric-card">
 
                 <div class="metric-icon">
-
-                    <i class="fa-solid fa-circle-check"></i>
-
+                    <i
+                        class="fa-solid fa-circle-check"
+                    ></i>
                 </div>
 
                 <div class="metric-content">
@@ -370,21 +2442,19 @@
 
         </section>
 
-
         <!-- =====================================================
              OPERATIONAL OVERVIEW
         ====================================================== -->
 
-        <section class="dashboard-grid">
-
-            <!-- Crop Breakdown -->
+        <section
+            class="dashboard-operational-grid"
+        >
 
             <article class="dashboard-panel">
 
                 <div class="panel-header">
 
                     <div>
-
                         <h2>
                             Crop Procurement
                         </h2>
@@ -392,13 +2462,13 @@
                         <p>
                             Today's procurement by crop
                         </p>
-
                     </div>
 
-                    <i class="fa-solid fa-wheat-awn"></i>
+                    <i
+                        class="fa-solid fa-wheat-awn"
+                    ></i>
 
                 </div>
-
 
                 <div
                     id="crop-breakdown"
@@ -407,7 +2477,9 @@
 
                     <div class="loading-state">
 
-                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        <i
+                            class="fa-solid fa-spinner fa-spin"
+                        ></i>
 
                         Loading crop data...
 
@@ -417,15 +2489,11 @@
 
             </article>
 
-
-            <!-- Quality Summary -->
-
             <article class="dashboard-panel">
 
                 <div class="panel-header">
 
                     <div>
-
                         <h2>
                             Quality Summary
                         </h2>
@@ -433,13 +2501,13 @@
                         <p>
                             Today's quality assessment
                         </p>
-
                     </div>
 
-                    <i class="fa-solid fa-microscope"></i>
+                    <i
+                        class="fa-solid fa-microscope"
+                    ></i>
 
                 </div>
-
 
                 <div
                     id="quality-summary"
@@ -458,7 +2526,6 @@
 
                     </div>
 
-
                     <div class="quality-item">
 
                         <span>
@@ -470,7 +2537,6 @@
                         </strong>
 
                     </div>
-
 
                     <div class="quality-item">
 
@@ -490,12 +2556,14 @@
 
         </section>
 
-
         <!-- =====================================================
-             MANDI / CENTER STATUS
+             MANDI STATUS
         ====================================================== -->
 
-        <section class="dashboard-panel full-width">
+        <section
+            class="dashboard-panel full-width"
+            style="margin-top: 24px;"
+        >
 
             <div class="panel-header">
 
@@ -511,10 +2579,11 @@
 
                 </div>
 
-                <i class="fa-solid fa-warehouse"></i>
+                <i
+                    class="fa-solid fa-warehouse"
+                ></i>
 
             </div>
-
 
             <div
                 id="center-status"
@@ -523,7 +2592,9 @@
 
                 <div class="loading-state">
 
-                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <i
+                        class="fa-solid fa-spinner fa-spin"
+                    ></i>
 
                     Loading center information...
 
@@ -533,12 +2604,14 @@
 
         </section>
 
-
         <!-- =====================================================
              RECENT TRANSACTIONS
         ====================================================== -->
 
-        <section class="dashboard-panel full-width">
+        <section
+            class="dashboard-panel full-width"
+            style="margin-top: 24px; margin-bottom: 28px;"
+        >
 
             <div class="panel-header">
 
@@ -554,10 +2627,11 @@
 
                 </div>
 
-                <i class="fa-solid fa-clock-rotate-left"></i>
+                <i
+                    class="fa-solid fa-clock-rotate-left"
+                ></i>
 
             </div>
-
 
             <div class="table-wrapper">
 
@@ -566,39 +2640,16 @@
                     <thead>
 
                         <tr>
-
-                            <th>
-                                Token
-                            </th>
-
-                            <th>
-                                Farmer
-                            </th>
-
-                            <th>
-                                Crop
-                            </th>
-
-                            <th>
-                                Quantity
-                            </th>
-
-                            <th>
-                                Center
-                            </th>
-
-                            <th>
-                                Status
-                            </th>
-
-                            <th>
-                                Payment
-                            </th>
-
+                            <th>Token</th>
+                            <th>Farmer</th>
+                            <th>Crop</th>
+                            <th>Quantity</th>
+                            <th>Center</th>
+                            <th>Status</th>
+                            <th>Payment</th>
                         </tr>
 
                     </thead>
-
 
                     <tbody id="transactions-body">
 
@@ -609,7 +2660,9 @@
                                 class="table-loading"
                             >
 
-                                <i class="fa-solid fa-spinner fa-spin"></i>
+                                <i
+                                    class="fa-solid fa-spinner fa-spin"
+                                ></i>
 
                                 Loading transactions...
 
@@ -625,49 +2678,552 @@
 
         </section>
 
+    </main>
 
-        <!-- =====================================================
-             REFRESH / SYSTEM STATUS
-        ====================================================== -->
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
 
-        <section class="dashboard-footer">
+    <footer class="system-footer-contrast">
 
-            <div class="system-status">
+        <div
+            style="
+                font-size:10px;
+                color:#b3bda5;
+                line-height:1.5;
+            "
+        >
 
-                <span
-                    id="system-status-indicator"
-                    class="status-dot"
-                ></span>
+            <h4
+                style="
+                    color:#fff;
+                    font-size:13px;
+                    margin:0 0 3px;
+                "
+            >
+                Kisan Setu • Department of Consumer Affairs (DoCA)
+            </h4>
+
+            MINISTRY OF CONSUMER AFFAIRS,
+            FOOD & PUBLIC DISTRIBUTION •
+            NATIONAL INFORMATICS CENTRE
+
+        </div>
+
+        <div class="footer-right">
+
+            <div class="active-indicator-pill">
+
+                <span class="active-dot"></span>
 
                 <span id="system-status-text">
-                    Connecting to Kisan Setu backend...
+                    SYSTEM ACTIVE
                 </span>
 
             </div>
 
+            <span
+                id="system-status-indicator"
+                style="display:none;"
+            ></span>
 
-            <button
-                id="refresh-dashboard"
-                class="refresh-button"
-                type="button"
-            >
+        </div>
 
-                <i class="fa-solid fa-arrows-rotate"></i>
-
-                Refresh Dashboard
-
-            </button>
-
-        </section>
-
-    </main>
-
+    </footer>
 
     <!-- =========================================================
-         ADMIN DASHBOARD JAVASCRIPT
+         EXISTING JS
+         Keep these exactly so your backend logic still loads
     ========================================================== -->
 
+    <script
+        src="admin.js"
+        defer
+    ></script>
+
     <script src="dashboard.js"></script>
+
+    <!-- =========================================================
+         UI-ONLY JAVASCRIPT
+         Does not alter API/backend logic
+    ========================================================== -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            /* =====================================================
+               ADMIN NAME -> INITIALS
+               Example:
+               Aisha Saha -> AS
+               Rahul -> RA
+            ====================================================== */
+
+            function generateInitials(name) {
+
+                if (!name) {
+                    return "AD";
+                }
+
+                const cleanedName = name
+                    .trim()
+                    .replace(/\s+/g, " ");
+
+                if (!cleanedName) {
+                    return "AD";
+                }
+
+                const parts = cleanedName.split(" ");
+
+                if (parts.length >= 2) {
+                    return (
+                        parts[0][0] +
+                        parts[parts.length - 1][0]
+                    ).toUpperCase();
+                }
+
+                return cleanedName
+                    .slice(0, 2)
+                    .toUpperCase();
+            }
+
+
+            const adminNameElement =
+                document.getElementById(
+                    "admin-user-name"
+                );
+
+            const adminAvatarElement =
+                document.getElementById(
+                    "admin-user-avatar"
+                );
+
+
+            function updateAdminAvatar() {
+
+                if (
+                    !adminNameElement ||
+                    !adminAvatarElement
+                ) {
+                    return;
+                }
+
+                const currentName =
+                    adminNameElement.textContent.trim();
+
+                adminAvatarElement.textContent =
+                    generateInitials(currentName);
+            }
+
+
+            updateAdminAvatar();
+
+
+            /*
+             Watch for admin.js updating the name
+             AFTER the page has already loaded.
+            */
+
+            if (adminNameElement) {
+
+                const observer =
+                    new MutationObserver(
+                        updateAdminAvatar
+                    );
+
+                observer.observe(
+                    adminNameElement,
+                    {
+                        childList: true,
+                        characterData: true,
+                        subtree: true
+                    }
+                );
+            }
+
+
+            /* =====================================================
+               DARK / LIGHT MODE
+            ====================================================== */
+
+            const themeButton =
+                document.getElementById(
+                    "theme-toggle-btn"
+                );
+
+            const themeIcon =
+                document.getElementById(
+                    "theme-toggle-icon"
+                );
+
+
+            function updateThemeIcon() {
+
+                if (!themeIcon) {
+                    return;
+                }
+
+                const darkModeActive =
+                    document.body.classList.contains(
+                        "dark-mode"
+                    );
+
+                themeIcon.className =
+                    darkModeActive
+                        ? "fa-solid fa-sun"
+                        : "fa-solid fa-moon";
+            }
+
+
+            const savedTheme =
+                localStorage.getItem(
+                    "kisan-setu-admin-theme"
+                );
+
+
+            if (savedTheme === "dark") {
+
+                document.body.classList.add(
+                    "dark-mode"
+                );
+
+            } else if (
+                !savedTheme &&
+                window.matchMedia &&
+                window.matchMedia(
+                    "(prefers-color-scheme: dark)"
+                ).matches
+            ) {
+
+                document.body.classList.add(
+                    "dark-mode"
+                );
+            }
+
+
+            updateThemeIcon();
+
+
+            if (themeButton) {
+
+                themeButton.addEventListener(
+                    "click",
+                    function () {
+
+                        document.body.classList.toggle(
+                            "dark-mode"
+                        );
+
+                        const darkModeActive =
+                            document.body.classList.contains(
+                                "dark-mode"
+                            );
+
+                        localStorage.setItem(
+                            "kisan-setu-admin-theme",
+                            darkModeActive
+                                ? "dark"
+                                : "light"
+                        );
+
+                        updateThemeIcon();
+                    }
+                );
+            }
+
+
+            /* =====================================================
+               DATE PICKER
+            ====================================================== */
+
+            const visibleDateInput =
+                document.getElementById(
+                    "dashboard-date-picker"
+                );
+
+            const nativeDateInput =
+                document.getElementById(
+                    "hidden-dashboard-native-date"
+                );
+
+            const calendarButton =
+                document.getElementById(
+                    "dashboard-calendar-btn"
+                );
+
+
+            function formatDateForDisplay(
+                yyyyMmDd
+            ) {
+
+                if (!yyyyMmDd) {
+                    return "";
+                }
+
+                const parts =
+                    yyyyMmDd.split("-");
+
+                if (parts.length !== 3) {
+                    return yyyyMmDd;
+                }
+
+                return (
+                    parts[2] +
+                    "/" +
+                    parts[1] +
+                    "/" +
+                    parts[0]
+                );
+            }
+
+
+            function formatDateForNative(
+                ddMmYyyy
+            ) {
+
+                if (!ddMmYyyy) {
+                    return "";
+                }
+
+                const parts =
+                    ddMmYyyy.split("/");
+
+                if (parts.length !== 3) {
+                    return "";
+                }
+
+                return (
+                    parts[2] +
+                    "-" +
+                    parts[1] +
+                    "-" +
+                    parts[0]
+                );
+            }
+
+
+            if (
+                visibleDateInput &&
+                !visibleDateInput.value
+            ) {
+
+                const today =
+                    new Date();
+
+                const dd =
+                    String(
+                        today.getDate()
+                    ).padStart(
+                        2,
+                        "0"
+                    );
+
+                const mm =
+                    String(
+                        today.getMonth() + 1
+                    ).padStart(
+                        2,
+                        "0"
+                    );
+
+                const yyyy =
+                    today.getFullYear();
+
+                visibleDateInput.value =
+                    dd +
+                    "/" +
+                    mm +
+                    "/" +
+                    yyyy;
+
+                if (nativeDateInput) {
+
+                    nativeDateInput.value =
+                        yyyy +
+                        "-" +
+                        mm +
+                        "-" +
+                        dd;
+                }
+            }
+
+
+            if (
+                nativeDateInput &&
+                visibleDateInput
+            ) {
+
+                nativeDateInput.addEventListener(
+                    "change",
+                    function () {
+
+                        visibleDateInput.value =
+                            formatDateForDisplay(
+                                nativeDateInput.value
+                            );
+
+
+                        /*
+                         Dispatch change event so any
+                         existing dashboard.js handler
+                         can still react to the date.
+                        */
+
+                        visibleDateInput.dispatchEvent(
+                            new Event(
+                                "change",
+                                {
+                                    bubbles: true
+                                }
+                            )
+                        );
+                    }
+                );
+
+
+                visibleDateInput.addEventListener(
+                    "change",
+                    function () {
+
+                        const formatted =
+                            formatDateForNative(
+                                visibleDateInput.value
+                            );
+
+                        if (formatted) {
+
+                            nativeDateInput.value =
+                                formatted;
+                        }
+                    }
+                );
+            }
+
+
+            function openCalendar() {
+
+                if (!nativeDateInput) {
+                    return;
+                }
+
+                /*
+                 Modern Chromium browsers
+                */
+
+                if (
+                    typeof nativeDateInput.showPicker
+                    === "function"
+                ) {
+
+                    try {
+
+                        nativeDateInput.showPicker();
+
+                    } catch (error) {
+
+                        nativeDateInput.click();
+                    }
+
+                } else {
+
+                    nativeDateInput.click();
+                }
+            }
+
+
+            if (calendarButton) {
+
+                calendarButton.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.preventDefault();
+
+                        openCalendar();
+                    }
+                );
+            }
+
+
+            const dateBox =
+                document.querySelector(
+                    ".farmers-date-box"
+                );
+
+
+            if (dateBox) {
+
+                dateBox.addEventListener(
+                    "dblclick",
+                    openCalendar
+                );
+            }
+
+
+            /* =====================================================
+               BASIC DATE INPUT FORMATTING
+               User can type:
+               17092026
+               and it becomes:
+               17/09/2026
+            ====================================================== */
+
+            if (visibleDateInput) {
+
+                visibleDateInput.addEventListener(
+                    "input",
+                    function () {
+
+                        let numbers =
+                            visibleDateInput.value
+                                .replace(/\D/g, "")
+                                .slice(0, 8);
+
+                        let formatted =
+                            numbers;
+
+                        if (
+                            numbers.length > 2
+                        ) {
+
+                            formatted =
+                                numbers.slice(
+                                    0,
+                                    2
+                                ) +
+                                "/" +
+                                numbers.slice(
+                                    2
+                                );
+                        }
+
+                        if (
+                            numbers.length > 4
+                        ) {
+
+                            formatted =
+                                numbers.slice(
+                                    0,
+                                    2
+                                ) +
+                                "/" +
+                                numbers.slice(
+                                    2,
+                                    4
+                                ) +
+                                "/" +
+                                numbers.slice(
+                                    4
+                                );
+                        }
+
+                        visibleDateInput.value =
+                            formatted;
+                    }
+                );
+            }
+
+        });
+    </script>
 
 </body>
 </html>

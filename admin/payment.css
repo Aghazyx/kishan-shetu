@@ -1,3 +1,4 @@
+
 /* ================================================================
    KISAN SETU ADMIN PORTAL
    A6 • PAYMENT MONITORING
@@ -1752,4 +1753,207 @@
 
   }
 
+}
+/* =========================================================
+   PAYMENT FOOTER 
+========================================================= */
+
+body .admin-footer.dashboard-footer {
+    width: 100% !important;
+    min-height: 95px !important;
+
+    /* No outside gap */
+    margin: 36px 0 0 0 !important;
+
+    /* Internal spacing */
+    padding: 20px 24px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+
+    /* Same dark green */
+    background: #121f0d !important;
+
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    color: #ffffff !important;
+    text-align: left !important;
+}
+
+
+/* =========================================================
+   LEFT SIDE
+========================================================= */
+
+body .admin-footer.dashboard-footer .dashboard-footer-left {
+    width: auto !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    gap: 5px !important;
+
+    text-align: left !important;
+    transform: none !important;
+}
+
+
+/* KISAN SETU */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-left strong {
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #ffffff !important;
+
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+
+    text-align: left !important;
+}
+
+
+/* MINISTRY / NIC */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-left > span {
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #ffffff !important;
+
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+
+    letter-spacing: 0 !important;
+    text-align: left !important;
+}
+
+
+/* =========================================================
+   BACKEND STATUS / UPDATED TIME
+========================================================= */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-status {
+    flex-shrink: 0 !important;
+
+    margin: 0 !important;
+    padding: 8px 13px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    background: rgba(255, 255, 255, 0.07) !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 999px !important;
+
+    color: #ffffff !important;
+
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+
+    white-space: nowrap !important;
+}
+
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-status span {
+    color: #ffffff !important;
+    font-size: 10px !important;
+}
+
+
+/* STATUS DOT */
+
+body .admin-footer.dashboard-footer
+.dashboard-footer-dot {
+    width: 8px !important;
+    height: 8px !important;
+
+    flex-shrink: 0 !important;
+
+    background: #98a973 !important;
+
+    border-radius: 50% !important;
+
+    box-shadow:
+        0 0 0 5px rgba(152, 169, 115, 0.11) !important;
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+body.dark-mode .admin-footer.dashboard-footer {
+    background: #121f0d !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .admin-footer.dashboard-footer
+.dashboard-footer-left strong,
+
+body.dark-mode .admin-footer.dashboard-footer
+.dashboard-footer-left > span,
+
+body.dark-mode .admin-footer.dashboard-footer
+.dashboard-footer-status,
+
+body.dark-mode .admin-footer.dashboard-footer
+.dashboard-footer-status span {
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+
+    body .admin-footer.dashboard-footer {
+        min-height: auto !important;
+
+        padding: 18px 16px !important;
+
+        flex-direction: column !important;
+        align-items: flex-start !important;
+
+        gap: 14px !important;
+    }
+
+    body .admin-footer.dashboard-footer
+    .dashboard-footer-status {
+        white-space: normal !important;
+    }
+}
+
+.payment-connection-bar {
+    display: none !important;
 }
