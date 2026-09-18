@@ -1,3 +1,4 @@
+
 /* =========================================================
    KISAN SETU PORTAL GATEWAY
    Separate from farmer-side portal.css
@@ -432,5 +433,573 @@ body {
     .gateway-card,
     .gateway-button {
         transition: none;
+    }
+}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+
+:root {
+    --forest-dark: #121f0d;
+    --forest: #30401c;
+    --moss: #526532;
+    --sage: #758850;
+    --apple: #98a973;
+    --light-sage: #b9c798;
+    --cream-green: #dce7be;
+    --cream: #f7f8ef;
+    --gold: #c9a24b;
+    --gold-soft: #e3cf94;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--forest-dark);
+    background: var(--forest-dark);
+}
+
+/* =====================================================
+   PAGE BACKGROUND
+===================================================== */
+
+.gateway-page {
+    position: relative;
+    min-height: 100vh;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-image:
+        linear-gradient(
+            115deg,
+            rgba(12, 23, 7, 0.91),
+            rgba(18, 31, 13, 0.79)
+        ),
+        url("portal-bg.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.gateway-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(185, 199, 152, 0.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(201, 162, 75, 0.08),
+            transparent 28%
+        );
+}
+
+/* =====================================================
+   MAIN PANEL
+===================================================== */
+
+.gateway-container {
+    position: relative;
+    z-index: 1;
+
+    width: min(1180px, 100%);
+    overflow: hidden;
+
+    background: rgba(244, 247, 233, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 24px;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.34),
+        0 8px 25px rgba(0, 0, 0, 0.16);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* =====================================================
+   BRAND HEADER
+===================================================== */
+
+.gateway-header {
+    padding: 20px 28px;
+
+    background: var(--forest-dark);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.gateway-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.gateway-brand-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+
+    font-size: 25px;
+}
+
+.gateway-brand h1 {
+    margin: 0;
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 21px;
+    font-weight: 800;
+
+    color: var(--white);
+}
+
+.gateway-brand p {
+    margin: 3px 0 0;
+
+    color: var(--light-sage);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* =====================================================
+   ACCESS SECTION
+===================================================== */
+
+.gateway-access {
+    padding: 27px 30px 25px;
+}
+
+.gateway-heading {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.gateway-eyebrow {
+    display: inline-flex;
+
+    margin-bottom: 8px;
+    padding: 6px 11px;
+
+    border-radius: 30px;
+
+    background: rgba(48, 64, 28, 0.08);
+    border: 1px solid rgba(48, 64, 28, 0.10);
+
+    color: var(--moss);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.gateway-heading h2 {
+    margin: 0 0 6px;
+
+    font-family: 'Fraunces', serif;
+    font-size: clamp(29px, 3vw, 40px);
+    font-weight: 600;
+    letter-spacing: -0.6px;
+
+    color: var(--forest-dark);
+}
+
+.gateway-heading p {
+    margin: 0;
+
+    color: var(--moss);
+    font-size: 13px;
+}
+
+/* =====================================================
+   PORTAL CARDS
+===================================================== */
+
+.gateway-grid {
+    max-width: 940px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.gateway-card {
+    position: relative;
+    overflow: hidden;
+
+    padding: 24px;
+
+    display: flex;
+    flex-direction: column;
+
+    background: rgba(255, 255, 255, 0.87);
+
+    border: 1px solid rgba(48, 64, 28, 0.13);
+    border-radius: 18px;
+
+    box-shadow:
+        0 6px 18px rgba(18, 31, 13, 0.06);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.gateway-card::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--forest),
+            var(--sage)
+        );
+}
+
+.gateway-card:nth-child(2)::before {
+    background:
+        linear-gradient(
+            90deg,
+            var(--forest),
+            var(--gold)
+        );
+}
+
+.gateway-card:hover {
+    transform: translateY(-4px);
+
+    border-color: rgba(117, 136, 80, 0.42);
+
+    box-shadow:
+        0 16px 35px rgba(18, 31, 13, 0.12);
+}
+
+.gateway-card-icon {
+    width: 46px;
+    height: 46px;
+
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: rgba(152, 169, 115, 0.15);
+    border: 1px solid rgba(117, 136, 80, 0.12);
+
+    font-size: 23px;
+}
+
+.gateway-card:nth-child(2) .gateway-card-icon {
+    background: rgba(201, 162, 75, 0.12);
+    border-color: rgba(201, 162, 75, 0.16);
+}
+
+.gateway-card-label {
+    width: fit-content;
+
+    margin-bottom: 7px;
+    padding: 4px 8px;
+
+    border-radius: 20px;
+
+    background: rgba(48, 64, 28, 0.07);
+
+    color: var(--moss);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.gateway-card h3 {
+    margin: 0 0 8px;
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--forest-dark);
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.gateway-card > p {
+    min-height: 58px;
+    margin: 0 0 14px;
+
+    color: #5c674d;
+
+    font-size: 11.5px;
+    line-height: 1.65;
+}
+
+/* =====================================================
+   FEATURE LIST
+===================================================== */
+
+.gateway-list {
+    margin: 0 0 20px;
+    padding: 0;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+
+    list-style: none;
+}
+
+.gateway-list li {
+    position: relative;
+
+    padding-left: 17px;
+
+    color: #445137;
+
+    font-size: 10.5px;
+    font-weight: 600;
+}
+
+.gateway-list li::before {
+    content: "✓";
+
+    position: absolute;
+    left: 0;
+
+    color: var(--sage);
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.gateway-button {
+    width: 100%;
+    min-height: 43px;
+
+    margin-top: auto;
+    padding: 0 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border: 0;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.gateway-button span {
+    font-size: 17px;
+    transition: transform 0.2s ease;
+}
+
+.gateway-farmer-button {
+    background: var(--forest);
+    color: var(--white);
+
+    box-shadow:
+        0 5px 14px rgba(48, 64, 28, 0.20);
+}
+
+.gateway-admin-button {
+    background: var(--forest);
+    color: var(--white);
+
+    box-shadow:
+        0 5px 14px rgba(48, 64, 28, 0.20);
+}
+
+.gateway-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 9px 20px rgba(18, 31, 13, 0.20);
+}
+
+.gateway-farmer-button:hover {
+    background: #3c5024;
+}
+
+.gateway-admin-button:hover {
+    background: #3c5024;
+}
+
+.gateway-button:hover span {
+    transform: translateX(3px);
+}
+
+/* =====================================================
+   SYSTEM INFORMATION
+===================================================== */
+
+.gateway-system-info {
+    padding: 13px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+
+    background: #edf2df;
+
+    border-top: 1px solid rgba(48, 64, 28, 0.09);
+    border-bottom: 1px solid rgba(48, 64, 28, 0.09);
+}
+
+.gateway-info-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: var(--moss);
+
+    font-size: 9.5px;
+    font-weight: 600;
+}
+
+.gateway-info-item span {
+    color: var(--sage);
+    font-size: 8px;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.gateway-footer {
+    padding: 15px 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    background: var(--forest-dark);
+
+    color: rgba(255, 255, 255, 0.70);
+
+    font-size: 9.5px;
+}
+
+.gateway-footer p {
+    margin: 0;
+}
+
+.gateway-footer p:first-child {
+    color: var(--white);
+    font-weight: 700;
+}
+
+.gateway-footer span {
+    margin: 0 5px;
+    color: var(--apple);
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 800px) {
+
+    .gateway-page {
+        padding: 18px;
+        align-items: flex-start;
+        background-attachment: scroll;
+    }
+
+    .gateway-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gateway-card > p {
+        min-height: 0;
+    }
+
+    .gateway-system-info {
+        flex-wrap: wrap;
+        gap: 12px 20px;
+    }
+}
+
+@media (max-width: 520px) {
+
+    .gateway-page {
+        padding: 10px;
+    }
+
+    .gateway-container {
+        border-radius: 18px;
+    }
+
+    .gateway-header {
+        padding: 17px 18px;
+    }
+
+    .gateway-access {
+        padding: 22px 16px;
+    }
+
+    .gateway-list {
+        grid-template-columns: 1fr;
+    }
+
+    .gateway-system-info {
+        padding: 14px 18px;
+        justify-content: flex-start;
+    }
+
+    .gateway-footer {
+        padding: 15px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
 }

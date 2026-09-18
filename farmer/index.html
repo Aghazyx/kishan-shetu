@@ -1243,6 +1243,949 @@
 
     /* ==================== END LIVE MANDI PRICES UI ==================== */
 
+  
+    /* ==================== KISAN SETU VISUAL REFRESH ==================== */
+    :root {
+      --bg-olive: #eef2e6;
+      --card-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(48, 64, 28, 0.12);
+      --dark-olive: #30401c;
+      --medium-olive: #526532;
+      --light-olive: #758850;
+      --accent-badge: #c9a24b;
+      --text-main: #17210f;
+      --text-muted: #68745b;
+      --border-subtle: rgba(48, 64, 28, 0.13);
+      --shadow-soft: 0 12px 32px rgba(18, 31, 13, 0.08);
+      --forest-dark: #121f0d;
+      --forest: #30401c;
+      --moss: #526532;
+      --sage: #758850;
+      --apple: #98a973;
+      --light-sage: #b9c798;
+      --cream-green: #dce7be;
+      --gold: #c9a24b;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 0 0, rgba(255,255,255,.9), transparent 35%),
+        linear-gradient(180deg, #eef2e6 0%, #e6ecda 100%);
+      transition: background .25s ease, color .25s ease;
+    }
+
+    .top-bar {
+      background: var(--forest-dark);
+      color: #f2f5ec;
+    }
+
+    .top-btn {
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+
+    .top-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.3);
+    }
+
+    .header-container {
+      position: relative;
+      overflow: hidden;
+      background-image:
+        linear-gradient(90deg, rgba(18,31,13,.84), rgba(18,31,13,.48)),
+        url("kisan-setu-header.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border: 1px solid rgba(255,255,255,.2);
+      box-shadow: 0 14px 32px rgba(18,31,13,.14);
+    }
+
+    .header-container > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-circle {
+      background:
+        #fff url("kisan-setu-logo.png") center/72% no-repeat;
+      border: 1px solid rgba(255,255,255,.55);
+      box-shadow: 0 6px 18px rgba(0,0,0,.16);
+    }
+
+    .logo-circle i {
+      display: none;
+    }
+
+    .title-group .sub-header,
+    .title-group h1 {
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,.32);
+    }
+
+    .badge-sub {
+      background: rgba(255,255,255,.92);
+      color: var(--forest);
+      border-color: rgba(255,255,255,.5);
+      text-shadow: none;
+    }
+
+    .header-container .glass-pill,
+    .header-container .lang-dropdown,
+    .header-container .user-pill {
+      background: rgba(255,255,255,.9);
+      border-color: rgba(255,255,255,.45);
+      backdrop-filter: blur(12px);
+    }
+
+    .work-cycle-hero-panel {
+      background: rgba(255,255,255,.84);
+      border: 1px solid rgba(48,64,28,.1);
+      box-shadow: 0 10px 28px rgba(18,31,13,.08);
+    }
+
+    .work-cycle-badge-large,
+    .btn-action-dark,
+    .toggle-btn.active,
+    .step-item.active {
+      background: var(--forest);
+    }
+
+    .work-cycle-badge-large,
+    .btn-action-dark,
+    .preset-pill,
+    .toggle-btn,
+    .step-item,
+    .card-panel,
+    .info-card,
+    .crop-card,
+    .glass-pill,
+    .icon-badge-btn,
+    .tech-btn {
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        border-color .18s ease;
+    }
+
+    .card-panel:hover,
+    .info-card:hover,
+    .crop-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(18,31,13,.10);
+      border-color: rgba(117,136,80,.28);
+    }
+
+    .tech-btn:hover,
+    .icon-badge-btn:hover,
+    .glass-pill:hover {
+      border-color: rgba(117,136,80,.35);
+    }
+
+    .pipeline-header-card {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        linear-gradient(90deg, rgba(18,31,13,.96) 0%, rgba(18,31,13,.82) 48%, rgba(18,31,13,.56) 100%),
+        url("index-hero.jpg") center/cover no-repeat;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 18px 38px rgba(18,31,13,.18);
+    }
+
+    .pipeline-header-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(120deg, transparent 45%, rgba(185,199,152,.08));
+      pointer-events: none;
+    }
+
+    .pipeline-title {
+      color: #fff;
+      text-shadow: 0 3px 14px rgba(0,0,0,.24);
+    }
+
+    .pipeline-description {
+      max-width: 760px;
+      color: #edf2e7;
+    }
+
+    .pill-badge-subtle {
+      background: rgba(255,255,255,.12);
+      color: #f5f7f1;
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-tech-stack-white {
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .btn-tech-stack-white:hover {
+      transform: translateY(-2px);
+      background: #f4f7ef;
+      box-shadow: 0 10px 22px rgba(0,0,0,.18);
+    }
+
+    .stepper-bar-card,
+    .main-wrapper {
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(48,64,28,.10);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .step-item:not(.active):hover {
+      background: rgba(152,169,115,.14);
+      transform: translateY(-1px);
+    }
+
+    .step-item.completed {
+      background: rgba(152,169,115,.14);
+    }
+
+    .step-item.completed .step-num {
+      background: var(--moss);
+    }
+
+    .card-panel {
+      background: rgba(255,255,255,.72);
+      border-color: rgba(48,64,28,.10);
+    }
+
+    .select-input,
+    .text-input,
+    .time-slot-btn {
+      border-color: rgba(48,64,28,.16);
+    }
+
+    .select-input:focus,
+    .text-input:focus {
+      border-color: var(--sage);
+      box-shadow: 0 0 0 3px rgba(117,136,80,.12);
+    }
+
+    .time-slot-btn:hover,
+    .preset-pill:hover {
+      background: var(--cream-green);
+      border-color: rgba(117,136,80,.24);
+      transform: translateY(-1px);
+    }
+
+    .btn-action-dark:hover {
+      background: var(--moss);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(48,64,28,.22);
+    }
+
+    .system-footer {
+      background: var(--forest-dark);
+      color: #edf2e7;
+    }
+
+    .theme-toggle-btn {
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      padding: 4px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      background: rgba(255,255,255,.2);
+      transform: translateY(-1px);
+    }
+
+    body.dark-mode {
+      --bg-olive: #0f190b;
+      --card-bg: rgba(24,35,17,.92);
+      --glass-border: rgba(185,199,152,.12);
+      --dark-olive: #dce7be;
+      --medium-olive: #b9c798;
+      --light-olive: #98a973;
+      --text-main: #eef4e7;
+      --text-muted: #b7c2aa;
+      --border-subtle: rgba(185,199,152,.13);
+      --shadow-soft: 0 12px 32px rgba(0,0,0,.24);
+      background: #0f190b;
+      color: var(--text-main);
+    }
+
+    body.dark-mode .top-bar,
+    body.dark-mode .system-footer {
+      background: #0b1308;
+    }
+
+    body.dark-mode .header-container {
+      background-image:
+        linear-gradient(90deg, rgba(7,14,5,.90), rgba(18,31,13,.58)),
+        url("kisan-setu-header.jpg");
+    }
+
+    body.dark-mode .work-cycle-hero-panel,
+    body.dark-mode .stepper-bar-card,
+    body.dark-mode .main-wrapper {
+      background: #182311;
+      border-color: rgba(185,199,152,.12);
+      color: var(--text-main);
+      box-shadow: 0 14px 34px rgba(0,0,0,.22);
+    }
+
+    body.dark-mode .pipeline-header-card {
+      background:
+        linear-gradient(90deg, rgba(7,14,5,.96), rgba(18,31,13,.86), rgba(18,31,13,.62)),
+        url("index-hero.jpg") center/cover no-repeat;
+    }
+
+    body.dark-mode .card-panel,
+    body.dark-mode .info-card,
+    body.dark-mode .crop-card,
+    body.dark-mode .farmer-info-box,
+    body.dark-mode .glass-pill {
+      background: #1d2a15;
+      border-color: rgba(185,199,152,.11);
+      color: var(--text-main);
+    }
+
+    body.dark-mode .header-container .glass-pill,
+    body.dark-mode .header-container .lang-dropdown,
+    body.dark-mode .header-container .user-pill {
+      background: rgba(18,31,13,.82);
+      color: #edf2e7;
+      border-color: rgba(255,255,255,.15);
+    }
+
+    body.dark-mode .header-container .helpline-box,
+    body.dark-mode .header-container .helpline-box strong,
+    body.dark-mode .header-container .tech-btn,
+    body.dark-mode .header-container .lang-dropdown,
+    body.dark-mode .header-container .user-info strong,
+    body.dark-mode .header-container .user-info small {
+      color: #edf2e7;
+    }
+
+    body.dark-mode .stage-sub-left h2,
+    body.dark-mode .form-group label,
+    body.dark-mode .info-card strong,
+    body.dark-mode .capabilities-list li,
+    body.dark-mode .step-text strong,
+    body.dark-mode .farmer-info-box strong {
+      color: #edf2e7 !important;
+    }
+
+    body.dark-mode .stage-tag,
+    body.dark-mode .stage-sub-left p,
+    body.dark-mode .card-desc,
+    body.dark-mode .info-card small,
+    body.dark-mode .info-card p,
+    body.dark-mode .step-text small {
+      color: #b7c2aa !important;
+    }
+
+    body.dark-mode .select-input,
+    body.dark-mode .text-input,
+    body.dark-mode .time-slot-btn,
+    body.dark-mode .preset-pill,
+    body.dark-mode select {
+      background: #111b0d;
+      color: #edf2e7;
+      border-color: rgba(185,199,152,.14);
+    }
+
+    body.dark-mode .channel-toggle-group {
+      background: #111b0d;
+      border-color: rgba(185,199,152,.12);
+    }
+
+    body.dark-mode .toggle-btn {
+      color: #dce7be;
+    }
+
+    body.dark-mode .toggle-btn.active,
+    body.dark-mode .btn-action-dark,
+    body.dark-mode .work-cycle-badge-large,
+    body.dark-mode .step-item.active {
+      background: #30401c;
+      color: #fff;
+    }
+
+    body.dark-mode .step-num {
+      background: #fff;
+      color: #30401c;
+      border-color: rgba(48,64,28,.22);
+    }
+
+    body.dark-mode .step-item.active .step-num {
+      background: #fff;
+      color: #30401c;
+    }
+
+    body.dark-mode .step-item.completed .step-num {
+      background: #98a973;
+      color: #121f0d;
+    }
+
+    body.dark-mode .modal-dialog,
+    body.dark-mode .mandi-modal-body,
+    body.dark-mode .mandi-table-shell,
+    body.dark-mode .mandi-search-input,
+    body.dark-mode .mandi-state-select {
+      background: #182311;
+      color: #edf2e7;
+      border-color: rgba(185,199,152,.12);
+    }
+
+    body.dark-mode .mandi-summary-card,
+    body.dark-mode .mandi-data-table tbody tr:nth-child(even) {
+      background: #1d2a15;
+    }
+
+    body.dark-mode .mandi-data-table thead th {
+      background: #111b0d;
+      color: #dce7be;
+    }
+
+    body.dark-mode .mandi-data-table tbody td {
+      color: #d7dfcf;
+      border-color: rgba(185,199,152,.08);
+    }
+
+    @media (max-width: 760px) {
+      .header-container {
+        background-position: center;
+      }
+
+      .pipeline-header-card {
+        padding: 28px 24px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .pipeline-title {
+        font-size: 31px;
+      }
+
+      .btn-tech-stack-white {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    /* =========================================================
+   FINAL THEME FIX — LIVE MANDI PRICE SECTION
+   ========================================================= */
+
+/* ---------- LIGHT MODE ---------- */
+
+body:not(.dark-mode) .market-card,
+body:not(.dark-mode) .mandi-market-card,
+body:not(.dark-mode) .market-intelligence-card {
+    background: #eef3e5 !important;
+    color: #30401c !important;
+    border: 1px solid rgba(48, 64, 28, 0.14) !important;
+    box-shadow: 0 12px 30px rgba(18, 31, 13, 0.08) !important;
+}
+
+body:not(.dark-mode) .market-card h2,
+body:not(.dark-mode) .mandi-market-card h2,
+body:not(.dark-mode) .market-intelligence-card h2 {
+    color: #30401c !important;
+}
+
+body:not(.dark-mode) .market-card p,
+body:not(.dark-mode) .mandi-market-card p,
+body:not(.dark-mode) .market-intelligence-card p {
+    color: #526532 !important;
+}
+
+/* Mandi badges */
+body:not(.dark-mode) .market-card .badge,
+body:not(.dark-mode) .mandi-market-card .badge,
+body:not(.dark-mode) .market-intelligence-card .badge {
+    background: rgba(152, 169, 115, 0.16) !important;
+    color: #30401c !important;
+    border-color: rgba(82, 101, 50, 0.18) !important;
+}
+
+/* Main View Mandi Prices button */
+body:not(.dark-mode) .market-card button,
+body:not(.dark-mode) .mandi-market-card button,
+body:not(.dark-mode) .market-intelligence-card button {
+    background: #30401c !important;
+    color: #ffffff !important;
+    border-color: #30401c !important;
+}
+
+body:not(.dark-mode) .market-card button:hover,
+body:not(.dark-mode) .mandi-market-card button:hover,
+body:not(.dark-mode) .market-intelligence-card button:hover {
+    background: #526532 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(48, 64, 28, 0.20);
+}
+
+
+/* ---------- DARK MODE ---------- */
+
+body.dark-mode .market-card,
+body.dark-mode .mandi-market-card,
+body.dark-mode .market-intelligence-card {
+    background: #182311 !important;
+    color: #edf2e7 !important;
+    border-color: rgba(185, 199, 152, 0.12) !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22) !important;
+}
+
+body.dark-mode .market-card h2,
+body.dark-mode .mandi-market-card h2,
+body.dark-mode .market-intelligence-card h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .market-card p,
+body.dark-mode .mandi-market-card p,
+body.dark-mode .market-intelligence-card p {
+    color: #cbd6c0 !important;
+}
+
+body.dark-mode .market-card .badge,
+body.dark-mode .mandi-market-card .badge,
+body.dark-mode .market-intelligence-card .badge {
+    background: rgba(152, 169, 115, 0.14) !important;
+    color: #dce7be !important;
+    border-color: rgba(185, 199, 152, 0.16) !important;
+}
+
+body.dark-mode .market-card button,
+body.dark-mode .mandi-market-card button,
+body.dark-mode .market-intelligence-card button {
+    background: #dce7be !important;
+    color: #182311 !important;
+    border-color: #dce7be !important;
+}
+
+body.dark-mode .market-card button:hover,
+body.dark-mode .mandi-market-card button:hover,
+body.dark-mode .market-intelligence-card button:hover {
+    background: #b9c798 !important;
+    transform: translateY(-2px);
+}
+
+
+/* ---------- PROCEED TO STAGE 3 BUTTON ---------- */
+
+body:not(.dark-mode) .stage-next-btn,
+body:not(.dark-mode) .proceed-btn {
+    background: #30401c !important;
+    color: #ffffff !important;
+}
+
+body:not(.dark-mode) .stage-next-btn:hover,
+body:not(.dark-mode) .proceed-btn:hover {
+    background: #526532 !important;
+    transform: translateY(-2px);
+}
+
+body.dark-mode .stage-next-btn,
+body.dark-mode .proceed-btn {
+    background: #30401c !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .stage-next-btn:hover,
+body.dark-mode .proceed-btn:hover {
+    background: #526532 !important;
+}
+
+
+/* ---------- VISIBLE THEME TOGGLE ---------- */
+
+#farmer-theme-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+
+    min-width: 92px !important;
+    height: 36px !important;
+    padding: 0 14px !important;
+
+    border-radius: 10px !important;
+    border: 1px solid rgba(255,255,255,0.22) !important;
+
+    background: rgba(255,255,255,0.12) !important;
+    color: #ffffff !important;
+
+    font-size: 12px !important;
+    font-weight: 700 !important;
+
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+#farmer-theme-toggle:hover {
+    background: rgba(255,255,255,0.22) !important;
+    transform: translateY(-1px);
+}
+
+#farmer-theme-toggle i {
+    color: #ffffff !important;
+    font-size: 13px !important;
+}
+/* ==================== LIVE MANDI CARD - LIGHT ==================== */
+
+body:not(.dark-mode) .mandi-launch-card {
+    background: #dce7be !important;
+    color: #30401c !important;
+    border: 1px solid rgba(48, 64, 28, 0.14) !important;
+    box-shadow: 0 10px 26px rgba(18, 31, 13, 0.10) !important;
+}
+
+body:not(.dark-mode) .mandi-launch-kicker {
+    color: #526532 !important;
+}
+
+body:not(.dark-mode) .mandi-launch-card h3 {
+    color: #30401c !important;
+}
+
+body:not(.dark-mode) .mandi-launch-card p {
+    color: #526532 !important;
+}
+
+body:not(.dark-mode) .mandi-launch-meta span {
+    background: rgba(255, 255, 255, 0.48) !important;
+    color: #30401c !important;
+    border-color: rgba(48, 64, 28, 0.14) !important;
+}
+
+body:not(.dark-mode) .mandi-launch-meta .mandi-demo-pill {
+    background: #fff7ed !important;
+    color: #9a3412 !important;
+    border-color: #fed7aa !important;
+}
+
+body:not(.dark-mode) .mandi-launch-button {
+    background: #30401c !important;
+    color: #ffffff !important;
+}
+
+body:not(.dark-mode) .mandi-launch-button:hover {
+    background: #526532 !important;
+    transform: translateY(-2px);
+}
+/* ==================== MANDI MODAL - LIGHT THEME ==================== */
+
+body:not(.dark-mode) .mandi-modal-dialog {
+    background: #f4f7ee !important;
+    border: 1px solid rgba(48, 64, 28, 0.14) !important;
+    color: #17210f !important;
+}
+
+body:not(.dark-mode) .mandi-modal-header {
+    background: #30401c !important;
+    border-color: rgba(255,255,255,0.10) !important;
+}
+
+body:not(.dark-mode) .mandi-modal-header-kicker {
+    color: #b9c798 !important;
+}
+
+body:not(.dark-mode) .mandi-modal-header h3 {
+    color: #ffffff !important;
+}
+
+body:not(.dark-mode) .mandi-modal-header p {
+    color: #dce7be !important;
+}
+
+body:not(.dark-mode) .mandi-modal-close {
+    background: rgba(255,255,255,0.10) !important;
+    color: #ffffff !important;
+    border-color: rgba(255,255,255,0.16) !important;
+}
+
+body:not(.dark-mode) .mandi-modal-close:hover {
+    background: rgba(255,255,255,0.20) !important;
+}
+
+body:not(.dark-mode) .mandi-modal-body {
+    background: #f4f7ee !important;
+}
+
+body:not(.dark-mode) .mandi-demo-notice {
+    background: #edf2df !important;
+    color: #526532 !important;
+    border-color: rgba(117,136,80,0.18) !important;
+}
+
+body:not(.dark-mode) .mandi-demo-notice strong {
+    color: #30401c !important;
+}
+
+body:not(.dark-mode) .mandi-summary-card {
+    background: #ffffff !important;
+    border-color: rgba(48,64,28,0.12) !important;
+    color: #30401c !important;
+}
+
+body:not(.dark-mode) .mandi-summary-card small {
+    color: #758850 !important;
+}
+
+body:not(.dark-mode) .mandi-summary-card strong {
+    color: #30401c !important;
+}
+
+body:not(.dark-mode) .mandi-toolbar {
+    background: #e7eddc !important;
+    border-color: rgba(48,64,28,0.10) !important;
+}
+
+body:not(.dark-mode) .mandi-search-input,
+body:not(.dark-mode) .mandi-state-select {
+    background: #ffffff !important;
+    color: #17210f !important;
+    border-color: rgba(48,64,28,0.16) !important;
+}
+
+body:not(.dark-mode) .mandi-search-input:focus,
+body:not(.dark-mode) .mandi-state-select:focus {
+    border-color: #758850 !important;
+    box-shadow: 0 0 0 3px rgba(117,136,80,0.12) !important;
+}
+
+body:not(.dark-mode) .mandi-result-count {
+    color: #526532 !important;
+}
+
+body:not(.dark-mode) .mandi-table-shell {
+    background: #ffffff !important;
+    border-color: rgba(48,64,28,0.12) !important;
+}
+
+body:not(.dark-mode) .mandi-data-table thead th {
+    background: #dce7be !important;
+    color: #30401c !important;
+    border-color: rgba(48,64,28,0.12) !important;
+}
+
+body:not(.dark-mode) .mandi-data-table tbody td {
+    color: #445137 !important;
+    border-color: rgba(48,64,28,0.08) !important;
+}
+
+body:not(.dark-mode) .mandi-data-table tbody tr:nth-child(even) {
+    background: #f5f8ef !important;
+}
+
+body:not(.dark-mode) .mandi-data-table tbody tr:hover {
+    background: #edf2df !important;
+}
+
+body:not(.dark-mode) .mandi-data-table .crop-name {
+    color: #30401c !important;
+}
+
+body:not(.dark-mode) .mandi-data-table .modal-price {
+    color: #526532 !important;
+}
+
+body:not(.dark-mode) .mandi-modal-footer {
+    color: #68745b !important;
+}
+/* ==================== MANDI MODAL - DARK THEME ==================== */
+
+body.dark-mode .mandi-modal-dialog {
+    background: #121f0d !important;
+    border-color: rgba(185,199,152,0.14) !important;
+    color: #edf2e7 !important;
+}
+
+body.dark-mode .mandi-modal-header {
+    background: #0b1308 !important;
+    border-color: rgba(185,199,152,0.10) !important;
+}
+
+body.dark-mode .mandi-modal-header-kicker {
+    color: #98a973 !important;
+}
+
+body.dark-mode .mandi-modal-header h3 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .mandi-modal-header p {
+    color: #b9c798 !important;
+}
+
+body.dark-mode .mandi-modal-close {
+    background: rgba(255,255,255,0.08) !important;
+    color: #ffffff !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+body.dark-mode .mandi-modal-close:hover {
+    background: rgba(255,255,255,0.16) !important;
+}
+
+body.dark-mode .mandi-modal-body {
+    background: #182311 !important;
+}
+
+body.dark-mode .mandi-demo-notice {
+    background: rgba(152,169,115,0.10) !important;
+    color: #b9c798 !important;
+    border-color: rgba(185,199,152,0.14) !important;
+}
+
+body.dark-mode .mandi-demo-notice strong {
+    color: #dce7be !important;
+}
+
+body.dark-mode .mandi-summary-card {
+    background: #1d2a15 !important;
+    border-color: rgba(185,199,152,0.12) !important;
+}
+
+body.dark-mode .mandi-summary-card small {
+    color: #98a973 !important;
+}
+
+body.dark-mode .mandi-summary-card strong {
+    color: #ffffff !important;
+}
+
+body.dark-mode .mandi-toolbar {
+    background: #111b0d !important;
+    border-color: rgba(185,199,152,0.10) !important;
+}
+
+body.dark-mode .mandi-search-input,
+body.dark-mode .mandi-state-select {
+    background: #1d2a15 !important;
+    color: #edf2e7 !important;
+    border-color: rgba(185,199,152,0.14) !important;
+}
+
+body.dark-mode .mandi-search-input::placeholder {
+    color: #8f9d83 !important;
+}
+
+body.dark-mode .mandi-result-count {
+    color: #b9c798 !important;
+}
+
+body.dark-mode .mandi-table-shell {
+    background: #182311 !important;
+    border-color: rgba(185,199,152,0.12) !important;
+}
+
+body.dark-mode .mandi-data-table thead th {
+    background: #0f190b !important;
+    color: #dce7be !important;
+    border-color: rgba(185,199,152,0.10) !important;
+}
+
+body.dark-mode .mandi-data-table tbody td {
+    color: #d7dfcf !important;
+    border-color: rgba(185,199,152,0.08) !important;
+}
+
+body.dark-mode .mandi-data-table tbody tr {
+    background: #182311 !important;
+}
+
+body.dark-mode .mandi-data-table tbody tr:nth-child(even) {
+    background: #1d2a15 !important;
+}
+
+body.dark-mode .mandi-data-table tbody tr:hover {
+    background: #26351c !important;
+}
+
+body.dark-mode .mandi-data-table .crop-name {
+    color: #dce7be !important;
+}
+
+body.dark-mode .mandi-data-table .modal-price {
+    color: #98a973 !important;
+}
+
+body.dark-mode .mandi-modal-footer {
+    color: #aebaa3 !important;
+}
+/* LIGHT / DARK MODE BUTTON */
+
+.theme-toggle-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+
+    height: 30px;
+    padding: 0 12px;
+
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.20);
+    border-color: rgba(255, 255, 255, 0.32);
+    transform: translateY(-1px);
+}
+
+.theme-toggle-btn i {
+    font-size: 11px;
+    color: #ffffff;
+}
+/* =========================================================
+   DARK MODE CONTRAST FIX
+   ========================================================= */
+
+/* White action buttons need DARK text */
+body.dark-mode .mandi-launch-button,
+body.dark-mode .btn-tech-stack-white {
+    background: #ffffff !important;
+    color: #30401c !important;
+    border: 1px solid rgba(255,255,255,0.18) !important;
+}
+
+body.dark-mode .mandi-launch-button i,
+body.dark-mode .btn-tech-stack-white i {
+    color: #30401c !important;
+}
+
+body.dark-mode .mandi-launch-button:hover,
+body.dark-mode .btn-tech-stack-white:hover {
+    background: #dce7be !important;
+    color: #121f0d !important;
+}
+    /* ==================== END VISUAL REFRESH ==================== */
+
   </style>
 </head>
 
@@ -1257,6 +2200,15 @@
     </span>
 
     <div class="top-bar-right">
+      <button
+    type="button"
+    id="farmer-theme-toggle"
+    class="theme-toggle-btn"
+    aria-label="Switch between light and dark mode"
+>
+    <i class="fa-solid fa-moon" id="farmer-theme-icon"></i>
+    <span id="farmer-theme-label">Dark Mode</span>
+</button>
 
       <button class="top-btn">
         <i class="fa-solid fa-code-branch"></i>
@@ -5034,6 +5986,53 @@
 
   <!-- ==================== KISAN SETU JAVASCRIPT ==================== -->
 
+
+  <script>
+    (function () {
+      const key = "kisanSetuTheme";
+
+      function applyTheme(theme) {
+        const dark = theme === "dark";
+        document.body.classList.toggle("dark-mode", dark);
+
+        const icon = document.getElementById("farmer-theme-icon");
+        const label = document.getElementById("farmer-theme-label");
+
+        if (icon) {
+          icon.className = dark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+        }
+
+        if (label) {
+          label.textContent = dark ? "Light" : "Dark";
+        }
+      }
+
+      function initTheme() {
+        const saved = localStorage.getItem(key) || "light";
+        applyTheme(saved);
+
+        const button = document.getElementById("farmer-theme-toggle");
+
+        if (button) {
+          button.addEventListener("click", function () {
+            const next = document.body.classList.contains("dark-mode")
+              ? "light"
+              : "dark";
+
+            localStorage.setItem(key, next);
+            applyTheme(next);
+          });
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initTheme);
+      } else {
+        initTheme();
+      }
+    })();
+  </script>
+
   <script src="lifestyle.js"></script>
   <script src="navbar.js"></script>
   <script src="stage-toggle.js"></script>
@@ -6508,6 +7507,5 @@
   </script>
 
   <!-- ==================== END LIVE MANDI PRICES JAVASCRIPT ==================== -->
-
 </body>
 </html>

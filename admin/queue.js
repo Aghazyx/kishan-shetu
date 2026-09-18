@@ -1,3 +1,4 @@
+
 // ================================================================
 // KISAN SETU ADMIN PORTAL
 // A5 • LIVE PROCUREMENT QUEUE
@@ -394,12 +395,72 @@ const renderAdminUser = () => {
             'admin-user-name'
         );
 
+    const adminAvatar =
+        getElement(
+            'admin-avatar'
+        );
 
-    if (!userName) {
 
-        return;
+    const setAdminDisplay = (
+        displayName
+    ) => {
 
-    }
+        const cleanName =
+            String(
+                displayName || 'Administrator'
+            ).trim();
+
+
+        if (userName) {
+
+            userName.textContent =
+                cleanName;
+
+        }
+
+
+        if (adminAvatar) {
+
+            const nameParts =
+                cleanName
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+
+            let initials = 'AD';
+
+
+            if (
+                nameParts.length >= 2
+            ) {
+
+                initials =
+                    (
+                        nameParts[0][0] +
+                        nameParts[1][0]
+                    ).toUpperCase();
+
+            } else if (
+                nameParts.length === 1 &&
+                cleanName.toLowerCase() !==
+                    'administrator' &&
+                cleanName.toLowerCase() !==
+                    'admin'
+            ) {
+
+                initials =
+                    nameParts[0][0]
+                        .toUpperCase();
+
+            }
+
+
+            adminAvatar.textContent =
+                initials;
+
+        }
+
+    };
 
 
     try {
@@ -412,8 +473,9 @@ const renderAdminUser = () => {
 
         if (!storedUser) {
 
-            userName.textContent =
-                'Administrator';
+            setAdminDisplay(
+                'Administrator'
+            );
 
             return;
 
@@ -426,16 +488,24 @@ const renderAdminUser = () => {
             );
 
 
-        userName.textContent =
-            user.username ||
+        const displayName =
             user.name ||
+            user.fullName ||
+            user.username ||
             user.email ||
             'Administrator';
 
+
+        setAdminDisplay(
+            displayName
+        );
+
+
     } catch {
 
-        userName.textContent =
-            'Administrator';
+        setAdminDisplay(
+            'Administrator'
+        );
 
     }
 
@@ -1775,7 +1845,7 @@ const loadQueueData = async () => {
 
         setText(
             'queue-last-updated',
-            formatDateTime(
+            formatTime(
                 generatedAt
             )
         );
@@ -2219,4 +2289,609 @@ const initQueuePage = async () => {
 document.addEventListener(
     'DOMContentLoaded',
     initQueuePage
+);
+// ================================================================
+// DASHBOARD UI
+// ================================================================
+
+const initQueueDashboardUI = () => {
+
+    // DARK MODE
+
+    const themeToggle =
+        document.getElementById(
+            'admin-theme-toggle'
+        );
+
+    const themeIcon =
+        themeToggle?.querySelector('i');
+
+
+    const updateThemeIcon = () => {
+
+        if (!themeIcon) {
+            return;
+        }
+
+        const darkMode =
+            document.body.classList.contains(
+                'dark-mode'
+            );
+
+        themeIcon.className =
+            darkMode
+                ? 'fa-solid fa-sun'
+                : 'fa-solid fa-moon';
+
+    };
+
+
+    const savedTheme =
+        localStorage.getItem(
+            'kisanSetuAdminTheme'
+        );
+
+
+    if (savedTheme === 'dark') {
+
+        document.body.classList.add(
+            'dark-mode'
+        );
+
+    }
+
+
+    updateThemeIcon();
+
+
+    if (themeToggle) {
+
+        themeToggle.addEventListener(
+            'click',
+            () => {
+
+                document.body.classList.toggle(
+                    'dark-mode'
+                );
+
+
+                const darkMode =
+                    document.body.classList.contains(
+                        'dark-mode'
+                    );
+
+
+                localStorage.setItem(
+                    'kisanSetuAdminTheme',
+                    darkMode
+                        ? 'dark'
+                        : 'light'
+                );
+
+
+                updateThemeIcon();
+
+            }
+        );
+
+    }
+
+
+    // CALENDAR
+
+    const calendarTrigger =
+        document.getElementById(
+            'queue-calendar-trigger'
+        );
+
+    const calendarDropdown =
+        document.getElementById(
+            'queue-calendar-dropdown'
+        );
+
+    const dateDisplay =
+        document.getElementById(
+            'queue-date-display'
+        );
+
+    const calendarTitle =
+        document.getElementById(
+            'queue-calendar-title'
+        );
+
+    const calendarDays =
+        document.getElementById(
+            'queue-calendar-days'
+        );
+
+    const previousButton =
+        document.getElementById(
+            'queue-calendar-prev'
+        );
+
+    const nextButton =
+        document.getElementById(
+            'queue-calendar-next'
+        );
+
+
+    if (
+        !calendarTrigger ||
+        !calendarDropdown ||
+        !dateDisplay ||
+        !calendarTitle ||
+        !calendarDays
+    ) {
+        return;
+    }
+
+
+    const today =
+        new Date();
+
+
+    let selectedDate =
+        new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+
+
+    let viewYear =
+        selectedDate.getFullYear();
+
+
+    let viewMonth =
+        selectedDate.getMonth();
+
+
+    const formatDate = date => {
+
+        const day =
+            String(
+                date.getDate()
+            ).padStart(
+                2,
+                '0'
+            );
+
+
+        const month =
+            String(
+                date.getMonth() + 1
+            ).padStart(
+                2,
+                '0'
+            );
+
+
+        const year =
+            date.getFullYear();
+
+
+        return `${day}/${month}/${year}`;
+
+    };
+
+
+    const isSameDate = (
+        firstDate,
+        secondDate
+    ) => {
+
+        return (
+            firstDate.getFullYear() ===
+                secondDate.getFullYear() &&
+
+            firstDate.getMonth() ===
+                secondDate.getMonth() &&
+
+            firstDate.getDate() ===
+                secondDate.getDate()
+        );
+
+    };
+
+
+    const renderCalendar = () => {
+
+        calendarTitle.textContent =
+            new Intl.DateTimeFormat(
+                'en-IN',
+                {
+                    month: 'long',
+                    year: 'numeric'
+                }
+            ).format(
+                new Date(
+                    viewYear,
+                    viewMonth,
+                    1
+                )
+            );
+
+
+        calendarDays.innerHTML =
+            '';
+
+
+        const firstDay =
+            new Date(
+                viewYear,
+                viewMonth,
+                1
+            ).getDay();
+
+
+        const numberOfDays =
+            new Date(
+                viewYear,
+                viewMonth + 1,
+                0
+            ).getDate();
+
+
+        for (
+            let index = 0;
+            index < firstDay;
+            index++
+        ) {
+
+            const emptyDay =
+                document.createElement(
+                    'span'
+                );
+
+
+            emptyDay.className =
+                'queue-calendar-empty';
+
+
+            calendarDays.appendChild(
+                emptyDay
+            );
+
+        }
+
+
+        for (
+            let day = 1;
+            day <= numberOfDays;
+            day++
+        ) {
+
+            const date =
+                new Date(
+                    viewYear,
+                    viewMonth,
+                    day
+                );
+
+
+            const button =
+                document.createElement(
+                    'button'
+                );
+
+
+            button.type =
+                'button';
+
+
+            button.className =
+                'queue-calendar-day';
+
+
+            button.textContent =
+                day;
+
+
+            if (
+                isSameDate(
+                    date,
+                    today
+                )
+            ) {
+
+                button.classList.add(
+                    'today'
+                );
+
+            }
+
+
+            if (
+                isSameDate(
+                    date,
+                    selectedDate
+                )
+            ) {
+
+                button.classList.add(
+                    'selected'
+                );
+
+            }
+
+
+            button.addEventListener(
+                'click',
+                event => {
+
+                    event.stopPropagation();
+
+
+                    selectedDate =
+                        new Date(
+                            viewYear,
+                            viewMonth,
+                            day
+                        );
+
+
+                    dateDisplay.textContent =
+                        formatDate(
+                            selectedDate
+                        );
+
+
+                    calendarDropdown.hidden =
+                        true;
+
+
+                    renderCalendar();
+
+                }
+            );
+
+
+            calendarDays.appendChild(
+                button
+            );
+
+        }
+
+    };
+
+
+    // CURRENT DATE
+
+    dateDisplay.textContent =
+        formatDate(
+            selectedDate
+        );
+
+
+    renderCalendar();
+
+
+    // OPEN CALENDAR
+
+    calendarTrigger.addEventListener(
+        'click',
+        event => {
+
+            event.stopPropagation();
+
+
+            calendarDropdown.hidden =
+                !calendarDropdown.hidden;
+
+        }
+    );
+
+
+    // PREVIOUS MONTH
+
+    previousButton?.addEventListener(
+        'click',
+        event => {
+
+            event.stopPropagation();
+
+
+            viewMonth--;
+
+
+            if (viewMonth < 0) {
+
+                viewMonth = 11;
+                viewYear--;
+
+            }
+
+
+            renderCalendar();
+
+        }
+    );
+
+
+    // NEXT MONTH
+
+    nextButton?.addEventListener(
+        'click',
+        event => {
+
+            event.stopPropagation();
+
+
+            viewMonth++;
+
+
+            if (viewMonth > 11) {
+
+                viewMonth = 0;
+                viewYear++;
+
+            }
+
+
+            renderCalendar();
+
+        }
+    );
+
+
+    // PREVENT DROPDOWN CLOSING
+
+    calendarDropdown.addEventListener(
+        'click',
+        event => {
+
+            event.stopPropagation();
+
+        }
+    );
+
+
+    // CLOSE WHEN CLICKING OUTSIDE
+
+    document.addEventListener(
+        'click',
+        () => {
+
+            calendarDropdown.hidden =
+                true;
+
+        }
+    );
+
+};
+
+
+// Start dashboard UI
+
+document.addEventListener(
+    'DOMContentLoaded',
+    initQueueDashboardUI
+);
+
+// ================================================================
+// LIVE QUEUE FOOTER STATUS SYNC
+// ================================================================
+
+const setupQueueFooterSync = () => {
+
+    const sourceConnection =
+        document.getElementById('queue-connection-text');
+
+    const sourceUpdated =
+        document.getElementById('queue-last-updated');
+
+    const footerConnection =
+        document.getElementById('footer-connection-text');
+
+    const footerUpdated =
+        document.getElementById('footer-last-updated');
+
+    const footerDot =
+        document.getElementById('footer-status-dot');
+
+
+    const syncQueueFooter = () => {
+
+        // CONNECTION STATUS
+        if (sourceConnection && footerConnection) {
+
+            const connectionText =
+                sourceConnection.textContent.trim();
+
+            footerConnection.textContent =
+                connectionText;
+
+            const lowerText =
+                connectionText.toLowerCase();
+
+            const connected =
+                lowerText.includes('connected') &&
+                !lowerText.includes('disconnected') &&
+                !lowerText.includes('unable') &&
+                !lowerText.includes('failed');
+
+            if (footerDot) {
+                footerDot.style.background =
+                    connected
+                        ? '#98a973'
+                        : '#b65d52';
+            }
+        }
+
+
+        // LAST REAL BACKEND UPDATE
+        if (sourceUpdated && footerUpdated) {
+
+            const updatedText =
+                sourceUpdated.textContent.trim();
+
+            if (
+                updatedText &&
+                updatedText !== '--' &&
+                updatedText !== '—'
+            ) {
+
+                if (
+                    updatedText.toLowerCase()
+                        .includes('connection failed')
+                ) {
+
+                    footerUpdated.textContent =
+                        'Update failed';
+
+                } else {
+
+                    footerUpdated.textContent =
+                        `Updated ${updatedText}`;
+                }
+
+            } else {
+
+                footerUpdated.textContent =
+                    'Waiting for update';
+            }
+        }
+    };
+
+
+    // Sync immediately
+    syncQueueFooter();
+
+
+    // Watch backend connection changes
+    if (sourceConnection) {
+
+        new MutationObserver(
+            syncQueueFooter
+        ).observe(
+            sourceConnection,
+            {
+                childList: true,
+                subtree: true,
+                characterData: true
+            }
+        );
+    }
+
+
+    // Watch backend timestamp changes
+    if (sourceUpdated) {
+
+        new MutationObserver(
+            syncQueueFooter
+        ).observe(
+            sourceUpdated,
+            {
+                childList: true,
+                subtree: true,
+                characterData: true
+            }
+        );
+    }
+};
+
+
+document.addEventListener(
+    'DOMContentLoaded',
+    setupQueueFooterSync
 );

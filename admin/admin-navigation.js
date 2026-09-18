@@ -1,3 +1,4 @@
+
 /* =========================================================
    KISAN SETU
    ADMIN PORTAL SHARED NAVIGATION
@@ -400,6 +401,78 @@
 
         });
     }
+    /* =====================================================
+   GLOBAL DARK / LIGHT MODE
+===================================================== */
+
+const THEME_STORAGE_KEY = "kisan-setu-admin-theme";
+
+
+function updateThemeIcon() {
+
+    const isDark =
+        document.body.classList.contains("dark-mode");
+
+    const icons =
+        document.querySelectorAll(
+            "#theme-toggle-icon, " +
+            "#theme-toggle i, " +
+            "#theme-toggle-btn i"
+        );
+
+    icons.forEach(function (icon) {
+
+        icon.className =
+            isDark
+                ? "fa-solid fa-sun"
+                : "fa-solid fa-moon";
+    });
+}
+
+
+function applySavedTheme() {
+
+    const savedTheme =
+        localStorage.getItem(THEME_STORAGE_KEY);
+
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+    } else {
+        document.body.classList.remove("dark-mode");
+    }
+
+    updateThemeIcon();
+}
+
+function bindGlobalThemeToggle() {
+
+    const themeButtons =
+        document.querySelectorAll(
+            "#theme-toggle, #theme-toggle-btn, #admin-theme-toggle"
+        );
+
+    themeButtons.forEach(function (button) {
+
+        if (button.dataset.themeBound === "true") {
+            return;
+        }
+
+        button.dataset.themeBound = "true";
+
+        button.addEventListener("click", function () {
+
+            const isDark =
+                document.body.classList.toggle("dark-mode");
+
+            localStorage.setItem(
+                THEME_STORAGE_KEY,
+                isDark ? "dark" : "light"
+            );
+
+            updateThemeIcon();
+        });
+    });
+}
 
 
     /* =====================================================
@@ -447,7 +520,7 @@
             return;
         }
 
-
+        applySavedTheme();
         renderAdminUsername();
 
         setActiveNavigation();
@@ -457,6 +530,7 @@
         bindLogoutButtons();
 
         bindFarmerPortalSwitch();
+        bindGlobalThemeToggle();
     }
 
 

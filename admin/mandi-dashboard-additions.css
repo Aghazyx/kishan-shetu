@@ -1,0 +1,1400 @@
+
+/* DASHBOARD */
+
+:root {
+    --forest-dark: #121f0d;
+    --forest: #30401c;
+    --moss: #526532;
+    --sage: #758850;
+    --apple: #98a973;
+    --light-sage: #b9c798;
+    --cream-green: #dce7be;
+    --gold: #c9a24b;
+    --gold-soft: #e3cf94;
+
+    --page-bg: #e7edd5;
+    --card-bg: rgba(255, 255, 255, 0.96);
+    --card-solid: #fffefb;
+
+    --text-main: #121f0d;
+    --text-muted: #526532;
+
+    --border: rgba(48, 64, 28, 0.13);
+
+    --shadow: 0 8px 24px rgba(18, 31, 13, 0.10);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+
+    font-family: 'Inter', sans-serif;
+
+    color: var(--text-main);
+
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(255, 255, 255, 0.80),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            rgba(117, 136, 80, 0.20),
+            transparent 42%
+        ),
+        var(--page-bg);
+}
+
+
+/* ADMIN HEADER */
+
+.admin-navbar {
+    position: relative;
+
+    margin: 14px 16px 10px;
+
+    min-height: 84px;
+
+    padding: 15px 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 18px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.16);
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(12, 23, 7, 0.90),
+            rgba(18, 31, 13, 0.76)
+        ),
+        url("52565520646011763.jpg");
+
+    background-size: cover;
+    background-position: center 46%;
+
+    box-shadow:
+        0 10px 28px rgba(12, 23, 7, 0.22);
+}
+
+.admin-navbar-left,
+.admin-navbar-right,
+.admin-brand,
+.admin-user {
+    display: flex;
+    align-items: center;
+}
+
+.admin-navbar-left {
+    gap: 14px;
+    min-width: 275px;
+}
+
+.admin-navbar-right {
+    justify-content: flex-end;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.admin-brand {
+    gap: 14px;
+    text-decoration: none;
+}
+
+.admin-brand-icon {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    flex: 0 0 48px;
+
+    color: var(--gold-soft);
+
+    font-size: 28px;
+}
+
+.admin-brand-icon img {
+    width: 48px;
+    height: 48px;
+
+    object-fit: contain;
+}
+
+.admin-brand-name {
+    display: flex;
+    flex-direction: column;
+
+    line-height: 1.05;
+}
+
+.admin-brand-name small {
+    color: var(--gold-soft);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+.admin-brand-name strong {
+    margin-top: 4px;
+
+    color: white;
+
+    font-family:
+        'Plus Jakarta Sans',
+        sans-serif;
+
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.admin-user {
+    gap: 10px;
+
+    padding: 6px 10px 6px 13px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.18);
+
+    border-radius: 12px;
+
+    background:
+        rgba(12, 23, 7, 0.63);
+
+    color: white;
+
+    backdrop-filter: blur(12px);
+}
+
+.admin-user-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+#admin-username {
+    max-width: 145px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.admin-user-copy small {
+    margin-top: 2px;
+
+    color: var(--light-sage);
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.admin-avatar {
+    width: 36px;
+    height: 36px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold-soft),
+            var(--gold)
+        );
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.admin-icon-button,
+.admin-language,
+.admin-farmer-link,
+.admin-logout-button {
+    min-height: 38px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.18);
+
+    border-radius: 10px;
+
+    background:
+        rgba(12, 23, 7, 0.63);
+
+    color: white;
+
+    font:
+        700 12px 'Inter',
+        sans-serif;
+}
+
+.admin-icon-button {
+    position: relative;
+
+    width: 38px;
+
+    padding: 0;
+
+    cursor: pointer;
+}
+
+.notification-count {
+    position: absolute;
+
+    right: -3px;
+    top: -5px;
+
+    min-width: 16px;
+    height: 16px;
+
+    padding: 0 4px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 10px;
+
+    background: var(--gold);
+
+    font-size: 9px;
+}
+
+.admin-language {
+    padding: 0 10px;
+}
+
+.admin-farmer-link,
+.admin-logout-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 13px;
+
+    text-decoration: none;
+}
+
+.admin-farmer-link {
+    background: white;
+    color: var(--forest-dark);
+}
+
+.admin-logout-button {
+    background: #d94a46;
+
+    cursor: pointer;
+}
+
+
+/* ADMIN NAVIGATION */
+
+.admin-navigation {
+    margin: 0 16px 18px;
+
+    padding: 7px;
+
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+
+    gap: 6px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--forest-dark),
+            #1d2a13
+        );
+
+    box-shadow:
+        0 6px 18px rgba(12, 23, 7, 0.18);
+}
+
+.admin-nav-item {
+    min-height: 40px;
+
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 9px;
+
+    color: #dce7be;
+
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.admin-nav-item.active {
+    background: white;
+
+    color: var(--forest-dark);
+
+    font-weight: 800;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.admin-farmer-portal-button {
+    display: none;
+}
+
+
+/* HERO */
+
+.mandi-page {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+
+    padding: 0 0 36px;
+}
+
+.mandi-page-header {
+    position: relative;
+
+    margin: 0 16px 22px;
+
+    min-height: 285px;
+
+    padding: 24px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(300px, 470px)
+        minmax(260px, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 30px;
+
+    overflow: visible;
+
+    border-radius: 22px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            130deg,
+            #30401c 0%,
+            #1a2810 58%,
+            #0c1707 100%
+        );
+
+    box-shadow:
+        0 12px 30px
+        rgba(12, 23, 7, 0.19);
+}
+
+.mandi-hero-photo {
+    height: 235px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.16);
+
+    border-radius: 17px;
+
+    box-shadow:
+        0 10px 24px
+        rgba(0, 0, 0, 0.28);
+}
+
+.mandi-hero-photo img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+    object-position: center 48%;
+}
+
+/* HERO */
+
+.mandi-eyebrow {
+    width: max-content;
+
+    margin: 0 0 14px;
+
+    padding: 6px 10px;
+
+    border:
+        1px solid rgba(255,255,255,.16);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    color: #e4ecd4;
+
+    font-family:
+        'Inter',
+        sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.1px;
+
+    line-height: 1.2;
+}
+
+.mandi-page-header h1 {
+    margin: 0 0 9px;
+
+    color: #ffffff;
+
+    font-family:
+        'Fraunces',
+        Georgia,
+        serif;
+
+    font-size:
+        clamp(34px, 4vw, 52px);
+
+    font-weight: 600;
+
+    line-height: 1.03;
+
+    letter-spacing: -1.2px;
+}
+
+.mandi-page-header p {
+    margin: 0;
+
+    max-width: 560px;
+
+    color: #dbe6cb;
+
+    font-family:
+        'Inter',
+        sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    line-height: 1.65;
+}
+
+.mandi-header-actions {
+    min-width: 168px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 9px;
+}
+
+.mandi-secondary-button {
+    min-height: 38px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.18);
+
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    color: white;
+
+    backdrop-filter: blur(10px);
+}
+
+
+/* CALENDAR */
+
+.mandi-date-box {
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        auto 1fr auto;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 10px;
+
+    border-radius: 11px;
+
+    background: white;
+
+    color: var(--forest-dark);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, 0.18);
+}
+
+#mandi-date-input {
+    width: 105px;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+
+    color: var(--forest-dark);
+
+    font:
+        700 11px 'Inter',
+        sans-serif;
+}
+
+#mandi-calendar-trigger {
+    width: 24px;
+    height: 24px;
+
+    border: 0;
+
+    background: transparent;
+
+    color: var(--forest-dark);
+
+    cursor: pointer;
+}
+
+.mandi-calendar-dropdown {
+    position: absolute;
+
+    right: 0;
+    top: calc(100% + 8px);
+
+    z-index: 50;
+
+    width: 270px;
+
+    padding: 12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 13px;
+
+    background: var(--card-solid);
+
+    color: var(--text-main);
+
+    box-shadow:
+        0 18px 42px
+        rgba(12, 23, 7, 0.22);
+}
+
+.mandi-calendar-head {
+    display: grid;
+
+    grid-template-columns:
+        30px 1fr 30px;
+
+    align-items: center;
+
+    text-align: center;
+
+    margin-bottom: 10px;
+}
+
+.mandi-calendar-head button {
+    width: 30px;
+    height: 30px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background:
+        rgba(152, 169, 115, 0.16);
+
+    color: var(--text-main);
+
+    cursor: pointer;
+}
+
+.mandi-calendar-week,
+.mandi-calendar-days {
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap: 4px;
+
+    text-align: center;
+}
+
+.mandi-calendar-week {
+    margin-bottom: 5px;
+
+    color: var(--text-muted);
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.mandi-calendar-day {
+    height: 30px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--text-main);
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+.mandi-calendar-day:hover,
+.mandi-calendar-day.selected {
+    background: var(--forest);
+
+    color: white;
+}
+
+.mandi-calendar-day.muted {
+    opacity: 0.35;
+}
+
+
+/* CONTENT */
+
+.mandi-connection-status,
+.mandi-summary-grid,
+.mandi-panel,
+.mandi-info-grid {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+.mandi-summary-grid {
+    gap: 16px;
+}
+
+.mandi-summary-card,
+.mandi-panel,
+.mandi-info-card {
+    border-color: var(--border);
+
+    background: var(--card-bg);
+
+    color: var(--text-main);
+
+    box-shadow: var(--shadow);
+}
+
+.mandi-summary-card {
+    min-height: 112px;
+
+    padding: 19px 20px;
+
+    border-radius: 16px;
+}
+
+.mandi-summary-icon,
+.mandi-panel-icon,
+.mandi-info-icon {
+    background:
+        rgba(152, 169, 115, 0.20);
+
+    color: var(--forest);
+}
+
+.mandi-summary-label,
+.mandi-summary-meta,
+.mandi-panel-header p,
+.center-id,
+.center-booked,
+.center-progress-label,
+.center-stat span,
+.slot-summary-label,
+.slot-center,
+.mandi-empty-state,
+.mandi-info-card p {
+    color: var(--text-muted);
+}
+
+.mandi-summary-value,
+.mandi-panel-header h2,
+.center-main-info h3,
+.center-stat strong,
+.slot-summary-item strong,
+.slot-time,
+.mandi-info-card h3,
+.mandi-farmer-name,
+.mandi-quantity {
+    color: var(--text-main);
+}
+
+
+/* DARK MODE */
+
+body.dark-mode {
+    --page-bg: #0c1707;
+
+    --card-bg:
+        rgba(24, 35, 17, 0.96);
+
+    --card-solid: #182311;
+
+    --text-main: #eef4df;
+
+    --text-muted: #b9c798;
+
+    --border:
+        rgba(185, 199, 152, 0.16);
+
+    background:
+        #0c1707 !important;
+
+    color: var(--text-main);
+}
+
+body.dark-mode .mandi-page {
+    background: transparent;
+}
+
+body.dark-mode .mandi-panel-header,
+body.dark-mode .mandi-booking-toolbar,
+body.dark-mode .mandi-table thead,
+body.dark-mode .admin-footer {
+    background: #182311;
+
+    color: var(--text-main);
+
+    border-color: var(--border);
+}
+
+body.dark-mode .mandi-search-wrapper input,
+body.dark-mode .mandi-filter-select {
+    background: #111d0c;
+
+    color: var(--text-main);
+
+    border-color: var(--border);
+}
+
+body.dark-mode .mandi-table td,
+body.dark-mode .mandi-table th,
+body.dark-mode .center-status-card,
+body.dark-mode .slot-row,
+body.dark-mode .slot-summary-grid {
+    border-color: var(--border);
+}
+
+body.dark-mode .mandi-table td,
+body.dark-mode .mandi-table th,
+body.dark-mode .mandi-kcc,
+body.dark-mode .mandi-quantity-unit {
+    color: var(--text-muted);
+}
+
+body.dark-mode .mandi-table tbody tr:hover {
+    background:
+        rgba(152, 169, 115, 0.06);
+}
+
+body.dark-mode .center-progress-track {
+    background: #0f1b0a;
+}
+
+body.dark-mode #theme-toggle i::before {
+    content: "\f185";
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+
+    .mandi-page-header {
+        grid-template-columns:
+            minmax(300px, 420px)
+            1fr;
+    }
+
+    .mandi-header-actions {
+        grid-column: 2;
+
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 850px) {
+
+    .admin-navigation {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .mandi-page-header {
+        grid-template-columns: 1fr;
+    }
+
+    .mandi-header-actions {
+        grid-column: auto;
+    }
+
+    .mandi-hero-photo {
+        height: 270px;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .admin-navbar,
+    .admin-navigation,
+    .mandi-page-header,
+    .mandi-connection-status,
+    .mandi-summary-grid,
+    .mandi-panel,
+    .mandi-info-grid {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .mandi-page-header {
+        padding: 16px;
+
+        gap: 20px;
+    }
+
+    .mandi-hero-photo {
+        height: 220px;
+    }
+
+    .admin-language,
+    .admin-farmer-link {
+        display: none;
+    }
+}
+/* FINAL DASHBOARD MATCH */
+
+
+/* HERO */
+
+.mandi-page .mandi-page-header .mandi-eyebrow {
+    margin: 0 0 14px !important;
+
+    color: #e4ecd4 !important;
+
+    font-family: "Inter", sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+
+    line-height: 1.2 !important;
+    letter-spacing: 1px !important;
+}
+
+.mandi-page .mandi-page-header h1 {
+    margin: 0 0 9px !important;
+
+    color: #ffffff !important;
+
+    font-family: "Fraunces", Georgia, serif !important;
+    font-size: clamp(34px, 4vw, 52px) !important;
+    font-weight: 600 !important;
+
+    line-height: 1.03 !important;
+    letter-spacing: -1.2px !important;
+}
+
+.mandi-page .mandi-page-header p {
+    margin: 0 !important;
+
+    max-width: 560px !important;
+
+    color: #dbe6cb !important;
+
+    font-family: "Inter", sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+
+    line-height: 1.65 !important;
+    letter-spacing: normal !important;
+}
+
+
+/* ADMIN */
+
+.admin-navbar .admin-user {
+    min-height: 48px !important;
+    height: 48px !important;
+
+    padding: 6px 9px 6px 12px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 9px !important;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.16) !important;
+
+    border-radius: 12px !important;
+
+    background:
+        rgba(12, 23, 7, 0.63) !important;
+
+    background-color:
+        rgba(12, 23, 7, 0.63) !important;
+
+    color: #ffffff !important;
+
+    box-shadow: none !important;
+
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.admin-navbar .admin-user-copy {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    gap: 2px !important;
+
+    line-height: 1 !important;
+}
+
+.admin-navbar #admin-username {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #ffffff !important;
+
+    font-family: "Inter", sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+
+    line-height: 13px !important;
+}
+
+
+/* VERIFIED */
+
+.admin-navbar .admin-verified,
+.admin-navbar .admin-user-copy small {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 3px !important;
+
+    color: #b9c798 !important;
+
+    font-family: "Inter", sans-serif !important;
+    font-size: 8px !important;
+    font-weight: 700 !important;
+
+    line-height: 10px !important;
+}
+
+.admin-navbar .admin-verified i,
+.admin-navbar .admin-user-copy small i {
+    width: 9px !important;
+    height: 9px !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    color: #98a973 !important;
+
+    font-size: 9px !important;
+
+    line-height: 9px !important;
+
+    transform: none !important;
+}
+
+
+/* AVATAR */
+
+.admin-navbar .admin-avatar {
+    width: 36px !important;
+    height: 36px !important;
+
+    min-width: 36px !important;
+    min-height: 36px !important;
+
+    flex: 0 0 36px !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #e3cf94,
+            #c9a24b
+        ) !important;
+
+    color: #ffffff !important;
+
+    font-family: "Inter", sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+
+    line-height: 1 !important;
+
+    box-shadow: none !important;
+}
+/* ADMIN AVATAR */
+
+.admin-avatar {
+    background: #c79a3b !important;
+    background-image: none !important;
+}
+/* ADMIN AVATAR */
+
+.admin-navbar .admin-user .admin-avatar,
+#admin-avatar {
+    background: #c79a3b !important;
+    background-color: #c79a3b !important;
+    background-image: none !important;
+}
+/* ADMIN BANNER */
+
+.admin-navbar {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(7, 20, 5, 0.96) 0%,
+            rgba(10, 27, 7, 0.90) 55%,
+            rgba(31, 35, 11, 0.88) 100%
+        ),
+        url("52565520646011763.jpg") !important;
+
+    background-size: cover !important;
+    background-position: center 46% !important;
+}
+/* ================================================================
+   HERO HOVER
+   ================================================================ */
+
+.mandi-hero-photo {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.mandi-hero-photo img {
+    width: 100% !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    object-fit: cover !important;
+    object-position: center 48% !important;
+
+    transform: scale(1) !important;
+
+    transition:
+        transform .55s cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+
+/* Hovering the whole hero zooms only the photo */
+
+.mandi-page-header:hover
+.mandi-hero-photo img {
+    transform: scale(1.035) !important;
+}
+
+
+
+/* ================================================================
+   ELEMENT BOX HOVER
+   ================================================================ */
+
+.mandi-summary-card {
+    position: relative !important;
+
+    overflow: hidden !important;
+
+    cursor: pointer;
+
+    transition:
+        transform .25s cubic-bezier(.16, 1, .3, 1),
+        box-shadow .25s ease,
+        border-color .25s ease !important;
+}
+
+
+/* Dashboard left highlight */
+
+.mandi-summary-card::after {
+    content: "" !important;
+
+    position: absolute !important;
+
+    left: 0 !important;
+    top: 0 !important;
+
+    width: 4px !important;
+    height: 100% !important;
+
+    display: block !important;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #98a973,
+            #30401c
+        ) !important;
+
+    opacity: 0 !important;
+
+    pointer-events: none;
+
+    transition:
+        opacity .25s ease !important;
+}
+
+
+/* Same Dashboard lift */
+
+.mandi-summary-card:hover {
+    transform:
+        translateY(-5px) !important;
+
+    border-color:
+        rgba(152, 169, 115, .58) !important;
+
+    box-shadow:
+        0 8px 24px
+        rgba(18, 31, 13, .10) !important;
+}
+
+
+.mandi-summary-card:hover::after {
+    opacity: 1 !important;
+}
+
+
+
+/* ================================================================
+   ELEMENT ICON HOVER
+   ================================================================ */
+
+.mandi-summary-icon {
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        color .25s ease !important;
+}
+
+
+.mandi-summary-card:hover
+.mandi-summary-icon {
+    transform:
+        translateY(-2px)
+        scale(1.07) !important;
+
+    background:
+        #30401c !important;
+
+    color:
+        #ffffff !important;
+}
+
+
+.mandi-summary-card:hover
+.mandi-summary-icon i {
+    color:
+        #ffffff !important;
+}
+
+
+
+/* ================================================================
+   PANEL HOVER
+   ================================================================ */
+
+.mandi-panel {
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease !important;
+}
+
+
+.mandi-panel:hover {
+    transform:
+        translateY(-2px) !important;
+
+    border-color:
+        rgba(152, 169, 115, .52) !important;
+
+    box-shadow:
+        0 8px 24px
+        rgba(18, 31, 13, .10) !important;
+}
+
+
+
+/* ================================================================
+   INFO CARD HOVER
+   ================================================================ */
+
+.mandi-info-card {
+    position: relative;
+
+    overflow: hidden;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease !important;
+}
+
+
+.mandi-info-card:hover {
+    transform:
+        translateY(-3px) !important;
+
+    border-color:
+        rgba(152, 169, 115, .45) !important;
+
+    box-shadow:
+        0 8px 22px
+        rgba(18, 31, 13, .09) !important;
+}
+
+
+
+/* ================================================================
+   SLOT ELEMENT HOVER
+   ================================================================ */
+
+.slot-summary-item {
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease !important;
+}
+
+
+.slot-summary-item:hover {
+    transform:
+        translateY(-3px) !important;
+
+    background:
+        rgba(152, 169, 115, .20) !important;
+
+    border-color:
+        rgba(152, 169, 115, .40) !important;
+}
+
+
+
+/* ================================================================
+   DARK MODE HOVER
+   ================================================================ */
+
+body.dark-mode
+.mandi-summary-card:hover {
+    border-color:
+        rgba(152, 169, 115, .58) !important;
+
+    box-shadow:
+        0 8px 24px
+        rgba(0, 0, 0, .28) !important;
+}
+
+
+body.dark-mode
+.mandi-summary-card::after {
+    background:
+        linear-gradient(
+            to bottom,
+            #98a973,
+            #526532
+        ) !important;
+}
+
+
+body.dark-mode
+.mandi-summary-card:hover
+.mandi-summary-icon {
+    background:
+        #758850 !important;
+
+    color:
+        #ffffff !important;
+}
+
+
+body.dark-mode
+.mandi-panel:hover,
+body.dark-mode
+.mandi-info-card:hover {
+    border-color:
+        rgba(185, 199, 152, .25) !important;
+
+    box-shadow:
+        0 8px 24px
+        rgba(0, 0, 0, .26) !important;
+}
+/* Hide original connection status visually but preserve layout */
+.mandi-connection-status {
+    visibility: hidden !important;
+}

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,6 +12,7 @@
     >
 
     <title>Live Queue | Kisan Setu Admin</title>
+    <link rel="icon" type="image/png" href="kisan-setu-logo.png">
 
 
     <!-- ============================================================
@@ -48,135 +50,175 @@
          ADMIN NAVBAR
     ============================================================= -->
 
-    <header class="admin-navbar">
+    <!-- ADMIN -->
 
-        <div class="admin-navbar-left">
+<header class="admin-navbar">
 
-            <a
-                href="dashboard.html"
-                class="admin-brand"
-            >
+    <div class="admin-navbar-left">
 
-                <span class="admin-brand-icon">
+        <a href="dashboard.html" class="admin-brand">
 
-                    <i class="fa-solid fa-wheat-awn"></i>
-
-                </span>
-
-
-                <span class="admin-brand-name">
-                    Kisan Setu
-                </span>
-
-            </a>
-
-
-            <span class="admin-navbar-divider"></span>
-
-
-            <span class="admin-portal-title">
-                Administration Portal
+            <span class="admin-brand-icon">
+                <img
+                    src="https://cdn-icons-png.flaticon.com/128/8524/8524310.png"
+                    alt="Kisan Setu"
+                >
             </span>
 
-        </div>
+            <span class="admin-brand-name">
+
+                <small>
+                    KISAN SETU
+                </small>
+
+                <strong>
+                    Administration Portal
+                </strong>
+
+            </span>
+
+        </a>
+
+    </div>
 
 
-        <div class="admin-navbar-right">
+    <div class="admin-navbar-right">
 
-            <div class="admin-user">
+        <div class="admin-user">
 
-                <i class="fa-solid fa-user-shield"></i>
+            <div class="admin-user-copy">
 
                 <span id="admin-user-name">
-                    Administrator
+                    admin
                 </span>
+
+                <small class="admin-verified">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified
+                </small>
 
             </div>
 
-
-            <button
-                type="button"
-                class="admin-logout-button"
-                id="admin-logout-button"
+            <div
+                class="admin-avatar"
+                id="admin-avatar"
             >
-
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-                Logout
-
-            </button>
+                AD
+            </div>
 
         </div>
 
-    </header>
 
+        <button
+            type="button"
+            class="admin-icon-button"
+            id="admin-theme-toggle"
+            aria-label="Toggle dark mode"
+        >
+            <i class="fa-solid fa-moon"></i>
+        </button>
+
+
+        <button
+            type="button"
+            class="admin-icon-button"
+            aria-label="Notifications"
+        >
+            <i class="fa-regular fa-bell"></i>
+            <span class="notification-count">3</span>
+        </button>
+
+
+        <select
+            class="admin-language"
+            aria-label="Language"
+        >
+            <option>🌐 English</option>
+        </select>
+
+
+        <a
+            href="../farmer/index.html"
+            class="admin-farmer-link"
+        >
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            Farmer Portal
+        </a>
+
+
+        <button
+            type="button"
+            class="admin-logout-button"
+            id="admin-logout-button"
+        >
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </button>
+
+    </div>
+
+</header>
 
     <!-- ============================================================
          ADMIN PORTAL NAVIGATION
     ============================================================= -->
 
-    <nav
-        class="admin-navigation"
-        aria-label="Administration navigation"
+    <!-- NAVIGATION -->
+
+<nav
+    class="admin-navigation"
+    aria-label="Administration navigation"
+>
+
+    <a
+        href="dashboard.html"
+        class="admin-nav-item"
     >
+        <i class="fa-solid fa-chart-line"></i>
+        Dashboard
+    </a>
 
-        <a
-            href="dashboard.html"
-            class="admin-nav-item"
-        >
-            Dashboard
-        </a>
+    <a
+        href="farmers.html"
+        class="admin-nav-item"
+    >
+        <i class="fa-solid fa-users"></i>
+        Farmers
+    </a>
 
+    <a
+        href="mandi.html"
+        class="admin-nav-item"
+    >
+        <i class="fa-solid fa-warehouse"></i>
+        Mandi & Slots
+    </a>
 
-        <a
-            href="farmers.html"
-            class="admin-nav-item"
-        >
-            Farmers
-        </a>
+    <a
+        href="queue.html"
+        class="admin-nav-item active"
+    >
+        <i class="fa-solid fa-list-ol"></i>
+        Live Queue
+    </a>
 
+    <a
+        href="payment.html"
+        class="admin-nav-item"
+    >
+        <i class="fa-solid fa-money-bill-transfer"></i>
+        Payments
+    </a>
 
-        <a
-            href="mandi.html"
-            class="admin-nav-item"
-        >
-            Mandi & Slots
-        </a>
+    <a
+        href="reports.html"
+        class="admin-nav-item"
+    >
+        <i class="fa-solid fa-chart-column"></i>
+        Reports
+    </a>
 
-
-        <a
-            href="queue.html"
-            class="admin-nav-item active"
-        >
-            Live Queue
-        </a>
-
-
-        <a
-            href="payment.html"
-            class="admin-nav-item"
-        >
-            Payments
-        </a>
-
-
-        <a
-            href="reports.html"
-            class="admin-nav-item"
-        >
-            Reports
-        </a>
-
-
-        <a
-            href="../index.html"
-            class="admin-nav-item admin-farmer-portal-button"
-        >
-            Farmer Portal
-        </a>
-
-    </nav>
-
+</nav>
 
     <!-- ============================================================
          A5 LIVE QUEUE PAGE
@@ -189,51 +231,120 @@
              PAGE HEADER
         ========================================================= -->
 
-        <section class="queue-page-header">
+        <!-- HERO -->
 
-            <div class="queue-header-content">
+<section class="queue-page-header queue-hero">
 
-                <div class="queue-header-icon">
+    <div class="queue-hero-photo">
 
-                    <i class="fa-solid fa-list-ol"></i>
+        <img
+            src="Download Lush Green Tropical Plants Wall for free.jpg"
+            alt="Green tropical plants"
+        >
+
+    </div>
+
+
+    <div class="queue-hero-copy">
+
+       <div class="queue-eyebrow">
+    <i class="fa-solid fa-signal"></i>
+    LIVE PROCUREMENT
+</div>
+
+        <h1>
+            Live Procurement Queue
+        </h1>
+
+        <p>
+            Monitor farmer arrivals, token positions,
+            and real-time procurement activity.
+        </p>
+
+    </div>
+
+
+    <div class="queue-hero-tools">
+
+        <div class="queue-date-control">
+
+           <button
+    type="button"
+    class="queue-date-box"
+    id="queue-calendar-trigger"
+>
+    <i class="fa-regular fa-calendar"></i>
+
+    <span id="queue-date-display">
+        --/--/----
+    </span>
+
+    <i class="fa-solid fa-chevron-down queue-date-chevron"></i>
+</button>
+
+
+            <div
+                class="queue-calendar-dropdown"
+                id="queue-calendar-dropdown"
+                hidden
+            >
+
+                <div class="queue-calendar-header">
+
+                    <button
+                        type="button"
+                        id="queue-calendar-prev"
+                        aria-label="Previous month"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <strong id="queue-calendar-title">
+                        Month
+                    </strong>
+
+                    <button
+                        type="button"
+                        id="queue-calendar-next"
+                        aria-label="Next month"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
 
                 </div>
 
-
-                <div>
-
-                    <h1>
-                        Live Procurement Queue
-                    </h1>
-
-
-                    <p>
-                        Monitor farmer arrivals, token positions,
-                        and real-time procurement activity.
-                    </p>
-
+                <div class="queue-calendar-weekdays">
+                    <span>Su</span>
+                    <span>Mo</span>
+                    <span>Tu</span>
+                    <span>We</span>
+                    <span>Th</span>
+                    <span>Fr</span>
+                    <span>Sa</span>
                 </div>
 
-            </div>
-
-
-            <div class="queue-header-actions">
-
-                <button
-                    type="button"
-                    class="queue-refresh-button"
-                    id="refresh-queue-button"
-                >
-
-                    <i class="fa-solid fa-rotate"></i>
-
-                    Refresh Queue
-
-                </button>
+                <div
+                    class="queue-calendar-days"
+                    id="queue-calendar-days"
+                ></div>
 
             </div>
 
-        </section>
+        </div>
+
+
+        <button
+            type="button"
+            class="queue-refresh-button"
+            id="refresh-queue-button"
+        >
+            <i class="fa-solid fa-rotate"></i>
+            Refresh Queue
+        </button>
+
+    </div>
+
+</section>
 
 
         <!-- ========================================================
@@ -854,29 +965,31 @@
          FOOTER
     ============================================================= -->
 
-    <footer class="admin-footer">
+    <footer class="admin-footer dashboard-footer">
 
-        <div class="admin-footer-content">
+    <div class="dashboard-footer-left">
+        <strong>Kisan Setu • Department of Consumer Affairs (DoCA)</strong>
+        <span>
+            MINISTRY OF CONSUMER AFFAIRS, FOOD &amp; PUBLIC DISTRIBUTION
+            • NATIONAL INFORMATICS CENTRE
+        </span>
+    </div>
 
-            <div class="admin-footer-brand">
+    <div class="dashboard-footer-status">
+        <span class="dashboard-footer-dot" id="footer-status-dot"></span>
 
-                <i class="fa-solid fa-wheat-awn"></i>
+        <span id="footer-connection-text">
+            Connecting...
+        </span>
 
-                <span>
-                    Kisan Setu
-                </span>
+        <span>•</span>
 
-            </div>
+        <span id="footer-last-updated">
+            Waiting for update
+        </span>
+    </div>
 
-
-            <div class="admin-footer-text">
-                Digital Agriculture Procurement Platform
-            </div>
-
-        </div>
-
-    </footer>
-
+</footer>
 
     <!-- ============================================================
          A5 JAVASCRIPT
